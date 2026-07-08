@@ -1,0 +1,24 @@
+2026-07-08 19:23:31 [INFO] === Demarrage du script (PowerShell 7.6.3) ===
+2026-07-08 19:23:32 [INFO] Module charge : PnP.PowerShell
+2026-07-08 19:23:33 [INFO] Module charge : Microsoft.Graph.Authentication
+2026-07-08 19:23:38 [INFO] Module charge : Microsoft.Graph.Groups
+2026-07-08 19:23:38 [INFO] Configuration chargee : A:\Projets\network-connect\PermissionsConfig.MASQUAGE.json
+2026-07-08 19:23:40 [SUCCESS] Connexion Graph reussie (app f82df874-d3ce-48fd-8942-0a35f0b0325e, tenant 673ed2ae-f76b-4b11-b1cb-b626f34e8f28)
+2026-07-08 19:23:44 [SUCCESS] Connexion SharePoint reussie : Site_temp [https://infosolucesivoire.sharepoint.com/sites/Site_temp]
+2026-07-08 19:23:44 [INFO] --------------------------------
+2026-07-08 19:23:44 [INFO] Bibliotheque : Documents | Dossier : Dossier A
+2026-07-08 19:23:44 [INFO] Traitement : Documents / Dossier A -> G_INVITE [Read]
+2026-07-08 19:23:48 [INFO] Rupture d'heritage des permissions sur Dossier A
+2026-07-08 19:23:50 [INFO] Groupe Entra ID valide : G_INVITE (51b9331d-4cfe-4333-a17c-7441a086e0f8)
+2026-07-08 19:23:51 [INFO] Niveau 'Read' traduit en 'Lecture' (nom reel du site)
+2026-07-08 19:23:54 [SUCCESS] OK : role 'Lecture' attribue a 'G_INVITE' sur 'Dossier A'
+2026-07-08 19:23:54 [INFO] --------------------------------
+2026-07-08 19:23:54 [INFO] Bibliotheque : Documents | Dossier : Dossier B
+2026-07-08 19:23:54 [INFO] Traitement : Documents / Dossier B -> G_INVITE [RETRAIT d'acces (masquage)]
+2026-07-08 19:23:57 [INFO] Rupture d'heritage des permissions sur Dossier B
+2026-07-08 19:23:57 [INFO] Groupe Entra ID valide : G_INVITE (51b9331d-4cfe-4333-a17c-7441a086e0f8)
+2026-07-08 19:23:58 [SUCCESS] OK : acces RETIRE pour 'G_INVITE' sur 'Dossier B' -> dossier MASQUE pour ce groupe
+2026-07-08 19:23:58 [INFO] ================================
+2026-07-08 19:23:58 [SUCCESS] BILAN : 2 attribution(s) reussie(s), 0 echec(s)
+2026-07-08 19:23:58 [INFO] Journal complet : A:\Projets\network-connect\Logs\SPO_Permissions_20260708_192331.log
+2026-07-08 19:23:58 [INFO] Traitement termine

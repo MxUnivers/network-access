@@ -309,11 +309,15 @@ function Set-FolderPermission {
         [string]$LibraryName,
         [string]$FolderPath,
         [string]$GroupName,
-        [string]$RoleName
+        [string]$RoleName,
+        [string]$Access = "Grant"
     )
 
     try {
-        Write-Log "Traitement : $LibraryName / $FolderPath -> $GroupName ($RoleName)"
+        # "Deny"/"Remove"/"None" = RETIRER tout acces du groupe -> le dossier devient masque pour lui
+        $IsDeny = $Access -match '^(Deny|Remove|None|Refuser|Retirer|Masquer)$'
+        $Label  = if ($IsDeny) { "RETRAIT d'acces (masquage)" } else { $RoleName }
+        Write-Log "Traitement : $LibraryName / $FolderPath -> $GroupName [$Label]"
 
         $FolderServerRelativeUrl =
             ((Get-PnPList $LibraryName -ErrorAction Stop).RootFolder.ServerRelativeUrl) +
@@ -325,7 +329,8 @@ function Set-FolderPermission {
         $ListItem = Get-PnPProperty -ClientObject $Folder -Property ListItemAllFields
 
         #==================================
-        # Rupture d'heritage
+        # Rupture d'heritage (on CONSERVE les permissions existantes :
+        # les proprietaires gardent l'acces, seul le groupe cible est concerne)
         #==================================
         if (-not $ListItem.HasUniqueRoleAssignments) {
             Write-Log "Rupture d'heritage des permissions sur $FolderPath"
@@ -340,28 +345,55 @@ function Set-FolderPermission {
         if (-not $AADGroup) { throw "Groupe Entra ID introuvable : $GroupName" }
         Write-Log "Groupe Entra ID valide : $GroupName ($($AADGroup.Id))"
 
-        #==================================
-        # Resolution du niveau d'autorisation
-        #==================================
-        $RealRole = Resolve-RoleName -Requested $RoleName
-        if (-not $RealRole) {
-            throw "Niveau d'autorisation introuvable : '$RoleName' (voir la liste ci-dessus)"
+        if ($IsDeny) {
+            #==================================
+            # RETRAIT : le groupe ne doit PLUS avoir acces -> dossier masque
+            #==================================
+            # On retrouve le principal SharePoint du groupe : par nom affiche OU par
+            # l'identifiant Entra (present dans le LoginName base sur les claims).
+            $spUser = Get-PnPUser | Where-Object {
+                ($_.Title -ieq $GroupName) -or
+                ($AADGroup.Id -and $_.LoginName -like "*$($AADGroup.Id)*")
+            } | Select-Object -First 1
+
+            if ($spUser) {
+                $ctx = Get-PnPContext
+                try {
+                    $ra = $ListItem.RoleAssignments.GetByPrincipalId($spUser.Id)
+                    $ra.DeleteObject()
+                    $ctx.ExecuteQuery()
+                    Write-Log "OK : acces RETIRE pour '$GroupName' sur '$FolderPath' -> dossier MASQUE pour ce groupe" "SUCCESS"
+                }
+                catch {
+                    Write-Log "OK : '$GroupName' n'avait deja aucun acces direct sur '$FolderPath' -> dossier MASQUE" "SUCCESS"
+                }
+            }
+            else {
+                Write-Log "OK : '$GroupName' absent des utilisateurs du site -> aucun acces sur '$FolderPath' (masque)" "SUCCESS"
+            }
         }
-        if ($RealRole -ne $RoleName) {
-            Write-Log "Niveau '$RoleName' traduit en '$RealRole' (nom reel du site)"
+        else {
+            #==================================
+            # ATTRIBUTION : resolution du role puis ajout
+            #==================================
+            $RealRole = Resolve-RoleName -Requested $RoleName
+            if (-not $RealRole) {
+                throw "Niveau d'autorisation introuvable : '$RoleName' (voir la liste ci-dessus)"
+            }
+            if ($RealRole -ne $RoleName) {
+                Write-Log "Niveau '$RoleName' traduit en '$RealRole' (nom reel du site)"
+            }
+
+            Set-PnPListItemPermission `
+                -List $LibraryName `
+                -Identity $ListItem.Id `
+                -User $GroupName `
+                -AddRole $RealRole `
+                -ErrorAction Stop
+
+            Write-Log "OK : role '$RealRole' attribue a '$GroupName' sur '$FolderPath'" "SUCCESS"
         }
 
-        #==================================
-        # Attribution de la permission
-        #==================================
-        Set-PnPListItemPermission `
-            -List $LibraryName `
-            -Identity $ListItem.Id `
-            -User $GroupName `
-            -AddRole $RealRole `
-            -ErrorAction Stop
-
-        Write-Log "OK : role '$RealRole' attribue a '$GroupName' sur '$FolderPath'" "SUCCESS"
         $script:CountOk++
     }
     catch {
@@ -380,11 +412,13 @@ foreach ($Entry in $Config.Permissions) {
     Write-Log "Bibliotheque : $($Entry.Library) | Dossier : $($Entry.FolderPath)"
 
     foreach ($Assignment in $Entry.Assignments) {
+        $access = if ($Assignment.Access) { $Assignment.Access } else { "Grant" }
         Set-FolderPermission `
             -LibraryName $Entry.Library `
             -FolderPath  $Entry.FolderPath `
             -GroupName   $Assignment.GroupName `
-            -RoleName    $Assignment.Role
+            -RoleName    $Assignment.Role `
+            -Access      $access
     }
 }
 
