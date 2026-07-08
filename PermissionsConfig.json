@@ -1,0 +1,22 @@
+{
+  "Auth": {
+    "TenantId": "infosolucesivoire.onmicrosoft.com",
+    "ClientId": "f82df874-d3ce-48fd-8942-0a35f0b0325e",
+    "CertificateThumbprint": "453C3E6F2F38609897D23FDB7AEE2237E5C18F98",
+    "CertificatePath": "",
+    "CertificatePassword": ""
+  },
+  "SiteUrl": "https://infosolucesivoire.sharepoint.com/sites/Site_temp",
+  "Permissions": [
+    {
+      "Library": "Documents",
+      "FolderPath": "Dossier A",
+      "Assignments": [
+        {
+          "GroupName": "G_INVITE",
+          "Role": "Full Control"
+        }
+      ]
+    }
+  ]
+}
