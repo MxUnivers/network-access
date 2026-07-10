@@ -17,8 +17,9 @@
     -> 4 dossier(s), 1 fichier(s)
 
   Architecture exportee :
-   A:\Projets\network-connect\architectures\sites\site_temp\resultats\architecture_20260710_130652.json
+   A:\Projets\network-connect\architectures\sites\site_temp\resultats\architecture_20260710_131859.json
    A:\Projets\network-connect\architectures\sites\site_temp\resultats\architecture-latest.json (copie 'derniere version')
+   A:\Projets\network-connect\architectures\sites\site_temp\resultats\architecture-latest.html (visualisation - double-cliquez pour ouvrir)
 
 === TERMINE ===
 

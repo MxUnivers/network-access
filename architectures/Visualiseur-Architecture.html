@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Visualiseur d'architecture SharePoint</title>
+<style>
+  :root{
+    --bg:#f6f8fa; --card:#ffffff; --text:#1f2328; --muted:#656d76; --line:#d0d7de;
+    --accent:#0969da; --sg:#1a7f37; --spg:#8250df; --usr:#bf3989; --deny:#cf222e; --chipbg:#eef2f6;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{ --bg:#0d1117; --card:#161b22; --text:#e6edf3; --muted:#8b949e; --line:#30363d;
+      --accent:#4493f8; --sg:#3fb950; --spg:#a371f7; --usr:#f778ba; --deny:#f85149; --chipbg:#21262d; }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);font:14px/1.5 -apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
+  header{padding:18px 22px;border-bottom:1px solid var(--line);background:var(--card);position:sticky;top:0;z-index:5}
+  h1{margin:0 0 4px;font-size:18px}
+  .sub{color:var(--muted);font-size:13px;word-break:break-all}
+  .toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:12px}
+  button,label.btn{cursor:pointer;border:1px solid var(--line);background:var(--card);color:var(--text);
+    padding:7px 12px;border-radius:8px;font-size:13px}
+  button:hover,label.btn:hover{border-color:var(--accent);color:var(--accent)}
+  input[type=search]{flex:1;min-width:160px;padding:7px 10px;border:1px solid var(--line);border-radius:8px;
+    background:var(--card);color:var(--text)}
+  #file{display:none}
+  main{padding:16px 22px;max-width:1100px;margin:0 auto}
+  .drop{border:2px dashed var(--line);border-radius:12px;padding:40px;text-align:center;color:var(--muted)}
+  .drop.hl{border-color:var(--accent);color:var(--accent)}
+  details{margin:2px 0}
+  summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:8px;padding:5px 8px;border-radius:8px}
+  summary::-webkit-details-marker{display:none}
+  summary:hover{background:var(--chipbg)}
+  summary .caret{width:12px;color:var(--muted);transition:transform .15s}
+  details[open]>summary .caret{transform:rotate(90deg)}
+  .ico{font-size:15px}
+  .name{font-weight:600}
+  .count{color:var(--muted);font-weight:400;font-size:12px}
+  .body{margin-left:20px;border-left:1px solid var(--line);padding-left:12px}
+  .perms{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 6px}
+  .badge{font-size:12px;padding:2px 8px;border-radius:999px;background:var(--chipbg);border:1px solid var(--line)}
+  .badge.sg{color:var(--sg)} .badge.spg{color:var(--spg)} .badge.usr{color:var(--usr)}
+  .badge.inherit{color:var(--muted)} .badge.none{color:var(--deny)}
+  .file{display:flex;align-items:center;gap:8px;padding:3px 8px;color:var(--muted)}
+  .file .name{font-weight:400;color:var(--text)}
+  .hidden{display:none}
+  .legend{color:var(--muted);font-size:12px;margin-top:10px}
+</style>
+</head>
+<body>
+<header>
+  <h1 id="site">Visualiseur d'architecture SharePoint</h1>
+  <div class="sub" id="url">Ouvrez un fichier <code>architecture_*.json</code> (ou glissez-le ici)</div>
+  <div class="toolbar">
+    <label class="btn" for="file">📂 Ouvrir un JSON</label>
+    <input type="file" id="file" accept=".json">
+    <button id="demo">👁 Voir un exemple</button>
+    <button id="expand">➕ Tout dérouler</button>
+    <button id="collapse">➖ Tout replier</button>
+    <input type="search" id="filter" placeholder="Filtrer par nom de dossier…">
+  </div>
+</header>
+<main>
+  <div class="drop" id="drop">Glissez-déposez un fichier <b>architecture_*.json</b> ici,<br>ou cliquez « Ouvrir un JSON ».</div>
+  <div id="tree"></div>
+  <div class="legend" id="legend"></div>
+</main>
+<script>
+const $ = s => document.querySelector(s);
+const el = (t,c,x)=>{const e=document.createElement(t); if(c)e.className=c; if(x!=null)e.textContent=x; return e;};
+const typeClass = t => t==='SecurityGroup'?'sg' : (t==='SharePointGroup'?'spg' : 'usr');
+
+function perms(f){
+  const w = el('div','perms');
+  if(f.HeritageRompu === false){ w.appendChild(el('span','badge inherit','héritage conservé')); return w; }
+  const list = f.Permissions||[];
+  if(!list.length){ w.appendChild(el('span','badge none','unique — aucun groupe explicite')); return w; }
+  list.forEach(p=>{
+    const b = el('span','badge '+typeClass(p.Type));
+    b.textContent = '🔐 '+p.Principal+' · '+((p.Roles||[]).join(', ')||'—');
+    w.appendChild(b);
+  });
+  return w;
+}
+
+function folder(f){
+  const d = el('details','folder');
+  const s = el('summary');
+  s.appendChild(el('span','caret','▶'));
+  s.appendChild(el('span','ico','📁'));
+  s.appendChild(el('span','name', f.Name));
+  const nSub=(f.Dossiers||[]).length, nFile=(f.Fichiers||[]).length;
+  s.appendChild(el('span','count', ` — ${nSub} dossier(s), ${nFile} fichier(s)`));
+  d.appendChild(s);
+  const body = el('div','body');
+  body.appendChild(perms(f));
+  (f.Dossiers||[]).forEach(sub=> body.appendChild(folder(sub)));
+  (f.Fichiers||[]).forEach(fi=>{
+    const r = el('div','file'); r.appendChild(el('span','ico','📄')); r.appendChild(el('span','name', fi.Name));
+    if(fi.Modifie) r.appendChild(el('span','count',' · '+fi.Modifie));
+    body.appendChild(r);
+  });
+  d.appendChild(body);
+  d.dataset.name = (f.Name||'').toLowerCase();
+  return d;
+}
+
+function library(l){
+  const d = el('details','lib'); d.open = true;
+  const s = el('summary');
+  s.appendChild(el('span','caret','▶'));
+  s.appendChild(el('span','ico','📚'));
+  s.appendChild(el('span','name', l.Name));
+  s.appendChild(el('span','count', ` — ${(l.Dossiers||[]).length} dossier(s)`));
+  d.appendChild(s);
+  const body = el('div','body');
+  (l.Dossiers||[]).forEach(f=> body.appendChild(folder(f)));
+  (l.Fichiers||[]).forEach(fi=>{
+    const r = el('div','file'); r.appendChild(el('span','ico','📄')); r.appendChild(el('span','name', fi.Name)); body.appendChild(r);
+  });
+  d.appendChild(body);
+  return d;
+}
+
+function render(data){
+  $('#drop').classList.add('hidden');
+  $('#site').textContent = '📊 ' + (data.Site?.Titre || 'Architecture');
+  $('#url').textContent = (data.Site?.Url||'') + (data.Site?.CaptureLe? '  •  capturé le '+data.Site.CaptureLe : '');
+  const tree = $('#tree'); tree.innerHTML='';
+  (data.Bibliotheques||[]).forEach(l=> tree.appendChild(library(l)));
+  $('#legend').textContent = 'Légende : 📚 bibliothèque · 📁 dossier · 📄 fichier · 🔐 groupe ayant un droit (vert=groupe Entra, violet=groupe SharePoint).';
+}
+
+function loadText(t){ try{ render(JSON.parse(t)); }catch(e){ alert('JSON invalide : '+e.message); } }
+
+$('#file').addEventListener('change', e=>{ const f=e.target.files[0]; if(!f)return; const r=new FileReader(); r.onload=()=>loadText(r.result); r.readAsText(f); });
+$('#expand').addEventListener('click', ()=> document.querySelectorAll('details').forEach(d=>d.open=true));
+$('#collapse').addEventListener('click', ()=> document.querySelectorAll('#tree details').forEach(d=>d.open=false));
+$('#filter').addEventListener('input', e=>{
+  const q = e.target.value.toLowerCase();
+  document.querySelectorAll('#tree details.folder').forEach(d=>{
+    const match = !q || (d.dataset.name||'').includes(q);
+    d.classList.toggle('hidden', q && !match);
+    if(match && q) { let p=d.parentElement; while(p){ if(p.tagName==='DETAILS'){p.open=true;p.classList.remove('hidden');} p=p.parentElement; } d.open=true; }
+  });
+});
+
+const drop = $('#drop');
+['dragover','dragenter'].forEach(ev=> document.addEventListener(ev, e=>{e.preventDefault(); drop.classList.add('hl');}));
+['dragleave','drop'].forEach(ev=> document.addEventListener(ev, e=>{e.preventDefault(); drop.classList.remove('hl');}));
+document.addEventListener('drop', e=>{ const f=e.dataTransfer.files[0]; if(f){ const r=new FileReader(); r.onload=()=>loadText(r.result); r.readAsText(f);} });
+
+// Exemple de démonstration
+const DEMO = {
+  Site:{ Titre:"Site_temp (exemple)", Url:"https://…/sites/Site_temp", CaptureLe:"2026-07-10 14:30" },
+  Bibliotheques:[{ Name:"Documents", Type:"Bibliotheque", Dossiers:[
+    { Name:"Dossier A", HeritageRompu:true, Permissions:[
+        {Principal:"Propriétaires de Site_temp",Type:"SharePointGroup",Roles:["Contrôle total"]},
+        {Principal:"G_INVITE",Type:"SecurityGroup",Roles:["Contrôle total"]}],
+      Dossiers:[{Name:"Sous-dossier A1",HeritageRompu:false,Permissions:[],Dossiers:[],Fichiers:[{Name:"note.docx",Modifie:"2026-07-09"}]}],
+      Fichiers:[{Name:"Budget.xlsx",Modifie:"2026-07-08"}] },
+    { Name:"Dossier B", HeritageRompu:true, Permissions:[
+        {Principal:"G_INVITE",Type:"SecurityGroup",Roles:["Modification"]}], Dossiers:[], Fichiers:[] },
+    { Name:"Dossier C", HeritageRompu:true, Permissions:[
+        {Principal:"Site_temp - Membres",Type:"SharePointGroup",Roles:["Modification"]}], Dossiers:[], Fichiers:[] }
+  ], Fichiers:[{Name:"Classeur 1.xlsx",Modifie:"2026-07-07"}] }]
+};
+$('#demo').addEventListener('click', ()=> render(DEMO));
+</script>
+</body>
+</html>
