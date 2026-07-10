@@ -403,6 +403,57 @@ function Set-FolderPermission {
 }
 
 #------------------------------------------------------
+# MODE EXCLUSIF : rendre un dossier PRIVE (retire les groupes herites du site)
+# Active par "ResetPermissions": true sur l'entree du dossier.
+#------------------------------------------------------
+function Reset-FolderToExclusive {
+    param([string]$LibraryName, [string]$FolderPath)
+    try {
+        $url = ((Get-PnPList $LibraryName -ErrorAction Stop).RootFolder.ServerRelativeUrl) + "/" + $FolderPath
+        $folder = Get-PnPFolder -Url $url -ErrorAction Stop
+        $li = Get-PnPProperty -ClientObject $folder -Property ListItemAllFields
+        $ctx = Get-PnPContext
+        # Repartir propre : restaurer l'heritage puis rompre SANS copier
+        if ($li.HasUniqueRoleAssignments) {
+            $li.ResetRoleInheritance()
+            $ctx.ExecuteQuery()
+        }
+        $li.BreakRoleInheritance($false, $true)   # $false = ne PAS copier -> retire Membres/Visiteurs du site
+        $ctx.ExecuteQuery()
+        Write-Log "Mode EXCLUSIF sur '$FolderPath' : dossier remis a zero (seuls les groupes listes + admins auront acces)"
+    }
+    catch {
+        Write-Log "Mode exclusif impossible sur '$FolderPath' : $($_.Exception.Message)" "WARN"
+    }
+}
+
+#------------------------------------------------------
+# RAPPORT : liste QUI a acces au dossier (pour verification depuis le log)
+#------------------------------------------------------
+function Show-FolderAccess {
+    param([string]$LibraryName, [string]$FolderPath)
+    try {
+        $url = ((Get-PnPList $LibraryName -ErrorAction Stop).RootFolder.ServerRelativeUrl) + "/" + $FolderPath
+        $folder = Get-PnPFolder -Url $url -ErrorAction Stop
+        $li = Get-PnPProperty -ClientObject $folder -Property ListItemAllFields
+        $ctx = Get-PnPContext
+        $ctx.Load($li.RoleAssignments)
+        $ctx.ExecuteQuery()
+        Write-Log "Acces effectifs sur '$FolderPath' (herite=$(-not $li.HasUniqueRoleAssignments)) :"
+        foreach ($ra in $li.RoleAssignments) {
+            $ctx.Load($ra.Member)
+            $ctx.Load($ra.RoleDefinitionBindings)
+            $ctx.ExecuteQuery()
+            $roles = ($ra.RoleDefinitionBindings | ForEach-Object { $_.Name }) -join ', '
+            Write-Log "   - $($ra.Member.Title) [$($ra.Member.PrincipalType)] : $roles"
+        }
+    }
+    catch {
+        Write-Log "Lecture des acces de '$FolderPath' impossible : $($_.Exception.Message)" "WARN"
+    }
+}
+
+#------------------------------------------------------
 # TRAITEMENT
 #------------------------------------------------------
 
@@ -410,6 +461,11 @@ foreach ($Entry in $Config.Permissions) {
 
     Write-Log "--------------------------------"
     Write-Log "Bibliotheque : $($Entry.Library) | Dossier : $($Entry.FolderPath)"
+
+    # Option : rendre le dossier PRIVE (retire les groupes du site) avant d'ajouter les groupes listes
+    if ($Entry.ResetPermissions) {
+        Reset-FolderToExclusive -LibraryName $Entry.Library -FolderPath $Entry.FolderPath
+    }
 
     foreach ($Assignment in $Entry.Assignments) {
         $access = if ($Assignment.Access) { $Assignment.Access } else { "Grant" }
@@ -420,6 +476,9 @@ foreach ($Entry in $Config.Permissions) {
             -RoleName    $Assignment.Role `
             -Access      $access
     }
+
+    # Rapport de verification : qui a acces a ce dossier apres traitement
+    Show-FolderAccess -LibraryName $Entry.Library -FolderPath $Entry.FolderPath
 }
 
 #------------------------------------------------------

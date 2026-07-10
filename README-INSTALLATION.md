@@ -102,9 +102,39 @@ Puis cliquez sur **Grant admin consent for <votre tenant>** (bouton en haut).
 - `CertificateThumbprint` : **prioritaire**. Si vous préférez un fichier `.pfx`,
   laissez le thumbprint vide et renseignez `CertificatePath` + `CertificatePassword`.
 - Ajoutez autant de blocs `Permissions` / `Assignments` que nécessaire.
-- Rôles acceptés (le script traduit tout seul EN → FR sur un site français) :
+
+### Comment est organisé le fichier
+
+- `Permissions` = **une entrée par dossier**. Chaque entrée a :
+  - `Library` : la bibliothèque (ex : `Documents`)
+  - `FolderPath` : le nom du dossier (ex : `Dossier A`)
+  - `Assignments` : **la liste des groupes** et ce qu'on leur fait sur ce dossier.
+
+- Dans `Assignments`, chaque ligne est **soit** une autorisation, **soit** un retrait :
+
+  | But | À écrire | Effet |
+  |-----|----------|-------|
+  | **Donner** un accès | `{ "GroupName": "G_X", "Role": "Read" }` | le groupe voit et ouvre le dossier |
+  | **Retirer / masquer** | `{ "GroupName": "G_X", "Access": "Deny" }` | le groupe **ne voit plus** le dossier |
+
+- Rôles acceptés pour `Role` (le script traduit tout seul EN → FR sur un site français) :
   `Full Control`/`Contrôle total`, `Edit`/`Modification`, `Contribute`/`Collaboration`,
   `Read`/`Lecture`.
+
+**Exemple : G_INVITE voit Dossier A mais PAS Dossier B**
+
+```json
+"Permissions": [
+  { "Library": "Documents", "FolderPath": "Dossier A",
+    "Assignments": [ { "GroupName": "G_INVITE", "Role": "Read" } ] },
+  { "Library": "Documents", "FolderPath": "Dossier B",
+    "Assignments": [ { "GroupName": "G_INVITE", "Access": "Deny" } ] }
+]
+```
+
+> Le masquage repose sur le « security trimming » de SharePoint : un dossier sur lequel
+> un groupe n'a **aucun** droit est automatiquement **invisible** pour lui — à condition
+> que ce groupe n'ait pas d'accès au site entier (ex : membre du site).
 
 ---
 

@@ -19,7 +19,8 @@
       "Library": "Documents",
       "FolderPath": "Dossier B",
       "Assignments": [
-        { "GroupName": "G_INVITE", "Role": "Modification" }
+        { "GroupName": "G_INVITE", "Role": "Modification" },
+        { "GroupName": "G_COMPTA", "Role": "Lecture" }
       ]
     },
     {
@@ -27,6 +28,14 @@
       "FolderPath": "Dossier C",
       "Assignments": [
         { "GroupName": "G_INVITE", "Access": "Deny" }
+      ]
+    },
+    {
+      "Library": "Documents",
+      "FolderPath": "Dossier Direction",
+      "ResetPermissions": true,
+      "Assignments": [
+        { "GroupName": "G_DIRECTION", "Role": "Contrôle total" }
       ]
     }
   ]

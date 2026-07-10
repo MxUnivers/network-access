@@ -1,0 +1,40 @@
+2026-07-10 12:26:26 [INFO] === Demarrage du script (PowerShell 7.6.3) ===
+2026-07-10 12:26:27 [INFO] Module charge : PnP.PowerShell
+2026-07-10 12:26:27 [INFO] Module charge : Microsoft.Graph.Authentication
+2026-07-10 12:26:32 [INFO] Module charge : Microsoft.Graph.Groups
+2026-07-10 12:26:32 [INFO] Configuration chargee : A:\Projets\network-connect\PermissionsConfig.json
+2026-07-10 12:26:33 [SUCCESS] Connexion Graph reussie (app f82df874-d3ce-48fd-8942-0a35f0b0325e, tenant 673ed2ae-f76b-4b11-b1cb-b626f34e8f28)
+2026-07-10 12:26:36 [SUCCESS] Connexion SharePoint reussie : Site_temp [https://infosolucesivoire.sharepoint.com/sites/Site_temp]
+2026-07-10 12:26:36 [INFO] --------------------------------
+2026-07-10 12:26:36 [INFO] Bibliotheque : Documents | Dossier : Dossier A
+2026-07-10 12:26:36 [INFO] Traitement : Documents / Dossier A -> G_INVITE [Contr“le total]
+2026-07-10 12:26:38 [INFO] Rupture d'heritage des permissions sur Dossier A
+2026-07-10 12:26:39 [INFO] Groupe Entra ID valide : G_INVITE (51b9331d-4cfe-4333-a17c-7441a086e0f8)
+2026-07-10 12:26:42 [SUCCESS] OK : role 'Contr“le total' attribue a 'G_INVITE' sur 'Dossier A'
+2026-07-10 12:26:44 [INFO] Acces effectifs sur 'Dossier A' (herite=True) :
+2026-07-10 12:26:44 [INFO]    - Propri‚taires de Site_temp [SharePointGroup] : Contr“le total
+2026-07-10 12:26:44 [INFO]    - Site_temp - Membres [SharePointGroup] : Modification
+2026-07-10 12:26:45 [INFO]    - G_INVITE [SecurityGroup] : Contr“le total, Lecture
+2026-07-10 12:26:45 [INFO] --------------------------------
+2026-07-10 12:26:45 [INFO] Bibliotheque : Documents | Dossier : Dossier B
+2026-07-10 12:26:45 [INFO] Traitement : Documents / Dossier B -> G_INVITE [Modification]
+2026-07-10 12:26:46 [INFO] Rupture d'heritage des permissions sur Dossier B
+2026-07-10 12:26:47 [INFO] Groupe Entra ID valide : G_INVITE (51b9331d-4cfe-4333-a17c-7441a086e0f8)
+2026-07-10 12:26:49 [SUCCESS] OK : role 'Modification' attribue a 'G_INVITE' sur 'Dossier B'
+2026-07-10 12:26:50 [INFO] Acces effectifs sur 'Dossier B' (herite=True) :
+2026-07-10 12:26:51 [INFO]    - Propri‚taires de Site_temp [SharePointGroup] : Contr“le total
+2026-07-10 12:26:51 [INFO]    - Site_temp - Membres [SharePointGroup] : Modification
+2026-07-10 12:26:52 [INFO]    - G_INVITE [SecurityGroup] : Modification
+2026-07-10 12:26:52 [INFO] --------------------------------
+2026-07-10 12:26:52 [INFO] Bibliotheque : Documents | Dossier : Dossier C
+2026-07-10 12:26:52 [INFO] Traitement : Documents / Dossier C -> G_INVITE [RETRAIT d'acces (masquage)]
+2026-07-10 12:26:54 [INFO] Rupture d'heritage des permissions sur Dossier C
+2026-07-10 12:26:54 [INFO] Groupe Entra ID valide : G_INVITE (51b9331d-4cfe-4333-a17c-7441a086e0f8)
+2026-07-10 12:26:55 [SUCCESS] OK : 'G_INVITE' n'avait deja aucun acces direct sur 'Dossier C' -> dossier MASQUE
+2026-07-10 12:26:57 [INFO] Acces effectifs sur 'Dossier C' (herite=True) :
+2026-07-10 12:26:57 [INFO]    - Propri‚taires de Site_temp [SharePointGroup] : Contr“le total
+2026-07-10 12:26:57 [INFO]    - Site_temp - Membres [SharePointGroup] : Modification
+2026-07-10 12:26:57 [INFO] ================================
+2026-07-10 12:26:57 [SUCCESS] BILAN : 3 attribution(s) reussie(s), 0 echec(s)
+2026-07-10 12:26:57 [INFO] Journal complet : A:\Projets\network-connect\Logs\SPO_Permissions_20260710_122626.log
+2026-07-10 12:26:57 [INFO] Traitement termine
