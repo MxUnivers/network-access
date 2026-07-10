@@ -14,6 +14,10 @@ Ne modifie AUCUNE permission. Verifie :
 .\Test-SPOConnection.ps1
 #>
 
+param(
+    [string]$ConfigFile
+)
+
 if ($PSVersionTable.PSVersion.Major -lt 7) {
     Write-Host ""
     Write-Host "  ============================================================" -ForegroundColor Red
@@ -32,11 +36,46 @@ $ErrorActionPreference = "Stop"
 
 $ScriptRoot = $PSScriptRoot
 if ([string]::IsNullOrWhiteSpace($ScriptRoot)) { $ScriptRoot = (Get-Location).Path }
-$ConfigFile = Join-Path $ScriptRoot "PermissionsConfig.json"
+if ([string]::IsNullOrWhiteSpace($ConfigFile)) {
+    $ConfigFile = Join-Path $ScriptRoot "PermissionsConfig.json"
+}
+elseif (-not [System.IO.Path]::IsPathRooted($ConfigFile)) {
+    $ConfigFile = Join-Path $ScriptRoot $ConfigFile
+}
+$ConfigDir = Split-Path -Parent $ConfigFile
 
 function Ok   ($m) { Write-Host "  [OK]   $m" -ForegroundColor Green }
 function Info ($m) { Write-Host "  [INFO] $m" -ForegroundColor Cyan }
 function Fail ($m) { Write-Host "  [FAIL] $m" -ForegroundColor Red }
+function Get-FullErrorText {
+    param($ErrorRecord)
+
+    $Messages = New-Object System.Collections.Generic.List[string]
+    if ($ErrorRecord.Exception.Message) { $Messages.Add($ErrorRecord.Exception.Message) }
+    $Inner = $ErrorRecord.Exception.InnerException
+    while ($Inner) {
+        if ($Inner.Message) { $Messages.Add($Inner.Message) }
+        $Inner = $Inner.InnerException
+    }
+    if ($ErrorRecord.ErrorDetails -and $ErrorRecord.ErrorDetails.Message) {
+        $Messages.Add($ErrorRecord.ErrorDetails.Message)
+    }
+    return (($Messages | Where-Object { -not [string]::IsNullOrWhiteSpace($_) } | Select-Object -Unique) -join "`n")
+}
+function Show-AuthHint {
+    param([string]$Details)
+
+    if ($Details -match "AADSTS700016") {
+        Info "Azure dit que le ClientId n'existe pas dans ce TenantId. Verifiez le tenant de l'App Registration."
+    }
+    elseif ($Details -match "AADSTS700027") {
+        Info "Azure dit que le certificat n'est pas enregistre sur cette App Registration."
+        Info "Televersez cle.cer dans Azure/Entra ID > App registrations > Certificates & secrets > Certificates."
+    }
+    elseif ($Details -match "AADSTS65001|consent") {
+        Info "Consentement admin probablement manquant sur les permissions d'application."
+    }
+}
 
 Write-Host "`n=== TEST DE CONNEXION (lecture seule) ===`n" -ForegroundColor White
 
@@ -49,6 +88,22 @@ try {
 }
 
 $Auth = $Config.Auth
+$HasThumbprint = -not [string]::IsNullOrWhiteSpace($Auth.CertificateThumbprint)
+$HasCertPath   = -not [string]::IsNullOrWhiteSpace($Auth.CertificatePath)
+
+if ($HasCertPath -and -not [System.IO.Path]::IsPathRooted($Auth.CertificatePath)) {
+    $Auth.CertificatePath = Join-Path $ConfigDir $Auth.CertificatePath
+}
+
+if (-not $HasThumbprint -and -not $HasCertPath) {
+    Fail "Aucun certificat : renseignez CertificateThumbprint OU CertificatePath dans config.json"
+    exit 1
+}
+
+if (-not $HasThumbprint -and $HasCertPath -and -not (Test-Path $Auth.CertificatePath)) {
+    Fail "Fichier certificat introuvable : $($Auth.CertificatePath)"
+    exit 1
+}
 
 # --- Installation + import des modules, hors dossiers proteges (Controlled Folder Access) ---
 # Les modules vont dans AppData\Local (NON protege), pas dans Documents (bloque par l'anti-rancongiciel).
@@ -80,15 +135,34 @@ try {
 
 # --- 1. Graph ---
 try {
-    Connect-MgGraph -TenantId $Auth.TenantId -ClientId $Auth.ClientId `
-        -CertificateThumbprint $Auth.CertificateThumbprint -NoWelcome -ErrorAction Stop
+    $GraphParams = @{
+        TenantId    = $Auth.TenantId
+        ClientId    = $Auth.ClientId
+        NoWelcome   = $true
+        ErrorAction = "Stop"
+    }
+
+    if ($HasThumbprint) {
+        $GraphParams.CertificateThumbprint = $Auth.CertificateThumbprint
+    }
+    else {
+        $SecurePwd = ConvertTo-SecureString ([string]$Auth.CertificatePassword) -AsPlainText -Force
+        $GraphParams.Certificate = [System.Security.Cryptography.X509Certificates.X509Certificate2]::new(
+            $Auth.CertificatePath,
+            $SecurePwd
+        )
+    }
+
+    Connect-MgGraph @GraphParams
     $ctx = Get-MgContext
     if (-not $ctx.ClientId) { throw "Contexte Graph vide" }
     Ok "Graph connecte (app $($ctx.ClientId))"
     Info "Scopes accordes : $($ctx.Scopes -join ', ')"
 } catch {
-    Fail "Connexion Graph : $($_.Exception.Message)"
-    Info "Cause frequente : consentement admin non accorde, ou propagation Azure (attendre 2-5 min)."
+    $Details = Get-FullErrorText $_
+    Fail "Connexion Graph : $Details"
+    Show-AuthHint -Details $Details
+    Info "Autres causes frequentes : consentement admin non accorde, ou propagation Azure (attendre 2-5 min)."
     exit 1
 }
 
@@ -106,12 +180,27 @@ foreach ($g in $groupes) {
 
 # --- 3. SharePoint ---
 try {
-    Connect-PnPOnline -Url $Config.SiteUrl -ClientId $Auth.ClientId `
-        -Tenant $Auth.TenantId -Thumbprint $Auth.CertificateThumbprint -ErrorAction Stop
+    $PnpParams = @{
+        Url         = $Config.SiteUrl
+        ClientId    = $Auth.ClientId
+        Tenant      = $Auth.TenantId
+        ErrorAction = "Stop"
+    }
+
+    if ($HasThumbprint) {
+        $PnpParams.Thumbprint = $Auth.CertificateThumbprint
+    }
+    else {
+        $PnpParams.CertificatePath     = $Auth.CertificatePath
+        $PnpParams.CertificatePassword = (ConvertTo-SecureString ([string]$Auth.CertificatePassword) -AsPlainText -Force)
+    }
+
+    Connect-PnPOnline @PnpParams
     $web = Get-PnPWeb -ErrorAction Stop
     Ok "SharePoint connecte : $($web.Title) [$($web.Url)]"
 } catch {
-    Fail "Connexion SharePoint : $($_.Exception.Message)"
+    $Details = Get-FullErrorText $_
+    Fail "Connexion SharePoint : $Details"
     Info "Cause frequente : permission Sites.FullControl.All non accordee/consentie."
     try { Disconnect-MgGraph | Out-Null } catch {}
     exit 1

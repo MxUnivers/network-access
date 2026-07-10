@@ -70,10 +70,45 @@ Ok "Module PnP.PowerShell charge"
 $Config = Get-Content -Path $ConfigFile -Raw | ConvertFrom-Json
 $Auth   = $Config.Auth
 if ([string]::IsNullOrWhiteSpace($SiteUrl)) { $SiteUrl = $Config.SiteUrl }
+$ConfigDir = Split-Path -Parent $ConfigFile
+
+if (-not $Config.SiteUrl -and [string]::IsNullOrWhiteSpace($SiteUrl)) { throw "Champ 'SiteUrl' manquant dans la configuration" }
+if (-not $Auth)          { throw "Section 'Auth' manquante dans la configuration" }
+if (-not $Auth.TenantId) { throw "Champ 'Auth.TenantId' manquant" }
+if (-not $Auth.ClientId) { throw "Champ 'Auth.ClientId' manquant" }
+
+$HasThumbprint = -not [string]::IsNullOrWhiteSpace($Auth.CertificateThumbprint)
+$HasCertPath   = -not [string]::IsNullOrWhiteSpace($Auth.CertificatePath)
+
+if ($HasCertPath -and -not [System.IO.Path]::IsPathRooted($Auth.CertificatePath)) {
+    $Auth.CertificatePath = Join-Path $ConfigDir $Auth.CertificatePath
+}
+
+if (-not $HasThumbprint -and -not $HasCertPath) {
+    throw "Aucun certificat : renseignez 'CertificateThumbprint' OU 'CertificatePath' dans la section Auth"
+}
+
+if (-not $HasThumbprint -and $HasCertPath -and -not (Test-Path $Auth.CertificatePath)) {
+    throw "Fichier certificat introuvable : $($Auth.CertificatePath)"
+}
 
 try {
-    Connect-PnPOnline -Url $SiteUrl -ClientId $Auth.ClientId -Tenant $Auth.TenantId `
-        -Thumbprint $Auth.CertificateThumbprint -ErrorAction Stop
+    $PnpParams = @{
+        Url         = $SiteUrl
+        ClientId    = $Auth.ClientId
+        Tenant      = $Auth.TenantId
+        ErrorAction = "Stop"
+    }
+
+    if ($HasThumbprint) {
+        $PnpParams.Thumbprint = $Auth.CertificateThumbprint
+    }
+    else {
+        $PnpParams.CertificatePath     = $Auth.CertificatePath
+        $PnpParams.CertificatePassword = (ConvertTo-SecureString ([string]$Auth.CertificatePassword) -AsPlainText -Force)
+    }
+
+    Connect-PnPOnline @PnpParams
     $web = Get-PnPWeb -ErrorAction Stop
     Ok "Connecte : $($web.Title) [$($web.Url)]"
 }
@@ -120,10 +155,13 @@ foreach ($lib in $libs) {
     $rootUrl = $lib.RootFolder.ServerRelativeUrl
 
     # Un seul appel : tous les elements (dossiers + fichiers) de la bibliotheque
-    $items = Get-PnPListItem -List $lib -PageSize 500 -Fields "FileRef", "FileLeafRef", "Modified"
+    $items = Get-PnPListItem -List $lib -PageSize 500 -Fields "FileRef", "FileLeafRef", "Created", "Author", "Modified", "Editor"
 
     $nodes = @{}
-    $rootNode = [ordered]@{ Name = $lib.Title; Type = "Bibliotheque"; ServerRelativeUrl = $rootUrl; Dossiers = @(); Fichiers = @() }
+    # Name = titre AFFICHE actuel (change si on renomme la bibliotheque).
+    # NomInterne = nom d'URL interne (ne change JAMAIS, ex "Documents partages").
+    $libInterne = $rootUrl.TrimEnd('/').Split('/')[-1]
+    $rootNode = [ordered]@{ Name = $lib.Title; NomInterne = $libInterne; Type = "Bibliotheque"; ServerRelativeUrl = $rootUrl; Dossiers = @(); Fichiers = @() }
     $nodes[$rootUrl] = $rootNode
 
     # 1) Dossiers (traites du moins profond au plus profond pour que le parent existe)
@@ -135,7 +173,10 @@ foreach ($lib in $libs) {
         $name = $fi["FileLeafRef"]
         if ($name -eq "Forms") { continue }   # dossier systeme
 
-        $node = [ordered]@{ Name = $name; Type = "Dossier"; ServerRelativeUrl = $url }
+        $modPar  = if ($fi["Editor"]) { "$($fi["Editor"].LookupValue)" } else { "" }
+        $creePar = if ($fi["Author"]) { "$($fi["Author"].LookupValue)" } else { "" }
+        $node = [ordered]@{ Name = $name; Type = "Dossier"; ServerRelativeUrl = $url;
+            Cree = "$($fi["Created"])"; CreePar = $creePar; Modifie = "$($fi["Modified"])"; ModifiePar = $modPar }
         if (-not $SansPermissions) {
             $p = Get-ItemPermissions -Item $fi
             $node.HeritageRompu = $p.HeritageRompu
@@ -156,7 +197,10 @@ foreach ($lib in $libs) {
         $url  = $fi["FileRef"]
         $name = $fi["FileLeafRef"]
         $parentUrl = $url.Substring(0, $url.LastIndexOf('/'))
-        $fileNode = [ordered]@{ Name = $name; Modifie = "$($fi["Modified"])" }
+        $modParF  = if ($fi["Editor"]) { "$($fi["Editor"].LookupValue)" } else { "" }
+        $creeParF = if ($fi["Author"]) { "$($fi["Author"].LookupValue)" } else { "" }
+        $fileNode = [ordered]@{ Name = $name; Cree = "$($fi["Created"])"; CreePar = $creeParF;
+            Modifie = "$($fi["Modified"])"; ModifiePar = $modParF }
         if ($nodes.ContainsKey($parentUrl)) { $nodes[$parentUrl].Fichiers += $fileNode }
         else { $rootNode.Fichiers += $fileNode }
     }
@@ -213,8 +257,8 @@ $HtmlTemplate = @'
 <html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Architecture SharePoint</title>
 <style>
-:root{--bg:#f6f8fa;--card:#fff;--text:#1f2328;--muted:#656d76;--line:#d0d7de;--accent:#0969da;--sg:#1a7f37;--spg:#8250df;--usr:#bf3989;--deny:#cf222e;--chipbg:#eef2f6}
-@media(prefers-color-scheme:dark){:root{--bg:#0d1117;--card:#161b22;--text:#e6edf3;--muted:#8b949e;--line:#30363d;--accent:#4493f8;--sg:#3fb950;--spg:#a371f7;--usr:#f778ba;--deny:#f85149;--chipbg:#21262d}}
+:root{--bg:#f6f8fa;--card:#fff;--text:#1f2328;--muted:#656d76;--line:#d0d7de;--accent:#0969da;--sg:#1a7f37;--spg:#8250df;--usr:#bf3989;--deny:#cf222e;--chipbg:#eef2f6;--hit:#fff3cd}
+@media(prefers-color-scheme:dark){:root{--bg:#0d1117;--card:#161b22;--text:#e6edf3;--muted:#8b949e;--line:#30363d;--accent:#4493f8;--sg:#3fb950;--spg:#a371f7;--usr:#f778ba;--deny:#f85149;--chipbg:#21262d;--hit:#3d3212}}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px/1.5 -apple-system,Segoe UI,Roboto,Arial,sans-serif}
 header{padding:18px 22px;border-bottom:1px solid var(--line);background:var(--card);position:sticky;top:0}
 h1{margin:0 0 4px;font-size:18px}.sub{color:var(--muted);font-size:13px;word-break:break-all}
@@ -231,12 +275,14 @@ summary::-webkit-details-marker{display:none}summary:hover{background:var(--chip
 .perms{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 6px}
 .badge{font-size:12px;padding:2px 8px;border-radius:999px;background:var(--chipbg);border:1px solid var(--line)}
 .badge.sg{color:var(--sg)}.badge.spg{color:var(--spg)}.badge.usr{color:var(--usr)}.badge.inherit{color:var(--muted)}.badge.none{color:var(--deny)}
-.file{display:flex;align-items:center;gap:8px;padding:3px 8px;color:var(--muted)}.file .name{font-weight:400;color:var(--text)}
+.file{display:flex;align-items:center;gap:8px;padding:3px 8px;color:var(--muted);border-radius:6px}.file .name{font-weight:400;color:var(--text)}.file.match{background:var(--hit)}
 .hidden{display:none}.legend{color:var(--muted);font-size:12px;margin-top:10px}
+@media print{.toolbar,#legend{display:none!important}header{position:static}.body{border:none}details{break-inside:avoid}}
 </style></head><body>
 <header><h1 id="site">Architecture</h1><div class="sub" id="url"></div>
 <div class="toolbar"><button id="expand">Tout derouler</button><button id="collapse">Tout replier</button>
-<input type="search" id="filter" placeholder="Filtrer par nom de dossier..."></div></header>
+<button id="pdf">Extraire PDF</button><button id="word">Extraire Word</button><button id="excel">Extraire Excel</button>
+<input type="search" id="filter" placeholder="Rechercher un dossier ou un fichier..."></div></header>
 <main><div id="tree"></div><div class="legend" id="legend"></div></main>
 <script>
 const DATA = /*__ARCH_DATA__*/;
@@ -246,21 +292,30 @@ const tc=t=>t==='SecurityGroup'?'sg':(t==='SharePointGroup'?'spg':'usr');
 function perms(f){const w=el('div','perms');if(f.HeritageRompu===false){w.appendChild(el('span','badge inherit','heritage conserve'));return w;}
 const l=f.Permissions||[];if(!l.length){w.appendChild(el('span','badge none','unique - aucun groupe explicite'));return w;}
 l.forEach(p=>{const b=el('span','badge '+tc(p.Type));b.textContent='🔐 '+p.Principal+' · '+((p.Roles||[]).join(', ')||'-');w.appendChild(b);});return w;}
+function fr(fi){var r=el('div','file');r.appendChild(el('span','ico','📄'));r.appendChild(el('span','name',fi.Name));var m=[];if(fi.Modifie||fi.ModifiePar)m.push('modifie'+(fi.Modifie?' le '+fi.Modifie:'')+(fi.ModifiePar?' par '+fi.ModifiePar:''));if(m.length)r.appendChild(el('span','count',' · '+m.join(' · ')));if(fi.Cree||fi.CreePar)r.title='Cree'+(fi.Cree?' le '+fi.Cree:'')+(fi.CreePar?' par '+fi.CreePar:'');r.dataset.name=(fi.Name||'').toLowerCase();return r;}
 function folder(f){const d=el('details','folder');const s=el('summary');s.appendChild(el('span','caret','▶'));s.appendChild(el('span','ico','📁'));s.appendChild(el('span','name',f.Name));
-s.appendChild(el('span','count',' - '+((f.Dossiers||[]).length)+' dossier(s), '+((f.Fichiers||[]).length)+' fichier(s)'));d.appendChild(s);
+s.appendChild(el('span','count',' - '+((f.Dossiers||[]).length)+' dossier(s), '+((f.Fichiers||[]).length)+' fichier(s)'+(f.ModifiePar?' · modifie par '+f.ModifiePar:'')));d.appendChild(s);
 const b=el('div','body');b.appendChild(perms(f));(f.Dossiers||[]).forEach(x=>b.appendChild(folder(x)));
-(f.Fichiers||[]).forEach(fi=>{const r=el('div','file');r.appendChild(el('span','ico','📄'));r.appendChild(el('span','name',fi.Name));if(fi.Modifie)r.appendChild(el('span','count',' · '+fi.Modifie));b.appendChild(r);});
+(f.Fichiers||[]).forEach(fi=>b.appendChild(fr(fi)));
 d.appendChild(b);d.dataset.name=(f.Name||'').toLowerCase();return d;}
 function lib(l){const d=el('details','lib');d.open=true;const s=el('summary');s.appendChild(el('span','caret','▶'));s.appendChild(el('span','ico','📚'));s.appendChild(el('span','name',l.Name));
-s.appendChild(el('span','count',' - '+((l.Dossiers||[]).length)+' dossier(s)'));d.appendChild(s);const b=el('div','body');
-(l.Dossiers||[]).forEach(f=>b.appendChild(folder(f)));(l.Fichiers||[]).forEach(fi=>{const r=el('div','file');r.appendChild(el('span','ico','📄'));r.appendChild(el('span','name',fi.Name));b.appendChild(r);});d.appendChild(b);return d;}
+var lc=' - '+((l.Dossiers||[]).length)+' dossier(s)';if(l.NomInterne&&l.NomInterne.toLowerCase()!==(l.Name||'').toLowerCase())lc+='  ·  nom interne : '+l.NomInterne;s.appendChild(el('span','count',lc));d.appendChild(s);const b=el('div','body');
+(l.Dossiers||[]).forEach(f=>b.appendChild(folder(f)));(l.Fichiers||[]).forEach(fi=>b.appendChild(fr(fi)));d.appendChild(b);return d;}
 $('#site').textContent='📊 '+(DATA.Site&&DATA.Site.Titre||'Architecture');
 $('#url').textContent=((DATA.Site&&DATA.Site.Url)||'')+((DATA.Site&&DATA.Site.CaptureLe)?'  •  capture le '+DATA.Site.CaptureLe:'');
 const tree=$('#tree');(DATA.Bibliotheques||[]).forEach(l=>tree.appendChild(lib(l)));
 $('#legend').textContent='Legende : 📚 bibliotheque · 📁 dossier · 📄 fichier · 🔐 groupe ayant un droit (vert=groupe Entra, violet=groupe SharePoint).';
 $('#expand').onclick=()=>document.querySelectorAll('details').forEach(d=>d.open=true);
 $('#collapse').onclick=()=>document.querySelectorAll('#tree details').forEach(d=>d.open=false);
-$('#filter').oninput=e=>{const q=e.target.value.toLowerCase();document.querySelectorAll('#tree details.folder').forEach(d=>{const m=!q||(d.dataset.name||'').includes(q);d.classList.toggle('hidden',q&&!m);if(m&&q){let p=d.parentElement;while(p){if(p.tagName==='DETAILS'){p.open=true;p.classList.remove('hidden');}p=p.parentElement;}d.open=true;}});};
+$('#filter').oninput=e=>{var q=(e.target.value||'').toLowerCase();var T=$('#tree');var all=[].slice.call(T.querySelectorAll('details.folder, .file'));all.forEach(n=>{n.classList.remove('hidden');n.classList.remove('match');});if(!q){T.querySelectorAll('details.folder').forEach(d=>d.open=false);T.querySelectorAll('details.lib').forEach(d=>d.open=true);return;}all.forEach(n=>n.classList.add('hidden'));var reveal=function(n){n.classList.remove('hidden');var p=n.parentElement;while(p&&p!==T){if(p.tagName==='DETAILS'){p.classList.remove('hidden');p.open=true;}p=p.parentElement;}};all.forEach(n=>{if((n.dataset.name||'').includes(q)){reveal(n);if(n.classList.contains('file'))n.classList.add('match');if(n.tagName==='DETAILS'){n.querySelectorAll('details.folder, .file').forEach(x=>x.classList.remove('hidden'));n.querySelectorAll('details').forEach(d=>d.open=true);}}});};
+const esc=s=>String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const safe=s=>(s||'site').replace(/[^\w\-]+/g,'_');
+function dl(blob,name){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1500);}
+$('#pdf').onclick=()=>{document.querySelectorAll('details').forEach(d=>d.open=true);window.print();};
+function rep(f,depth){var pad=depth*20;var pt=(f.HeritageRompu===false)?'<i>heritage conserve</i>':(!(f.Permissions||[]).length?'<i>unique - aucun groupe explicite</i>':(f.Permissions||[]).map(p=>'<b>'+esc(p.Principal)+'</b> ('+esc(p.Type)+') : '+esc((p.Roles||[]).join(', '))).join(' &nbsp;|&nbsp; '));var h='<p style="margin:6px 0 2px '+pad+'px">📁 <b>'+esc(f.Name)+'</b>'+(f.ModifiePar?' <span style="color:#777">- modifie par '+esc(f.ModifiePar)+'</span>':'')+'<br><span style="margin-left:18px;color:#333">'+pt+'</span></p>';(f.Dossiers||[]).forEach(s=>h+=rep(s,depth+1));return h;}
+$('#word').onclick=()=>{var h='<html xmlns:w="urn:schemas-microsoft-com:office:word"><head><meta charset="utf-8"><style>body{font-family:Calibri,Arial;font-size:11pt}h1{font-size:18pt}h2{font-size:14pt;color:#0969da;border-bottom:1px solid #ccc}</style></head><body>';h+='<h1>Architecture SharePoint - '+esc(DATA.Site&&DATA.Site.Titre||'')+'</h1><p>'+esc(DATA.Site&&DATA.Site.Url||'')+'<br>Capture le '+esc(DATA.Site&&DATA.Site.CaptureLe||'')+'</p>';(DATA.Bibliotheques||[]).forEach(l=>{h+='<h2>📚 '+esc(l.Name)+'</h2>';(l.Dossiers||[]).forEach(f=>h+=rep(f,0));});h+='</body></html>';dl(new Blob(['﻿'+h],{type:'application/msword'}),'architecture-'+safe(DATA.Site&&DATA.Site.Titre)+'.doc');};
+function walk(n,lib,par,rows){(n.Dossiers||[]).forEach(f=>{var path=par?par+'/'+f.Name:f.Name;if(f.HeritageRompu===false){rows.push([lib,path,'non (herite)','','','',f.ModifiePar||'']);}else if(!(f.Permissions||[]).length){rows.push([lib,path,'oui','(aucun groupe explicite)','','',f.ModifiePar||'']);}else (f.Permissions||[]).forEach(p=>rows.push([lib,path,'oui',p.Principal,p.Type,(p.Roles||[]).join(', '),f.ModifiePar||'']));walk(f,lib,path,rows);});}
+$('#excel').onclick=()=>{var rows=[['Bibliotheque','Dossier (chemin)','Heritage rompu','Groupe / Principal','Type','Roles','Modifie par']];(DATA.Bibliotheques||[]).forEach(l=>walk(l,l.Name,'',rows));var csv=rows.map(r=>r.map(c=>'"'+String(c==null?'':c).replace(/"/g,'""')+'"').join(';')).join('\r\n');dl(new Blob(['﻿'+csv],{type:'text/csv;charset=utf-8'}),'architecture-'+safe(DATA.Site&&DATA.Site.Titre)+'.csv');};
 </script></body></html>
 '@
 $HtmlFile = Join-Path $OutDir "architecture-latest.html"

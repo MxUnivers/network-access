@@ -1,0 +1,17 @@
+
+=== TEST DE CONNEXION (lecture seule) ===
+
+  [OK]   Configuration lue : A:\Projets\network-connect\architectures\sites\L'AGENCE X\config.json
+  [OK]   Modules charges
+  [OK]   Graph connecte (app 4fd0a256-1ab4-4984-b9b3-9860da2cfaf3)
+  [INFO] Scopes accordes : Group.Read.All
+  [FAIL] Groupe Entra ID INTROUVABLE : G_INVITE
+  [OK]   SharePoint connecte : L'AGENCE X [https://lagencexci.sharepoint.com/sites/LAGENCEX]
+  [OK]   Bibliotheque trouvee : Documents
+  [FAIL] Dossier INTROUVABLE : /sites/LAGENCEX/Documents partages/Dossier A (a creer, ou verifier le nom)
+  [OK]   Bibliotheque trouvee : Documents
+  [FAIL] Dossier INTROUVABLE : /sites/LAGENCEX/Documents partages/Dossier B (a creer, ou verifier le nom)
+
+=== TEST TERMINE ===
+Si toutes les lignes sont [OK], lancez : 2-Appliquer-Permissions.cmd
+

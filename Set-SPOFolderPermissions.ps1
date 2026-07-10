@@ -167,6 +167,7 @@ try {
 
     $Config = Get-Content -Path $ConfigFile -Raw | ConvertFrom-Json
     Write-Log "Configuration chargee : $ConfigFile"
+    $ConfigDir = Split-Path -Parent $ConfigFile
 
     # Validation des champs obligatoires
     if (-not $Config.SiteUrl)          { throw "Champ 'SiteUrl' manquant dans la configuration" }
@@ -177,8 +178,16 @@ try {
     $HasThumbprint = -not [string]::IsNullOrWhiteSpace($Config.Auth.CertificateThumbprint)
     $HasCertPath   = -not [string]::IsNullOrWhiteSpace($Config.Auth.CertificatePath)
 
+    if ($HasCertPath -and -not [System.IO.Path]::IsPathRooted($Config.Auth.CertificatePath)) {
+        $Config.Auth.CertificatePath = Join-Path $ConfigDir $Config.Auth.CertificatePath
+    }
+
     if (-not $HasThumbprint -and -not $HasCertPath) {
         throw "Aucun certificat : renseignez 'CertificateThumbprint' OU 'CertificatePath' dans la section Auth"
+    }
+
+    if (-not $HasThumbprint -and $HasCertPath -and -not (Test-Path $Config.Auth.CertificatePath)) {
+        throw "Fichier certificat introuvable : $($Config.Auth.CertificatePath)"
     }
 }
 catch {

@@ -1,0 +1,26 @@
+{
+  "Auth": {
+    "TenantId": "lagencexci.onmicrosoft.com",
+    "ClientId": "4fd0a256-1ab4-4984-b9b3-9860da2cfaf3",
+    "CertificateThumbprint": "453C3E6F2F38609897D23FDB7AEE2237E5C18F98",
+    "CertificatePath": "",
+    "CertificatePassword": ""
+  },
+  "SiteUrl": "https://lagencexci.sharepoint.com/sites/LAGENCEX",
+  "Permissions": [
+    {
+      "Library": "Documents",
+      "FolderPath": "Dossier A",
+      "Assignments": [
+        { "GroupName": "G_INVITE", "Role": "Lecture" }
+      ]
+    },
+    {
+      "Library": "Documents",
+      "FolderPath": "Dossier B",
+      "Assignments": [
+        { "GroupName": "G_INVITE", "Access": "Deny" }
+      ]
+    }
+  ]
+}

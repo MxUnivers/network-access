@@ -1,0 +1,12 @@
+
+=== RECUPERATION DE L'ARCHITECTURE ===
+
+  Module PnP.PowerShell charge
+  Connecte : L'AGENCE X [https://lagencexci.sharepoint.com/sites/LAGENCEX]
+  Bibliotheque : 1. DAF
+    -> 2297 dossier(s), 5350 fichier(s)
+  Bibliotheque : 1.1 DAF BUM
+    -> 385 dossier(s), 645 fichier(s)
+  Bibliotheque : 10. TEAM X
+    -> 18 dossier(s), 3298 fichier(s)
+  Bibliotheque : 2. Client servicing
