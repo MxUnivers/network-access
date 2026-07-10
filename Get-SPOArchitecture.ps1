@@ -46,8 +46,57 @@ elseif (-not [System.IO.Path]::IsPathRooted($ConfigFile)) {
 function Info ($m) { Write-Host "  $m" -ForegroundColor Cyan }
 function Ok   ($m) { Write-Host "  $m" -ForegroundColor Green }
 function Warn ($m) { Write-Host "  $m" -ForegroundColor Yellow }
+function Format-Duration {
+    param([TimeSpan]$Duration)
+
+    if ($Duration.TotalHours -ge 1) {
+        return "{0}h {1}min" -f [math]::Floor($Duration.TotalHours), $Duration.Minutes
+    }
+    if ($Duration.TotalMinutes -ge 1) {
+        return "{0}min {1}s" -f [math]::Floor($Duration.TotalMinutes), $Duration.Seconds
+    }
+    return "{0}s" -f [math]::Max(0, [math]::Round($Duration.TotalSeconds))
+}
+function Show-ArchitectureProgress {
+    param(
+        [double]$Percent,
+        [string]$Stage,
+        [int]$LibraryIndex = 0,
+        [int]$LibraryTotal = 0,
+        [int]$RemainingFolders = 0,
+        [int]$RemainingFiles = 0,
+        [datetime]$StartedAt
+    )
+
+    $Percent = [math]::Max(0, [math]::Min(100, $Percent))
+    $Elapsed = (Get-Date) - $StartedAt
+    $RemainingText = "calcul en cours"
+    $EtaText = "calcul en cours"
+
+    if ($Percent -gt 0.5) {
+        $TotalSeconds = $Elapsed.TotalSeconds / ($Percent / 100)
+        $Remaining = [TimeSpan]::FromSeconds([math]::Max(0, $TotalSeconds - $Elapsed.TotalSeconds))
+        $FinishAt = (Get-Date).Add($Remaining)
+        $RemainingText = Format-Duration $Remaining
+        $EtaText = $FinishAt.ToString("HH:mm:ss")
+    }
+
+    $LibText = if ($LibraryTotal -gt 0) { "bibliotheque $LibraryIndex/$LibraryTotal" } else { "initialisation" }
+    $RestText = if ($LibraryTotal -gt 0) {
+        $RemainingLibraries = [math]::Max(0, $LibraryTotal - $LibraryIndex)
+        "reste: $RemainingLibraries bibliotheque(s), $RemainingFolders dossier(s), $RemainingFiles fichier(s)"
+    }
+    else {
+        "reste: estimation apres lecture des bibliotheques"
+    }
+
+    Write-Output ("  [PROGRESSION] {0,6:N1}% | {1} | {2} | {3} | ecoule: {4} | restant estime: {5} | fin estimee: {6}" -f `
+        $Percent, $LibText, $Stage, $RestText, (Format-Duration $Elapsed), $RemainingText, $EtaText)
+}
 
 Write-Host "`n=== RECUPERATION DE L'ARCHITECTURE ===`n" -ForegroundColor White
+$ProgressStartedAt = Get-Date
+Show-ArchitectureProgress -Percent 0 -Stage "demarrage" -StartedAt $ProgressStartedAt
 
 #------------------------------------------------------
 # MODULES (hors dossiers proteges par Controlled Folder Access)
@@ -63,6 +112,7 @@ if (-not (Get-Module -ListAvailable -Name PnP.PowerShell)) {
 }
 Import-Module PnP.PowerShell -ErrorAction Stop
 Ok "Module PnP.PowerShell charge"
+Show-ArchitectureProgress -Percent 5 -Stage "module charge" -StartedAt $ProgressStartedAt
 
 #------------------------------------------------------
 # CONFIGURATION + CONNEXION
@@ -111,6 +161,7 @@ try {
     Connect-PnPOnline @PnpParams
     $web = Get-PnPWeb -ErrorAction Stop
     Ok "Connecte : $($web.Title) [$($web.Url)]"
+    Show-ArchitectureProgress -Percent 10 -Stage "connexion SharePoint reussie" -StartedAt $ProgressStartedAt
 }
 catch {
     Warn "Connexion impossible : $($_.Exception.Message)"
@@ -146,15 +197,22 @@ function Get-ItemPermissions {
 # PARCOURS DES BIBLIOTHEQUES DE DOCUMENTS
 #------------------------------------------------------
 $SkipLibs = @("Style Library", "Form Templates", "Site Assets", "Site Pages")
-$libs = Get-PnPList | Where-Object { $_.BaseTemplate -eq 101 -and -not $_.Hidden -and ($SkipLibs -notcontains $_.Title) }
+$libs = @(Get-PnPList | Where-Object { $_.BaseTemplate -eq 101 -and -not $_.Hidden -and ($SkipLibs -notcontains $_.Title) })
+$TotalLibraries = $libs.Count
+Show-ArchitectureProgress -Percent 12 -Stage "$TotalLibraries bibliotheque(s) a lire" -LibraryIndex 0 -LibraryTotal $TotalLibraries -StartedAt $ProgressStartedAt
 
 $LibrariesOut = @()
 
+$LibIndex = 0
 foreach ($lib in $libs) {
+    $LibIndex++
+    $LibraryBasePercent = 12 + ((($LibIndex - 1) / [math]::Max(1, $TotalLibraries)) * 78)
     Info "Bibliotheque : $($lib.Title)"
+    Show-ArchitectureProgress -Percent $LibraryBasePercent -Stage "lecture de '$($lib.Title)'" -LibraryIndex $LibIndex -LibraryTotal $TotalLibraries -StartedAt $ProgressStartedAt
     $rootUrl = $lib.RootFolder.ServerRelativeUrl
 
     # Un seul appel : tous les elements (dossiers + fichiers) de la bibliotheque
+    Show-ArchitectureProgress -Percent $LibraryBasePercent -Stage "chargement des elements de '$($lib.Title)'" -LibraryIndex $LibIndex -LibraryTotal $TotalLibraries -StartedAt $ProgressStartedAt
     $items = Get-PnPListItem -List $lib -PageSize 500 -Fields "FileRef", "FileLeafRef", "Created", "Author", "Modified", "Editor"
 
     $nodes = @{}
@@ -165,13 +223,19 @@ foreach ($lib in $libs) {
     $nodes[$rootUrl] = $rootNode
 
     # 1) Dossiers (traites du moins profond au plus profond pour que le parent existe)
-    $folderItems = $items | Where-Object { $_.FileSystemObjectType -eq "Folder" } |
-        Sort-Object { ($_["FileRef"] -split '/').Count }
+    $folderItems = @($items | Where-Object { $_.FileSystemObjectType -eq "Folder" -and $_["FileLeafRef"] -ne "Forms" } |
+        Sort-Object { ($_["FileRef"] -split '/').Count })
+
+    $fileItems = @($items | Where-Object { $_.FileSystemObjectType -eq "File" })
+    $FolderTotal = $folderItems.Count
+    $FileTotal = $fileItems.Count
+    $WorkTotal = [math]::Max(1, $FolderTotal + $FileTotal)
+    $WorkDone = 0
+    Show-ArchitectureProgress -Percent $LibraryBasePercent -Stage "$FolderTotal dossier(s), $FileTotal fichier(s) trouves" -LibraryIndex $LibIndex -LibraryTotal $TotalLibraries -RemainingFolders $FolderTotal -RemainingFiles $FileTotal -StartedAt $ProgressStartedAt
 
     foreach ($fi in $folderItems) {
         $url  = $fi["FileRef"]
         $name = $fi["FileLeafRef"]
-        if ($name -eq "Forms") { continue }   # dossier systeme
 
         $modPar  = if ($fi["Editor"]) { "$($fi["Editor"].LookupValue)" } else { "" }
         $creePar = if ($fi["Author"]) { "$($fi["Author"].LookupValue)" } else { "" }
@@ -189,10 +253,15 @@ foreach ($lib in $libs) {
         $parentUrl = $url.Substring(0, $url.LastIndexOf('/'))
         if ($nodes.ContainsKey($parentUrl)) { $nodes[$parentUrl].Dossiers += $node }
         else { $rootNode.Dossiers += $node }
+
+        $WorkDone++
+        $LocalPercent = $WorkDone / $WorkTotal
+        $OverallPercent = 12 + ((($LibIndex - 1 + $LocalPercent) / [math]::Max(1, $TotalLibraries)) * 78)
+        Show-ArchitectureProgress -Percent $OverallPercent -Stage "dossier '$name' traite" -LibraryIndex $LibIndex -LibraryTotal $TotalLibraries -RemainingFolders ([math]::Max(0, $FolderTotal - $WorkDone)) -RemainingFiles $FileTotal -StartedAt $ProgressStartedAt
     }
 
     # 2) Fichiers (rattaches a leur dossier parent)
-    $fileItems = $items | Where-Object { $_.FileSystemObjectType -eq "File" }
+    $ProcessedFiles = 0
     foreach ($fi in $fileItems) {
         $url  = $fi["FileRef"]
         $name = $fi["FileLeafRef"]
@@ -203,14 +272,26 @@ foreach ($lib in $libs) {
             Modifie = "$($fi["Modified"])"; ModifiePar = $modParF }
         if ($nodes.ContainsKey($parentUrl)) { $nodes[$parentUrl].Fichiers += $fileNode }
         else { $rootNode.Fichiers += $fileNode }
+
+        $WorkDone++
+        $ProcessedFiles++
+        if (($ProcessedFiles % 25 -eq 0) -or ($ProcessedFiles -eq $FileTotal)) {
+            $LocalPercent = $WorkDone / $WorkTotal
+            $OverallPercent = 12 + ((($LibIndex - 1 + $LocalPercent) / [math]::Max(1, $TotalLibraries)) * 78)
+            Show-ArchitectureProgress -Percent $OverallPercent -Stage "$ProcessedFiles/$FileTotal fichier(s) traites" -LibraryIndex $LibIndex -LibraryTotal $TotalLibraries -RemainingFolders 0 -RemainingFiles ([math]::Max(0, $FileTotal - $ProcessedFiles)) -StartedAt $ProgressStartedAt
+        }
     }
 
-    $nbDossiers = ($folderItems | Measure-Object).Count
-    $nbFichiers = ($fileItems | Measure-Object).Count
+    $nbDossiers = $FolderTotal
+    $nbFichiers = $FileTotal
     Ok "  -> $nbDossiers dossier(s), $nbFichiers fichier(s)"
+    $LibraryEndPercent = 12 + (($LibIndex / [math]::Max(1, $TotalLibraries)) * 78)
+    Show-ArchitectureProgress -Percent $LibraryEndPercent -Stage "bibliotheque '$($lib.Title)' terminee" -LibraryIndex $LibIndex -LibraryTotal $TotalLibraries -RemainingFolders 0 -RemainingFiles 0 -StartedAt $ProgressStartedAt
 
     $LibrariesOut += $rootNode
 }
+
+Show-ArchitectureProgress -Percent 92 -Stage "preparation de l'export JSON/HTML" -LibraryIndex $TotalLibraries -LibraryTotal $TotalLibraries -StartedAt $ProgressStartedAt
 
 #------------------------------------------------------
 # OBJET FINAL
@@ -323,6 +404,7 @@ $html = $HtmlTemplate.Replace('/*__ARCH_DATA__*/', $json)
 Set-Content -Path $HtmlFile -Value $html -Encoding UTF8
 
 Disconnect-PnPOnline
+Show-ArchitectureProgress -Percent 100 -Stage "export termine" -LibraryIndex $TotalLibraries -LibraryTotal $TotalLibraries -StartedAt $ProgressStartedAt
 
 Write-Host ""
 Ok "Architecture exportee :"

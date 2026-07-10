@@ -24,9 +24,10 @@ if not exist "%~dp0resultats" mkdir "%~dp0resultats"
 
 echo PowerShell 7 detecte : "%PWSH%"
 echo Recuperation de l'architecture L'AGENCE X... patientez.
+echo Progression affichee en direct : pourcentage, restant, duree ecoulee, estimation.
 echo.
 
-"%PWSH%" -NoProfile -ExecutionPolicy Bypass -File "%~dp0..\..\..\Get-SPOArchitecture.ps1" -ConfigFile "%~dp0config.json" -OutputDir "%~dp0resultats" > "%~dp0resultats\recuperation-log.txt" 2>&1
+"%PWSH%" -NoProfile -ExecutionPolicy Bypass -Command "& { & ""%~dp0..\..\..\Get-SPOArchitecture.ps1"" -ConfigFile ""%~dp0config.json"" -OutputDir ""%~dp0resultats"" *>&1 | Tee-Object -FilePath ""%~dp0resultats\recuperation-log.txt"" }"
 set "CODE=%ERRORLEVEL%"
 
 echo ================= RESULTAT =================
