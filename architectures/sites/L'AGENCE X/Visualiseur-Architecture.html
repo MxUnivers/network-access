@@ -152,6 +152,8 @@
   @media (max-width:640px){header{padding:14px}main{padding:12px}.grid2,.summary-grid{grid-template-columns:1fr}.toolbar button,.toolbar label.btn{flex:1}.folder-actions{margin-left:0}.body{margin-left:12px;padding-left:9px}.action-panel{padding:10px}}
   @media print{.action-panel,.editor,.folder-actions,#legend{display:none!important}header{position:static}.body{border:none}main{display:block;max-width:none;padding:0 12px}.tree-wrap{border:none;box-shadow:none}details{break-inside:avoid}}
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 </head>
 <body>
 <header>
@@ -905,6 +907,40 @@ function doFilter(q){
 function foldersForExport(){ return SELECTED_FOLDERS.size ? FOLDERS.filter(m=>SELECTED_FOLDERS.has(m.id)) : FOLDERS; }
 function permTextHtml(f){ return (f.HeritageRompu===false)?"<i>heritage conserve</i>":(!(f.Permissions||[]).length?"<i>unique - aucun groupe explicite</i>":(f.Permissions||[]).map(p=>"<b>"+esc(p.Principal)+"</b> ("+esc(p.Type)+") : "+esc((p.Roles||[]).join(", "))).join(" &nbsp;|&nbsp; ")); }
 function exportPDF(){
+  if(!needData())return;
+  const J = window.jspdf && window.jspdf.jsPDF;
+  if(!J){
+    alert("Bibliotheque PDF non chargee (hors ligne ?). Utilisation de l'impression du navigateur.");
+    exportPDFPrint();
+    return;
+  }
+  const doc = new J({orientation:"landscape", unit:"pt", format:"a4"});
+  const scope = SELECTED_FOLDERS.size ? " (selection)" : "";
+  doc.setFontSize(14); doc.setTextColor(20);
+  doc.text("Architecture SharePoint"+scope, 40, 40);
+  doc.setFontSize(9); doc.setTextColor(120);
+  doc.text([ (DATA.Site&&DATA.Site.Titre||""), (DATA.Site&&DATA.Site.Url||""), "Capture : "+(DATA.Site&&DATA.Site.CaptureLe||"") ].filter(Boolean).join("   |   "), 40, 56);
+  const body=[];
+  foldersForExport().forEach(m=>{
+    const f=m.node;
+    if(f.HeritageRompu===false) body.push([m.library, m.path, "(heritage conserve)", "", "", f.ModifiePar||""]);
+    else if(!(f.Permissions||[]).length) body.push([m.library, m.path, "(aucun groupe explicite)", "", "", f.ModifiePar||""]);
+    else (f.Permissions||[]).forEach(p=> body.push([m.library, m.path, p.Principal||"", p.Type||"", (p.Roles||[]).join(", "), f.ModifiePar||""]));
+  });
+  doc.autoTable({
+    startY:70,
+    head:[["Bibliotheque","Dossier (chemin)","Groupe / Principal","Type","Niveau","Modifie par"]],
+    body: body.length ? body : [["(aucune donnee)","","","","",""]],
+    styles:{fontSize:8, cellPadding:3, overflow:"linebreak", valign:"top"},
+    headStyles:{fillColor:[9,105,218], textColor:255},
+    alternateRowStyles:{fillColor:[246,248,250]},
+    columnStyles:{1:{cellWidth:150}, 2:{cellWidth:130}, 4:{cellWidth:90}},
+    margin:{left:40, right:40},
+    didDrawPage:(hd)=>{ doc.setFontSize(8); doc.setTextColor(150); doc.text("Page "+doc.internal.getNumberOfPages(), hd.settings.margin.left, doc.internal.pageSize.getHeight()-16); }
+  });
+  doc.save("architecture-"+safe(DATA.Site&&DATA.Site.Titre)+(SELECTED_FOLDERS.size?"-selection":"")+".pdf");
+}
+function exportPDFPrint(){
   if(!needData())return;
   const sel = SELECTED_FOLDERS.size>0 && CURRENT_VIEW==="tree";
   const T=$("#tree");
