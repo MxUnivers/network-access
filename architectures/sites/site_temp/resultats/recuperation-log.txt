@@ -1,0 +1,24 @@
+
+=== RECUPERATION DE L'ARCHITECTURE ===
+
+  Module PnP.PowerShell charge
+  Connecte : Site_temp [https://infosolucesivoire.sharepoint.com/sites/Site_temp]
+  Bibliotheque : 03. L'AGENCE X
+    -> 4 dossier(s), 0 fichier(s)
+  Bibliotheque : BibliothŠque de styles
+    -> 0 dossier(s), 0 fichier(s)
+  Bibliotheque : CINEMA
+    -> 6 dossier(s), 2 fichier(s)
+  Bibliotheque : Documents
+    -> 4 dossier(s), 4 fichier(s)
+  Bibliotheque : ModŠles de formulaire
+    -> 0 dossier(s), 0 fichier(s)
+  Bibliotheque : PiŠces jointes
+    -> 4 dossier(s), 1 fichier(s)
+
+  Architecture exportee :
+   A:\Projets\network-connect\architectures\sites\site_temp\resultats\architecture_20260710_130652.json
+   A:\Projets\network-connect\architectures\sites\site_temp\resultats\architecture-latest.json (copie 'derniere version')
+
+=== TERMINE ===
+
