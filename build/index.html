@@ -1332,6 +1332,7 @@ function renderEditor(){
     return;
   }
   const meta = FOLDER_BY_ID.get(SELECTED_ID);
+  const hasLocalEdit = PERMISSION_EDITS.has(SELECTED_ID);
   const entry = PERMISSION_EDITS.get(SELECTED_ID) || {Assignments:[]};
   const effective = effectivePermissionsForMeta(meta);
   const currentList = effective.list;
@@ -1393,23 +1394,17 @@ function renderEditor(){
   addBtn.addEventListener("click",()=>addAssignment(SELECTED_ID));
   const clearBtn = el("button","ghost","Vider les lignes");
   clearBtn.type = "button";
-  clearBtn.addEventListener("click",()=>{ entryFor(SELECTED_ID).Assignments=[]; markDirty("Autorisations videes pour le dossier selectionne."); renderEditor(); updateFolderMarkers(); updateSummary(); });
-  const copyCurrentBtn = el("button","ghost","Reprendre droits actuels");
-  copyCurrentBtn.type = "button";
-  copyCurrentBtn.disabled = !currentList.length;
-  copyCurrentBtn.addEventListener("click",()=>{
-    const entry = entryFor(SELECTED_ID);
-    entry.Assignments = currentList.map(p=>({GroupName:p.Principal, Role:p.Roles[0] || "Lecture"}));
-    markDirty("Droits actuels repris dans la configuration.");
-    renderEditor();
-    updateFolderMarkers();
-    updateSummary();
+  clearBtn.addEventListener("click",()=>{
+    const local=entryFor(SELECTED_ID);
+    local.Assignments=[];
+    if(currentList.length) local.ResetPermissions=true;
+    markDirty("Autorisations videes pour le dossier selectionne.");
+    renderEditor(); updateFolderMarkers(); updateSummary();
   });
   const inheritBtn = el("button","danger","Ne rien changer");
   inheritBtn.type = "button";
   inheritBtn.addEventListener("click",()=>{ PERMISSION_EDITS.delete(SELECTED_ID); markDirty("Le dossier revient a ses droits non modifies."); renderEditor(); updateFolderMarkers(); updateSummary(); });
   actions.appendChild(addBtn);
-  actions.appendChild(copyCurrentBtn);
   actions.appendChild(clearBtn);
   actions.appendChild(inheritBtn);
   panel.appendChild(actions);
@@ -1417,9 +1412,14 @@ function renderEditor(){
   const resetWrap = el("label","reset-option");
   const reset = document.createElement("input");
   reset.type = "checkbox";
-  reset.checked = !!entry.ResetPermissions;
+  const autoResetCurrent = currentList.length > 0 && !hasLocalEdit;
+  reset.checked = !!entry.ResetPermissions || autoResetCurrent;
   reset.addEventListener("change",()=>{
-    entryFor(SELECTED_ID).ResetPermissions = reset.checked;
+    const local=entryFor(SELECTED_ID);
+    if(!hasLocalEdit && currentList.length && !local.Assignments.length){
+      local.Assignments=currentList.map(permission=>({GroupName:permission.Principal, Role:permission.Roles[0] || "Lecture"}));
+    }
+    local.ResetPermissions = reset.checked;
     markDirty(reset.checked ? "Le remplacement des droits actuels est active." : "Le remplacement des droits actuels est desactive.");
     updateFolderMarkers();
     updateSummary();
@@ -1432,11 +1432,25 @@ function renderEditor(){
   resetWrap.appendChild(resetText);
   panel.appendChild(resetWrap);
 
+  const editableHeading = el("div","rights-heading");
+  editableHeading.appendChild(el("strong","","Droits a modifier"));
+  editableHeading.appendChild(el("span","rights-source",hasLocalEdit ? "Modifications locales" : "Droits actuels prets a modifier"));
+  panel.appendChild(editableHeading);
   const list = el("div","assignment-list");
-  if(!entry.Assignments || !entry.Assignments.length){
+  const displayedAssignments = hasLocalEdit
+    ? entry.Assignments
+    : currentList.map(permission=>({GroupName:permission.Principal, Role:permission.Roles[0] || "Lecture"}));
+  const promoteCurrentRights = hasLocalEdit ? null : ()=>{
+    if(PERMISSION_EDITS.has(SELECTED_ID)) return PERMISSION_EDITS.get(SELECTED_ID);
+    const local = entryFor(SELECTED_ID);
+    local.Assignments = displayedAssignments.map(assignment=>Object.assign({},assignment));
+    local.ResetPermissions = true;
+    return local;
+  };
+  if(!displayedAssignments.length){
     list.appendChild(el("div","assignment-empty","Aucun nouveau droit defini pour ce dossier."));
   }else{
-    entry.Assignments.forEach((assignment,index)=>list.appendChild(assignmentRow(SELECTED_ID, assignment, index)));
+    displayedAssignments.forEach((assignment,index)=>list.appendChild(assignmentRow(SELECTED_ID, assignment, index, promoteCurrentRights)));
   }
   panel.appendChild(list);
   updatePreview();
@@ -1447,14 +1461,21 @@ function addAssignment(id){
   const entry = entryFor(id);
   const suggested = suggestedGroupFor(FOLDER_BY_ID.get(id));
   entry.Assignments.push({GroupName:suggested, Role:"Lecture"});
+  if(!Object.prototype.hasOwnProperty.call(entry,"ResetPermissions") && effectivePermissionsForMeta(FOLDER_BY_ID.get(id)).list.length){
+    entry.ResetPermissions=true;
+  }
   markDirty("Nouvelle autorisation ajoutee.");
   renderEditor();
   updateFolderMarkers();
   updateSummary();
   focusLastAssignment();
 }
-function assignmentRow(id, assignment, index){
+function assignmentRow(id, assignment, index, promoteCurrent){
   const row = el("div","assignment"+(norm(assignment.GroupName) ? "" : " invalid"));
+  const getEditableAssignment = ()=>{
+    const entry = promoteCurrent ? promoteCurrent() : entryFor(id);
+    return entry.Assignments[index] || assignment;
+  };
   const group = document.createElement("input");
   group.type = "text";
   group.placeholder = "Nom exact du groupe";
@@ -1463,7 +1484,8 @@ function assignmentRow(id, assignment, index){
   group.setAttribute("aria-label","Nom du groupe");
   group.title = "Nom exact du groupe Entra ID ou SharePoint";
   group.addEventListener("input",()=>{
-    assignment.GroupName=group.value;
+    const editable = getEditableAssignment();
+    editable.GroupName=group.value;
     markDirty("Groupe d’autorisation modifie.");
     row.classList.toggle("invalid", !norm(group.value));
     updateSummary();
@@ -1481,15 +1503,16 @@ function assignmentRow(id, assignment, index){
   const deny=document.createElement("option"); deny.value="__deny"; deny.textContent="Deny / masquer"; role.appendChild(deny);
   role.value = assignment.Access==="Deny" ? "__deny" : (assignment.Role||"Lecture");
   role.addEventListener("change",()=>{
-    if(role.value==="__deny"){ delete assignment.Role; assignment.Access="Deny"; }
-    else { assignment.Role=role.value; delete assignment.Access; }
+    const editable = getEditableAssignment();
+    if(role.value==="__deny"){ delete editable.Role; editable.Access="Deny"; }
+    else { editable.Role=role.value; delete editable.Access; }
     markDirty("Niveau d’autorisation modifie.");
     updateSummary(); updateFolderMarkers(); updatePreview();
   });
   const remove = el("button","danger icon","Retirer");
   remove.type = "button";
   remove.addEventListener("click",()=>{
-    const entry = entryFor(id);
+    const entry = promoteCurrent ? promoteCurrent() : entryFor(id);
     entry.Assignments.splice(index,1);
     if(!entry.Assignments.length) PERMISSION_EDITS.set(id, entry);
     markDirty("Autorisation retiree.");
