@@ -34,11 +34,118 @@ const DATA = {
   "Site": {
     "Titre": "Site_temp",
     "Url": "https://infosolucesivoire.sharepoint.com/sites/Site_temp",
-    "CaptureLe": "2026-07-10 13:54:04"
+    "CaptureLe": "2026-07-13 15:08:45",
+    "HeritageRompu": true,
+    "Permissions": [
+      {
+        "Principal": "Propriétaires de Site_temp",
+        "Type": "SharePointGroup",
+        "Roles": [
+          "Contrôle total"
+        ],
+        "Members": [
+          {
+            "Name": "Compte système",
+            "Email": "",
+            "LoginName": "SHAREPOINT\\system",
+            "UserPrincipalName": "",
+            "Type": "User"
+          },
+          {
+            "Name": "Propriétaires de Site_temp",
+            "Email": "Site_temp@infosolucesivoire.onmicrosoft.com",
+            "LoginName": "c:0o.c|federateddirectoryclaimprovider|d3d1ef52-3c01-478a-a0e3-aaac360f791f_o",
+            "UserPrincipalName": "",
+            "Type": "SecurityGroup"
+          }
+        ]
+      },
+      {
+        "Principal": "Site_temp - Visiteurs",
+        "Type": "SharePointGroup",
+        "Roles": [
+          "Lecture"
+        ],
+        "Members": [
+          {
+            "Name": "anvounpascal",
+            "Email": "anvounpascal@outlook.com",
+            "LoginName": "i:0#.f|membership|anvounpascal_outlook.com#ext#@infosolucesivoire.onmicrosoft.com",
+            "UserPrincipalName": "anvounpascal_outlook.com#ext#@infosolucesivoire.onmicrosoft.com",
+            "Type": "User"
+          }
+        ]
+      },
+      {
+        "Principal": "Site_temp - Membres",
+        "Type": "SharePointGroup",
+        "Roles": [
+          "Modification"
+        ],
+        "Members": [
+          {
+            "Name": "Site_temp - Membres",
+            "Email": "Site_temp@infosolucesivoire.onmicrosoft.com",
+            "LoginName": "c:0o.c|federateddirectoryclaimprovider|d3d1ef52-3c01-478a-a0e3-aaac360f791f",
+            "UserPrincipalName": "",
+            "Type": "SecurityGroup"
+          }
+        ]
+      },
+      {
+        "Principal": "G_INVITE",
+        "Type": "SecurityGroup",
+        "Roles": [
+          "Accès limité"
+        ],
+        "Members": [
+          {
+            "Name": "",
+            "Email": "",
+            "LoginName": "",
+            "UserPrincipalName": "",
+            "Type": ""
+          }
+        ]
+      },
+      {
+        "Principal": "G_PARTENAIRE",
+        "Type": "SecurityGroup",
+        "Roles": [
+          "Accès limité"
+        ],
+        "Members": [
+          {
+            "Name": "",
+            "Email": "",
+            "LoginName": "",
+            "UserPrincipalName": "",
+            "Type": ""
+          }
+        ]
+      },
+      {
+        "Principal": "G_MEMBRE",
+        "Type": "SecurityGroup",
+        "Roles": [
+          "Accès limité"
+        ],
+        "Members": [
+          {
+            "Name": "",
+            "Email": "",
+            "LoginName": "",
+            "UserPrincipalName": "",
+            "Type": ""
+          }
+        ]
+      }
+    ]
   },
   "Bibliotheques": [
     {
       "Name": "03. L'AGENCE X",
+      "NomInterne": "03 LAGENCE X",
       "Type": "Bibliotheque",
       "ServerRelativeUrl": "/sites/Site_temp/03 LAGENCE X",
       "Dossiers": [
@@ -96,17 +203,23 @@ const DATA = {
           "Fichiers": []
         }
       ],
-      "Fichiers": []
+      "Fichiers": [],
+      "HeritageRompu": false,
+      "Permissions": []
     },
     {
       "Name": "Bibliothèque de styles",
+      "NomInterne": "Style Library",
       "Type": "Bibliotheque",
       "ServerRelativeUrl": "/sites/Site_temp/Style Library",
       "Dossiers": [],
-      "Fichiers": []
+      "Fichiers": [],
+      "HeritageRompu": false,
+      "Permissions": []
     },
     {
       "Name": "CINEMA",
+      "NomInterne": "CINEMA",
       "Type": "Bibliotheque",
       "ServerRelativeUrl": "/sites/Site_temp/CINEMA",
       "Dossiers": [
@@ -207,10 +320,13 @@ const DATA = {
           "Fichiers": []
         }
       ],
-      "Fichiers": []
+      "Fichiers": [],
+      "HeritageRompu": false,
+      "Permissions": []
     },
     {
       "Name": "Documents",
+      "NomInterne": "Documents partages",
       "Type": "Bibliotheque",
       "ServerRelativeUrl": "/sites/Site_temp/Documents partages",
       "Dossiers": [
@@ -229,6 +345,22 @@ const DATA = {
               "Type": "SharePointGroup",
               "Roles": [
                 "Contrôle total"
+              ],
+              "Members": [
+                {
+                  "Name": "Compte système",
+                  "Email": "",
+                  "LoginName": "SHAREPOINT\\system",
+                  "UserPrincipalName": "",
+                  "Type": "User"
+                },
+                {
+                  "Name": "Propriétaires de Site_temp",
+                  "Email": "Site_temp@infosolucesivoire.onmicrosoft.com",
+                  "LoginName": "c:0o.c|federateddirectoryclaimprovider|d3d1ef52-3c01-478a-a0e3-aaac360f791f_o",
+                  "UserPrincipalName": "",
+                  "Type": "SecurityGroup"
+                }
               ]
             },
             {
@@ -236,6 +368,15 @@ const DATA = {
               "Type": "SharePointGroup",
               "Roles": [
                 "Modification"
+              ],
+              "Members": [
+                {
+                  "Name": "Site_temp - Membres",
+                  "Email": "Site_temp@infosolucesivoire.onmicrosoft.com",
+                  "LoginName": "c:0o.c|federateddirectoryclaimprovider|d3d1ef52-3c01-478a-a0e3-aaac360f791f",
+                  "UserPrincipalName": "",
+                  "Type": "SecurityGroup"
+                }
               ]
             },
             {
@@ -244,6 +385,47 @@ const DATA = {
               "Roles": [
                 "Contrôle total",
                 "Lecture"
+              ],
+              "Members": [
+                {
+                  "Name": "",
+                  "Email": "",
+                  "LoginName": "",
+                  "UserPrincipalName": "",
+                  "Type": ""
+                }
+              ]
+            },
+            {
+              "Principal": "G_PARTENAIRE",
+              "Type": "SecurityGroup",
+              "Roles": [
+                "Modification"
+              ],
+              "Members": [
+                {
+                  "Name": "",
+                  "Email": "",
+                  "LoginName": "",
+                  "UserPrincipalName": "",
+                  "Type": ""
+                }
+              ]
+            },
+            {
+              "Principal": "G_MEMBRE",
+              "Type": "SecurityGroup",
+              "Roles": [
+                "Modification"
+              ],
+              "Members": [
+                {
+                  "Name": "",
+                  "Email": "",
+                  "LoginName": "",
+                  "UserPrincipalName": "",
+                  "Type": ""
+                }
               ]
             }
           ],
@@ -273,6 +455,22 @@ const DATA = {
               "Type": "SharePointGroup",
               "Roles": [
                 "Contrôle total"
+              ],
+              "Members": [
+                {
+                  "Name": "Compte système",
+                  "Email": "",
+                  "LoginName": "SHAREPOINT\\system",
+                  "UserPrincipalName": "",
+                  "Type": "User"
+                },
+                {
+                  "Name": "Propriétaires de Site_temp",
+                  "Email": "Site_temp@infosolucesivoire.onmicrosoft.com",
+                  "LoginName": "c:0o.c|federateddirectoryclaimprovider|d3d1ef52-3c01-478a-a0e3-aaac360f791f_o",
+                  "UserPrincipalName": "",
+                  "Type": "SecurityGroup"
+                }
               ]
             },
             {
@@ -280,6 +478,15 @@ const DATA = {
               "Type": "SharePointGroup",
               "Roles": [
                 "Modification"
+              ],
+              "Members": [
+                {
+                  "Name": "Site_temp - Membres",
+                  "Email": "Site_temp@infosolucesivoire.onmicrosoft.com",
+                  "LoginName": "c:0o.c|federateddirectoryclaimprovider|d3d1ef52-3c01-478a-a0e3-aaac360f791f",
+                  "UserPrincipalName": "",
+                  "Type": "SecurityGroup"
+                }
               ]
             },
             {
@@ -287,6 +494,15 @@ const DATA = {
               "Type": "SecurityGroup",
               "Roles": [
                 "Modification"
+              ],
+              "Members": [
+                {
+                  "Name": "",
+                  "Email": "",
+                  "LoginName": "",
+                  "UserPrincipalName": "",
+                  "Type": ""
+                }
               ]
             }
           ],
@@ -316,6 +532,22 @@ const DATA = {
               "Type": "SharePointGroup",
               "Roles": [
                 "Contrôle total"
+              ],
+              "Members": [
+                {
+                  "Name": "Compte système",
+                  "Email": "",
+                  "LoginName": "SHAREPOINT\\system",
+                  "UserPrincipalName": "",
+                  "Type": "User"
+                },
+                {
+                  "Name": "Propriétaires de Site_temp",
+                  "Email": "Site_temp@infosolucesivoire.onmicrosoft.com",
+                  "LoginName": "c:0o.c|federateddirectoryclaimprovider|d3d1ef52-3c01-478a-a0e3-aaac360f791f_o",
+                  "UserPrincipalName": "",
+                  "Type": "SecurityGroup"
+                }
               ]
             },
             {
@@ -323,6 +555,15 @@ const DATA = {
               "Type": "SharePointGroup",
               "Roles": [
                 "Modification"
+              ],
+              "Members": [
+                {
+                  "Name": "Site_temp - Membres",
+                  "Email": "Site_temp@infosolucesivoire.onmicrosoft.com",
+                  "LoginName": "c:0o.c|federateddirectoryclaimprovider|d3d1ef52-3c01-478a-a0e3-aaac360f791f",
+                  "UserPrincipalName": "",
+                  "Type": "SecurityGroup"
+                }
               ]
             }
           ],
@@ -359,17 +600,111 @@ const DATA = {
           ]
         }
       ],
-      "Fichiers": []
+      "Fichiers": [],
+      "HeritageRompu": true,
+      "Permissions": [
+        {
+          "Principal": "Propriétaires de Site_temp",
+          "Type": "SharePointGroup",
+          "Roles": [
+            "Contrôle total"
+          ],
+          "Members": [
+            {
+              "Name": "Compte système",
+              "Email": "",
+              "LoginName": "SHAREPOINT\\system",
+              "UserPrincipalName": "",
+              "Type": "User"
+            },
+            {
+              "Name": "Propriétaires de Site_temp",
+              "Email": "Site_temp@infosolucesivoire.onmicrosoft.com",
+              "LoginName": "c:0o.c|federateddirectoryclaimprovider|d3d1ef52-3c01-478a-a0e3-aaac360f791f_o",
+              "UserPrincipalName": "",
+              "Type": "SecurityGroup"
+            }
+          ]
+        },
+        {
+          "Principal": "Site_temp - Membres",
+          "Type": "SharePointGroup",
+          "Roles": [
+            "Modification"
+          ],
+          "Members": [
+            {
+              "Name": "Site_temp - Membres",
+              "Email": "Site_temp@infosolucesivoire.onmicrosoft.com",
+              "LoginName": "c:0o.c|federateddirectoryclaimprovider|d3d1ef52-3c01-478a-a0e3-aaac360f791f",
+              "UserPrincipalName": "",
+              "Type": "SecurityGroup"
+            }
+          ]
+        },
+        {
+          "Principal": "G_INVITE",
+          "Type": "SecurityGroup",
+          "Roles": [
+            "Accès limité"
+          ],
+          "Members": [
+            {
+              "Name": "",
+              "Email": "",
+              "LoginName": "",
+              "UserPrincipalName": "",
+              "Type": ""
+            }
+          ]
+        },
+        {
+          "Principal": "G_PARTENAIRE",
+          "Type": "SecurityGroup",
+          "Roles": [
+            "Accès limité"
+          ],
+          "Members": [
+            {
+              "Name": "",
+              "Email": "",
+              "LoginName": "",
+              "UserPrincipalName": "",
+              "Type": ""
+            }
+          ]
+        },
+        {
+          "Principal": "G_MEMBRE",
+          "Type": "SecurityGroup",
+          "Roles": [
+            "Accès limité"
+          ],
+          "Members": [
+            {
+              "Name": "",
+              "Email": "",
+              "LoginName": "",
+              "UserPrincipalName": "",
+              "Type": ""
+            }
+          ]
+        }
+      ]
     },
     {
       "Name": "Modèles de formulaire",
+      "NomInterne": "FormServerTemplates",
       "Type": "Bibliotheque",
       "ServerRelativeUrl": "/sites/Site_temp/FormServerTemplates",
       "Dossiers": [],
-      "Fichiers": []
+      "Fichiers": [],
+      "HeritageRompu": false,
+      "Permissions": []
     },
     {
       "Name": "Pièces jointes",
+      "NomInterne": "SiteAssets",
       "Type": "Bibliotheque",
       "ServerRelativeUrl": "/sites/Site_temp/SiteAssets",
       "Dossiers": [
@@ -432,10 +767,12 @@ const DATA = {
           "Name": "__siteIcon__.png",
           "Cree": "06/29/2026 23:13:55",
           "CreePar": "Compte système",
-          "Modifie": "07/10/2026 11:51:57",
+          "Modifie": "07/13/2026 14:50:34",
           "ModifiePar": "Compte système"
         }
-      ]
+      ],
+      "HeritageRompu": false,
+      "Permissions": []
     }
   ]
 };
@@ -452,7 +789,7 @@ const b=el('div','body');b.appendChild(perms(f));(f.Dossiers||[]).forEach(x=>b.a
 (f.Fichiers||[]).forEach(fi=>b.appendChild(fr(fi)));
 d.appendChild(b);d.dataset.name=(f.Name||'').toLowerCase();return d;}
 function lib(l){const d=el('details','lib');d.open=true;const s=el('summary');s.appendChild(el('span','caret','▶'));s.appendChild(el('span','ico','📚'));s.appendChild(el('span','name',l.Name));
-s.appendChild(el('span','count',' - '+((l.Dossiers||[]).length)+' dossier(s)'));d.appendChild(s);const b=el('div','body');
+var lc=' - '+((l.Dossiers||[]).length)+' dossier(s)';if(l.NomInterne&&l.NomInterne.toLowerCase()!==(l.Name||'').toLowerCase())lc+='  ·  nom interne : '+l.NomInterne;s.appendChild(el('span','count',lc));d.appendChild(s);const b=el('div','body');
 (l.Dossiers||[]).forEach(f=>b.appendChild(folder(f)));(l.Fichiers||[]).forEach(fi=>b.appendChild(fr(fi)));d.appendChild(b);return d;}
 $('#site').textContent='📊 '+(DATA.Site&&DATA.Site.Titre||'Architecture');
 $('#url').textContent=((DATA.Site&&DATA.Site.Url)||'')+((DATA.Site&&DATA.Site.CaptureLe)?'  •  capture le '+DATA.Site.CaptureLe:'');

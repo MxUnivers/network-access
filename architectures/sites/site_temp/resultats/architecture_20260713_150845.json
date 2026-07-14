@@ -1,0 +1,746 @@
+{
+  "Site": {
+    "Titre": "Site_temp",
+    "Url": "https://infosolucesivoire.sharepoint.com/sites/Site_temp",
+    "CaptureLe": "2026-07-13 15:08:45",
+    "HeritageRompu": true,
+    "Permissions": [
+      {
+        "Principal": "Propriétaires de Site_temp",
+        "Type": "SharePointGroup",
+        "Roles": [
+          "Contrôle total"
+        ],
+        "Members": [
+          {
+            "Name": "Compte système",
+            "Email": "",
+            "LoginName": "SHAREPOINT\\system",
+            "UserPrincipalName": "",
+            "Type": "User"
+          },
+          {
+            "Name": "Propriétaires de Site_temp",
+            "Email": "Site_temp@infosolucesivoire.onmicrosoft.com",
+            "LoginName": "c:0o.c|federateddirectoryclaimprovider|d3d1ef52-3c01-478a-a0e3-aaac360f791f_o",
+            "UserPrincipalName": "",
+            "Type": "SecurityGroup"
+          }
+        ]
+      },
+      {
+        "Principal": "Site_temp - Visiteurs",
+        "Type": "SharePointGroup",
+        "Roles": [
+          "Lecture"
+        ],
+        "Members": [
+          {
+            "Name": "anvounpascal",
+            "Email": "anvounpascal@outlook.com",
+            "LoginName": "i:0#.f|membership|anvounpascal_outlook.com#ext#@infosolucesivoire.onmicrosoft.com",
+            "UserPrincipalName": "anvounpascal_outlook.com#ext#@infosolucesivoire.onmicrosoft.com",
+            "Type": "User"
+          }
+        ]
+      },
+      {
+        "Principal": "Site_temp - Membres",
+        "Type": "SharePointGroup",
+        "Roles": [
+          "Modification"
+        ],
+        "Members": [
+          {
+            "Name": "Site_temp - Membres",
+            "Email": "Site_temp@infosolucesivoire.onmicrosoft.com",
+            "LoginName": "c:0o.c|federateddirectoryclaimprovider|d3d1ef52-3c01-478a-a0e3-aaac360f791f",
+            "UserPrincipalName": "",
+            "Type": "SecurityGroup"
+          }
+        ]
+      },
+      {
+        "Principal": "G_INVITE",
+        "Type": "SecurityGroup",
+        "Roles": [
+          "Accès limité"
+        ],
+        "Members": [
+          {
+            "Name": "",
+            "Email": "",
+            "LoginName": "",
+            "UserPrincipalName": "",
+            "Type": ""
+          }
+        ]
+      },
+      {
+        "Principal": "G_PARTENAIRE",
+        "Type": "SecurityGroup",
+        "Roles": [
+          "Accès limité"
+        ],
+        "Members": [
+          {
+            "Name": "",
+            "Email": "",
+            "LoginName": "",
+            "UserPrincipalName": "",
+            "Type": ""
+          }
+        ]
+      },
+      {
+        "Principal": "G_MEMBRE",
+        "Type": "SecurityGroup",
+        "Roles": [
+          "Accès limité"
+        ],
+        "Members": [
+          {
+            "Name": "",
+            "Email": "",
+            "LoginName": "",
+            "UserPrincipalName": "",
+            "Type": ""
+          }
+        ]
+      }
+    ]
+  },
+  "Bibliotheques": [
+    {
+      "Name": "03. L'AGENCE X",
+      "NomInterne": "03 LAGENCE X",
+      "Type": "Bibliotheque",
+      "ServerRelativeUrl": "/sites/Site_temp/03 LAGENCE X",
+      "Dossiers": [
+        {
+          "Name": "L'AGENCE X",
+          "Type": "Dossier",
+          "ServerRelativeUrl": "/sites/Site_temp/03 LAGENCE X/L'AGENCE X",
+          "Cree": "07/10/2026 12:49:13",
+          "CreePar": "Pascal N'DRI",
+          "Modifie": "07/10/2026 12:59:03",
+          "ModifiePar": "Pascal N'DRI",
+          "HeritageRompu": false,
+          "Permissions": [],
+          "Dossiers": [
+            {
+              "Name": "01. DEIRECTEUR CREA",
+              "Type": "Dossier",
+              "ServerRelativeUrl": "/sites/Site_temp/03 LAGENCE X/L'AGENCE X/01. DEIRECTEUR CREA",
+              "Cree": "07/10/2026 12:49:50",
+              "CreePar": "Pascal N'DRI",
+              "Modifie": "07/10/2026 12:49:50",
+              "ModifiePar": "Pascal N'DRI",
+              "HeritageRompu": false,
+              "Permissions": [],
+              "Dossiers": [],
+              "Fichiers": []
+            },
+            {
+              "Name": "Dossier des CM",
+              "Type": "Dossier",
+              "ServerRelativeUrl": "/sites/Site_temp/03 LAGENCE X/L'AGENCE X/Dossier des CM",
+              "Cree": "07/10/2026 12:44:18",
+              "CreePar": "Pascal N'DRI",
+              "Modifie": "07/10/2026 12:49:19",
+              "ModifiePar": "Pascal N'DRI",
+              "HeritageRompu": false,
+              "Permissions": [],
+              "Dossiers": [],
+              "Fichiers": []
+            },
+            {
+              "Name": "TEAMX",
+              "Type": "Dossier",
+              "ServerRelativeUrl": "/sites/Site_temp/03 LAGENCE X/L'AGENCE X/TEAMX",
+              "Cree": "07/10/2026 12:50:00",
+              "CreePar": "Pascal N'DRI",
+              "Modifie": "07/10/2026 12:50:00",
+              "ModifiePar": "Pascal N'DRI",
+              "HeritageRompu": false,
+              "Permissions": [],
+              "Dossiers": [],
+              "Fichiers": []
+            }
+          ],
+          "Fichiers": []
+        }
+      ],
+      "Fichiers": [],
+      "HeritageRompu": false,
+      "Permissions": []
+    },
+    {
+      "Name": "Bibliothèque de styles",
+      "NomInterne": "Style Library",
+      "Type": "Bibliotheque",
+      "ServerRelativeUrl": "/sites/Site_temp/Style Library",
+      "Dossiers": [],
+      "Fichiers": [],
+      "HeritageRompu": false,
+      "Permissions": []
+    },
+    {
+      "Name": "CINEMA",
+      "NomInterne": "CINEMA",
+      "Type": "Bibliotheque",
+      "ServerRelativeUrl": "/sites/Site_temp/CINEMA",
+      "Dossiers": [
+        {
+          "Name": "MAJESTIC",
+          "Type": "Dossier",
+          "ServerRelativeUrl": "/sites/Site_temp/CINEMA/MAJESTIC",
+          "Cree": "07/10/2026 12:44:45",
+          "CreePar": "Pascal N'DRI",
+          "Modifie": "07/10/2026 12:55:46",
+          "ModifiePar": "Pascal N'DRI",
+          "HeritageRompu": false,
+          "Permissions": [],
+          "Dossiers": [
+            {
+              "Name": "01 FILMS",
+              "Type": "Dossier",
+              "ServerRelativeUrl": "/sites/Site_temp/CINEMA/MAJESTIC/01 FILMS",
+              "Cree": "07/10/2026 12:45:36",
+              "CreePar": "Pascal N'DRI",
+              "Modifie": "07/10/2026 12:45:36",
+              "ModifiePar": "Pascal N'DRI",
+              "HeritageRompu": false,
+              "Permissions": [],
+              "Dossiers": [],
+              "Fichiers": [
+                {
+                  "Name": "INTRO FILMS.pptx",
+                  "Cree": "07/10/2026 12:47:22",
+                  "CreePar": "Pascal N'DRI",
+                  "Modifie": "07/10/2026 12:48:11",
+                  "ModifiePar": "Pascal N'DRI"
+                }
+              ]
+            },
+            {
+              "Name": "1.1 LES CLIENTS",
+              "Type": "Dossier",
+              "ServerRelativeUrl": "/sites/Site_temp/CINEMA/MAJESTIC/1.1 LES CLIENTS",
+              "Cree": "07/10/2026 12:45:53",
+              "CreePar": "Pascal N'DRI",
+              "Modifie": "07/10/2026 12:45:53",
+              "ModifiePar": "Pascal N'DRI",
+              "HeritageRompu": false,
+              "Permissions": [],
+              "Dossiers": [
+                {
+                  "Name": "LES DOSSIERS CLIENTS DE JANVIER",
+                  "Type": "Dossier",
+                  "ServerRelativeUrl": "/sites/Site_temp/CINEMA/MAJESTIC/1.1 LES CLIENTS/LES DOSSIERS CLIENTS DE JANVIER",
+                  "Cree": "07/10/2026 12:46:20",
+                  "CreePar": "Pascal N'DRI",
+                  "Modifie": "07/10/2026 12:46:20",
+                  "ModifiePar": "Pascal N'DRI",
+                  "HeritageRompu": false,
+                  "Permissions": [],
+                  "Dossiers": [],
+                  "Fichiers": [
+                    {
+                      "Name": "CLient de Janvier.docx",
+                      "Cree": "07/10/2026 12:46:28",
+                      "CreePar": "Pascal N'DRI",
+                      "Modifie": "07/10/2026 12:47:11",
+                      "ModifiePar": "Pascal N'DRI"
+                    }
+                  ]
+                }
+              ],
+              "Fichiers": []
+            },
+            {
+              "Name": "BILLETERIE",
+              "Type": "Dossier",
+              "ServerRelativeUrl": "/sites/Site_temp/CINEMA/MAJESTIC/BILLETERIE",
+              "Cree": "07/10/2026 12:45:19",
+              "CreePar": "Pascal N'DRI",
+              "Modifie": "07/10/2026 12:45:19",
+              "ModifiePar": "Pascal N'DRI",
+              "HeritageRompu": false,
+              "Permissions": [],
+              "Dossiers": [],
+              "Fichiers": []
+            },
+            {
+              "Name": "LES CINEMAS",
+              "Type": "Dossier",
+              "ServerRelativeUrl": "/sites/Site_temp/CINEMA/MAJESTIC/LES CINEMAS",
+              "Cree": "07/10/2026 12:45:05",
+              "CreePar": "Pascal N'DRI",
+              "Modifie": "07/10/2026 12:45:05",
+              "ModifiePar": "Pascal N'DRI",
+              "HeritageRompu": false,
+              "Permissions": [],
+              "Dossiers": [],
+              "Fichiers": []
+            }
+          ],
+          "Fichiers": []
+        }
+      ],
+      "Fichiers": [],
+      "HeritageRompu": false,
+      "Permissions": []
+    },
+    {
+      "Name": "Documents",
+      "NomInterne": "Documents partages",
+      "Type": "Bibliotheque",
+      "ServerRelativeUrl": "/sites/Site_temp/Documents partages",
+      "Dossiers": [
+        {
+          "Name": "Dossier A",
+          "Type": "Dossier",
+          "ServerRelativeUrl": "/sites/Site_temp/Documents partages/Dossier A",
+          "Cree": "07/08/2026 01:30:21",
+          "CreePar": "Pascal N'DRI",
+          "Modifie": "07/10/2026 12:26:42",
+          "ModifiePar": "Application SharePoint",
+          "HeritageRompu": true,
+          "Permissions": [
+            {
+              "Principal": "Propriétaires de Site_temp",
+              "Type": "SharePointGroup",
+              "Roles": [
+                "Contrôle total"
+              ],
+              "Members": [
+                {
+                  "Name": "Compte système",
+                  "Email": "",
+                  "LoginName": "SHAREPOINT\\system",
+                  "UserPrincipalName": "",
+                  "Type": "User"
+                },
+                {
+                  "Name": "Propriétaires de Site_temp",
+                  "Email": "Site_temp@infosolucesivoire.onmicrosoft.com",
+                  "LoginName": "c:0o.c|federateddirectoryclaimprovider|d3d1ef52-3c01-478a-a0e3-aaac360f791f_o",
+                  "UserPrincipalName": "",
+                  "Type": "SecurityGroup"
+                }
+              ]
+            },
+            {
+              "Principal": "Site_temp - Membres",
+              "Type": "SharePointGroup",
+              "Roles": [
+                "Modification"
+              ],
+              "Members": [
+                {
+                  "Name": "Site_temp - Membres",
+                  "Email": "Site_temp@infosolucesivoire.onmicrosoft.com",
+                  "LoginName": "c:0o.c|federateddirectoryclaimprovider|d3d1ef52-3c01-478a-a0e3-aaac360f791f",
+                  "UserPrincipalName": "",
+                  "Type": "SecurityGroup"
+                }
+              ]
+            },
+            {
+              "Principal": "G_INVITE",
+              "Type": "SecurityGroup",
+              "Roles": [
+                "Contrôle total",
+                "Lecture"
+              ],
+              "Members": [
+                {
+                  "Name": "",
+                  "Email": "",
+                  "LoginName": "",
+                  "UserPrincipalName": "",
+                  "Type": ""
+                }
+              ]
+            },
+            {
+              "Principal": "G_PARTENAIRE",
+              "Type": "SecurityGroup",
+              "Roles": [
+                "Modification"
+              ],
+              "Members": [
+                {
+                  "Name": "",
+                  "Email": "",
+                  "LoginName": "",
+                  "UserPrincipalName": "",
+                  "Type": ""
+                }
+              ]
+            },
+            {
+              "Principal": "G_MEMBRE",
+              "Type": "SecurityGroup",
+              "Roles": [
+                "Modification"
+              ],
+              "Members": [
+                {
+                  "Name": "",
+                  "Email": "",
+                  "LoginName": "",
+                  "UserPrincipalName": "",
+                  "Type": ""
+                }
+              ]
+            }
+          ],
+          "Dossiers": [],
+          "Fichiers": [
+            {
+              "Name": "Présentation.pptx",
+              "Cree": "07/08/2026 01:30:52",
+              "CreePar": "Pascal N'DRI",
+              "Modifie": "07/08/2026 01:31:21",
+              "ModifiePar": "Pascal N'DRI"
+            }
+          ]
+        },
+        {
+          "Name": "Dossier B",
+          "Type": "Dossier",
+          "ServerRelativeUrl": "/sites/Site_temp/Documents partages/Dossier B",
+          "Cree": "07/08/2026 01:32:20",
+          "CreePar": "Pascal N'DRI",
+          "Modifie": "07/10/2026 12:26:49",
+          "ModifiePar": "Application SharePoint",
+          "HeritageRompu": true,
+          "Permissions": [
+            {
+              "Principal": "Propriétaires de Site_temp",
+              "Type": "SharePointGroup",
+              "Roles": [
+                "Contrôle total"
+              ],
+              "Members": [
+                {
+                  "Name": "Compte système",
+                  "Email": "",
+                  "LoginName": "SHAREPOINT\\system",
+                  "UserPrincipalName": "",
+                  "Type": "User"
+                },
+                {
+                  "Name": "Propriétaires de Site_temp",
+                  "Email": "Site_temp@infosolucesivoire.onmicrosoft.com",
+                  "LoginName": "c:0o.c|federateddirectoryclaimprovider|d3d1ef52-3c01-478a-a0e3-aaac360f791f_o",
+                  "UserPrincipalName": "",
+                  "Type": "SecurityGroup"
+                }
+              ]
+            },
+            {
+              "Principal": "Site_temp - Membres",
+              "Type": "SharePointGroup",
+              "Roles": [
+                "Modification"
+              ],
+              "Members": [
+                {
+                  "Name": "Site_temp - Membres",
+                  "Email": "Site_temp@infosolucesivoire.onmicrosoft.com",
+                  "LoginName": "c:0o.c|federateddirectoryclaimprovider|d3d1ef52-3c01-478a-a0e3-aaac360f791f",
+                  "UserPrincipalName": "",
+                  "Type": "SecurityGroup"
+                }
+              ]
+            },
+            {
+              "Principal": "G_INVITE",
+              "Type": "SecurityGroup",
+              "Roles": [
+                "Modification"
+              ],
+              "Members": [
+                {
+                  "Name": "",
+                  "Email": "",
+                  "LoginName": "",
+                  "UserPrincipalName": "",
+                  "Type": ""
+                }
+              ]
+            }
+          ],
+          "Dossiers": [],
+          "Fichiers": [
+            {
+              "Name": "Doc1.docx",
+              "Cree": "07/07/2026 23:25:29",
+              "CreePar": "Pascal N'DRI",
+              "Modifie": "07/07/2026 23:26:13",
+              "ModifiePar": "Pascal N'DRI"
+            }
+          ]
+        },
+        {
+          "Name": "Dossier C",
+          "Type": "Dossier",
+          "ServerRelativeUrl": "/sites/Site_temp/Documents partages/Dossier C",
+          "Cree": "07/10/2026 12:13:10",
+          "CreePar": "Pascal N'DRI",
+          "Modifie": "07/10/2026 12:13:10",
+          "ModifiePar": "Pascal N'DRI",
+          "HeritageRompu": true,
+          "Permissions": [
+            {
+              "Principal": "Propriétaires de Site_temp",
+              "Type": "SharePointGroup",
+              "Roles": [
+                "Contrôle total"
+              ],
+              "Members": [
+                {
+                  "Name": "Compte système",
+                  "Email": "",
+                  "LoginName": "SHAREPOINT\\system",
+                  "UserPrincipalName": "",
+                  "Type": "User"
+                },
+                {
+                  "Name": "Propriétaires de Site_temp",
+                  "Email": "Site_temp@infosolucesivoire.onmicrosoft.com",
+                  "LoginName": "c:0o.c|federateddirectoryclaimprovider|d3d1ef52-3c01-478a-a0e3-aaac360f791f_o",
+                  "UserPrincipalName": "",
+                  "Type": "SecurityGroup"
+                }
+              ]
+            },
+            {
+              "Principal": "Site_temp - Membres",
+              "Type": "SharePointGroup",
+              "Roles": [
+                "Modification"
+              ],
+              "Members": [
+                {
+                  "Name": "Site_temp - Membres",
+                  "Email": "Site_temp@infosolucesivoire.onmicrosoft.com",
+                  "LoginName": "c:0o.c|federateddirectoryclaimprovider|d3d1ef52-3c01-478a-a0e3-aaac360f791f",
+                  "UserPrincipalName": "",
+                  "Type": "SecurityGroup"
+                }
+              ]
+            }
+          ],
+          "Dossiers": [],
+          "Fichiers": [
+            {
+              "Name": "Classeur 1.xlsx",
+              "Cree": "07/07/2026 23:26:20",
+              "CreePar": "Pascal N'DRI",
+              "Modifie": "07/07/2026 23:27:07",
+              "ModifiePar": "Pascal N'DRI"
+            }
+          ]
+        },
+        {
+          "Name": "Dossier D",
+          "Type": "Dossier",
+          "ServerRelativeUrl": "/sites/Site_temp/Documents partages/Dossier D",
+          "Cree": "07/10/2026 12:18:57",
+          "CreePar": "Pascal N'DRI",
+          "Modifie": "07/10/2026 12:18:57",
+          "ModifiePar": "Pascal N'DRI",
+          "HeritageRompu": false,
+          "Permissions": [],
+          "Dossiers": [],
+          "Fichiers": [
+            {
+              "Name": "Conception de la solution RH.docx",
+              "Cree": "07/10/2026 12:19:38",
+              "CreePar": "Pascal N'DRI",
+              "Modifie": "07/10/2026 12:19:38",
+              "ModifiePar": "Pascal N'DRI"
+            }
+          ]
+        }
+      ],
+      "Fichiers": [],
+      "HeritageRompu": true,
+      "Permissions": [
+        {
+          "Principal": "Propriétaires de Site_temp",
+          "Type": "SharePointGroup",
+          "Roles": [
+            "Contrôle total"
+          ],
+          "Members": [
+            {
+              "Name": "Compte système",
+              "Email": "",
+              "LoginName": "SHAREPOINT\\system",
+              "UserPrincipalName": "",
+              "Type": "User"
+            },
+            {
+              "Name": "Propriétaires de Site_temp",
+              "Email": "Site_temp@infosolucesivoire.onmicrosoft.com",
+              "LoginName": "c:0o.c|federateddirectoryclaimprovider|d3d1ef52-3c01-478a-a0e3-aaac360f791f_o",
+              "UserPrincipalName": "",
+              "Type": "SecurityGroup"
+            }
+          ]
+        },
+        {
+          "Principal": "Site_temp - Membres",
+          "Type": "SharePointGroup",
+          "Roles": [
+            "Modification"
+          ],
+          "Members": [
+            {
+              "Name": "Site_temp - Membres",
+              "Email": "Site_temp@infosolucesivoire.onmicrosoft.com",
+              "LoginName": "c:0o.c|federateddirectoryclaimprovider|d3d1ef52-3c01-478a-a0e3-aaac360f791f",
+              "UserPrincipalName": "",
+              "Type": "SecurityGroup"
+            }
+          ]
+        },
+        {
+          "Principal": "G_INVITE",
+          "Type": "SecurityGroup",
+          "Roles": [
+            "Accès limité"
+          ],
+          "Members": [
+            {
+              "Name": "",
+              "Email": "",
+              "LoginName": "",
+              "UserPrincipalName": "",
+              "Type": ""
+            }
+          ]
+        },
+        {
+          "Principal": "G_PARTENAIRE",
+          "Type": "SecurityGroup",
+          "Roles": [
+            "Accès limité"
+          ],
+          "Members": [
+            {
+              "Name": "",
+              "Email": "",
+              "LoginName": "",
+              "UserPrincipalName": "",
+              "Type": ""
+            }
+          ]
+        },
+        {
+          "Principal": "G_MEMBRE",
+          "Type": "SecurityGroup",
+          "Roles": [
+            "Accès limité"
+          ],
+          "Members": [
+            {
+              "Name": "",
+              "Email": "",
+              "LoginName": "",
+              "UserPrincipalName": "",
+              "Type": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "Name": "Modèles de formulaire",
+      "NomInterne": "FormServerTemplates",
+      "Type": "Bibliotheque",
+      "ServerRelativeUrl": "/sites/Site_temp/FormServerTemplates",
+      "Dossiers": [],
+      "Fichiers": [],
+      "HeritageRompu": false,
+      "Permissions": []
+    },
+    {
+      "Name": "Pièces jointes",
+      "NomInterne": "SiteAssets",
+      "Type": "Bibliotheque",
+      "ServerRelativeUrl": "/sites/Site_temp/SiteAssets",
+      "Dossiers": [
+        {
+          "Name": "SitePages",
+          "Type": "Dossier",
+          "ServerRelativeUrl": "/sites/Site_temp/SiteAssets/SitePages",
+          "Cree": "06/29/2026 23:13:27",
+          "CreePar": "Pascal N'DRI",
+          "Modifie": "06/29/2026 23:13:27",
+          "ModifiePar": "Pascal N'DRI",
+          "HeritageRompu": false,
+          "Permissions": [],
+          "Dossiers": [
+            {
+              "Name": "CollabHome",
+              "Type": "Dossier",
+              "ServerRelativeUrl": "/sites/Site_temp/SiteAssets/SitePages/CollabHome",
+              "Cree": "06/29/2026 23:13:27",
+              "CreePar": "Pascal N'DRI",
+              "Modifie": "06/29/2026 23:13:27",
+              "ModifiePar": "Pascal N'DRI",
+              "HeritageRompu": false,
+              "Permissions": [],
+              "Dossiers": [],
+              "Fichiers": []
+            },
+            {
+              "Name": "CollabHome(1)",
+              "Type": "Dossier",
+              "ServerRelativeUrl": "/sites/Site_temp/SiteAssets/SitePages/CollabHome(1)",
+              "Cree": "06/29/2026 23:13:27",
+              "CreePar": "Pascal N'DRI",
+              "Modifie": "06/29/2026 23:13:27",
+              "ModifiePar": "Pascal N'DRI",
+              "HeritageRompu": false,
+              "Permissions": [],
+              "Dossiers": [],
+              "Fichiers": []
+            }
+          ],
+          "Fichiers": []
+        },
+        {
+          "Name": "Bloc-notes de Site_temp",
+          "Type": "Dossier",
+          "ServerRelativeUrl": "/sites/Site_temp/SiteAssets/Bloc-notes de Site_temp",
+          "Cree": "06/29/2026 23:21:57",
+          "CreePar": "Pascal N'DRI",
+          "Modifie": "06/29/2026 23:21:57",
+          "ModifiePar": "Pascal N'DRI",
+          "HeritageRompu": false,
+          "Permissions": [],
+          "Dossiers": [],
+          "Fichiers": []
+        }
+      ],
+      "Fichiers": [
+        {
+          "Name": "__siteIcon__.png",
+          "Cree": "06/29/2026 23:13:55",
+          "CreePar": "Compte système",
+          "Modifie": "07/13/2026 14:50:34",
+          "ModifiePar": "Compte système"
+        }
+      ],
+      "HeritageRompu": false,
+      "Permissions": []
+    }
+  ]
+}

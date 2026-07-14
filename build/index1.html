@@ -1,0 +1,1592 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Visualiseur et editeur de droits SharePoint</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+<style>
+  :root{
+    --bg:#f6f8fa;--card:#fff;--card2:#fbfcfd;--text:#1f2328;--muted:#656d76;--line:#d0d7de;
+    --accent:#0969da;--accent-soft:#ddf4ff;--good:#1a7f37;--warn:#9a6700;--danger:#cf222e;
+    --sg:#1a7f37;--spg:#8250df;--usr:#bf3989;--chipbg:#eef2f6;--hit:#fff8c5;--shadow:0 1px 2px rgba(31,35,40,.06)
+  }
+  @media (prefers-color-scheme:dark){
+    :root{
+      --bg:#0d1117;--card:#161b22;--card2:#0f1520;--text:#e6edf3;--muted:#8b949e;--line:#30363d;
+      --accent:#4493f8;--accent-soft:#102a44;--good:#3fb950;--warn:#d29922;--danger:#f85149;
+      --sg:#3fb950;--spg:#a371f7;--usr:#f778ba;--chipbg:#21262d;--hit:#3d3212;--shadow:none
+    }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);font:14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+  header{padding:18px 24px;border-bottom:1px solid var(--line);background:var(--card);position:sticky;top:0;z-index:10;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+  h1{margin:0 0 2px;font-size:20px;letter-spacing:-.01em}
+  .sub{color:var(--muted);font-size:13px;word-break:break-word}
+  .toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  button,label.btn{cursor:pointer;border:1px solid var(--line);background:var(--card);color:var(--text);padding:7px 11px;border-radius:8px;font-size:13px;line-height:1.25;min-height:34px}
+  button:hover,label.btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+  button:focus-visible,label.btn:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+  button.primary:hover{filter:brightness(.96);color:#fff}
+  button.danger:hover{border-color:var(--danger);color:var(--danger);background:transparent}
+  button.ghost{background:transparent}
+  button.icon{padding:5px 8px;min-height:30px}
+  button:disabled{opacity:.55;cursor:not-allowed}
+  label.btn input{display:none}
+  .sep{width:1px;height:24px;background:var(--line);margin:0 2px}
+  input[type=search],input[type=text],input[type=password],input[type=url],select,textarea{
+    width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--text);font:inherit
+  }
+  input[type=search]{flex:1;min-width:190px}
+  input::placeholder,textarea::placeholder{color:var(--muted)}
+  main{padding:20px 24px;max-width:1500px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1fr) 440px;gap:20px;align-items:start}
+  .viewer,.editor{min-width:0}
+  .action-panel{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px;margin-bottom:14px;box-shadow:var(--shadow)}
+  .action-title{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-bottom:10px;color:var(--muted);font-size:12px;text-transform:uppercase;font-weight:700;letter-spacing:.04em}
+  .drop{border:2px dashed var(--line);border-radius:10px;padding:14px;text-align:center;color:var(--muted);background:var(--card2);min-height:60px;display:flex;align-items:center;justify-content:center;font-size:13px}
+  .drop.hl{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+  .load-progress{margin-top:10px;border:1px solid var(--line);border-radius:8px;background:var(--card2);padding:10px;display:grid;gap:7px}
+  .progress-head{display:flex;justify-content:space-between;gap:10px;color:var(--muted);font-size:12px}
+  .progress-track{height:10px;border-radius:999px;background:var(--chipbg);overflow:hidden;border:1px solid var(--line)}
+  .progress-bar{height:100%;width:0;background:var(--accent);transition:width .18s ease}
+  .progress-detail{font-size:12px;color:var(--muted);word-break:break-word}
+  .tree-wrap{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px;box-shadow:var(--shadow)}
+  .empty-note{color:var(--muted);font-size:13px;padding:14px}
+  details{margin:2px 0}
+  summary{list-style:none;cursor:default;display:flex;align-items:flex-start;gap:8px;padding:5px 8px;border-radius:8px;min-height:34px}
+  summary::-webkit-details-marker{display:none}
+  summary:hover{background:var(--chipbg)}
+  details.folder.selected>summary{background:var(--accent-soft);box-shadow:inset 3px 0 0 var(--accent)}
+  details.folder.configured>summary .edit-state{color:var(--good);border-color:rgba(26,127,55,.35);background:rgba(26,127,55,.09)}
+  .caret{width:24px;height:24px;color:var(--muted);transition:transform .15s;flex:0 0 auto;margin-top:-1px;display:inline-flex;align-items:center;justify-content:center;border-radius:6px;cursor:pointer;user-select:none}
+  .caret:hover{background:var(--accent-soft);color:var(--accent)}
+  details.folder>summary{cursor:pointer}
+  details[open]>summary .caret{transform:rotate(90deg)}
+  .ico{width:18px;text-align:center;flex:0 0 auto}
+  .folder-main{min-width:0;flex:1}
+  .folder-line{display:flex;gap:6px;align-items:center;min-width:0;flex-wrap:wrap}
+  .name{font-weight:600;word-break:break-word}
+  .count{color:var(--muted);font-weight:400;font-size:12px}
+  .folder-path{color:var(--muted);font-size:12px;word-break:break-word}
+  .folder-actions{display:flex;gap:6px;margin-left:auto;align-items:center;flex:0 0 auto}
+  .folder-actions .btn-icon{display:inline-flex;align-items:center;justify-content:center;border:1px solid transparent;background:transparent;color:var(--muted);border-radius:6px;padding:2px 5px;font-size:12px;cursor:pointer;min-height:26px;line-height:1}
+  .folder-actions .btn-icon:hover{border-color:var(--line);color:var(--text);background:var(--card2)}
+  .body{margin-left:20px;border-left:1px solid var(--line);padding-left:12px}
+  .perms{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 6px}
+  .badge{font-size:12px;padding:2px 8px;border-radius:999px;background:var(--chipbg);border:1px solid var(--line);display:inline-flex;align-items:center;gap:4px;max-width:100%}
+  .badge.sg{color:var(--sg)}.badge.spg{color:var(--spg)}.badge.usr{color:var(--usr)}.badge.inherit{color:var(--muted)}.badge.none{color:var(--danger)}
+  .badge.edit-state{white-space:nowrap;color:var(--muted)}
+  .file{display:flex;align-items:center;gap:8px;padding:3px 8px;color:var(--muted);border-radius:6px}.file .name{font-weight:400;color:var(--text)}
+  .file.match{background:var(--hit)}
+  .hidden{display:none!important}.legend{color:var(--muted);font-size:12px;margin-top:10px}
+  .editor{position:sticky;top:106px;max-height:calc(100vh - 126px);overflow-y:auto;scrollbar-gutter:stable;background:var(--card);border:1px solid var(--line);border-radius:10px;box-shadow:0 1px 4px rgba(0,0,0,.05);scrollbar-width:thin}
+  .editor-head{padding:14px 16px;border-bottom:1px solid var(--line);background:var(--card2);border-radius:10px 10px 0 0}
+  .editor-head h2{font-size:16px;margin:0 0 3px}
+  .editor-head .status{color:var(--muted);font-size:12px}
+  .editor-section{padding:14px 16px;border-bottom:1px solid var(--line)}
+  .editor-section:last-child{border-bottom:none}
+  .section-title{font-size:12px;text-transform:uppercase;color:var(--muted);font-weight:700;letter-spacing:.04em;margin:0 0 8px}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .field{display:flex;flex-direction:column;gap:4px;min-width:0}
+  .field label{font-size:12px;color:var(--muted)}
+  .field small{font-size:11px;color:var(--muted)}
+  .groups-row{display:flex;gap:8px;align-items:center}
+  .groups-row input{min-width:0}
+  .chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+  .chip{display:inline-flex;gap:6px;align-items:center;border:1px solid var(--line);background:var(--chipbg);border-radius:999px;padding:3px 8px;font-size:12px;max-width:100%}
+  .chip span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .chip button{border:none;background:transparent;min-height:0;padding:0;color:var(--muted);line-height:1}
+  .selected-folder{display:grid;gap:8px}
+  .selected-title{font-weight:700;font-size:14px;word-break:break-word}
+  .selected-meta{color:var(--muted);font-size:12px;word-break:break-word}
+  .current-perms{display:flex;gap:6px;flex-wrap:wrap}
+  .quick-actions{display:flex;gap:8px;flex-wrap:wrap}
+  .reset-option{display:flex;gap:8px;align-items:flex-start;border:1px solid var(--line);border-radius:8px;padding:8px;background:var(--card2);font-size:13px}
+  .reset-option input{margin-top:3px}
+  .reset-option span{color:var(--muted);font-size:12px;display:block}
+  .assignment-list{display:grid;gap:8px;margin-top:10px}
+  .assignment{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(120px,.9fr) auto;gap:8px;align-items:center;padding:4px 0}
+  .assignment.invalid input{border-color:var(--danger);background:rgba(207,34,46,.05)}
+  .assignment-empty{color:var(--muted);font-size:13px;padding:8px;border:1px dashed var(--line);border-radius:8px;background:var(--card2)}
+  .summary-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  .metric{border:1px solid var(--line);border-radius:8px;padding:10px;background:var(--card2);transition:box-shadow .15s}
+  .metric:hover{box-shadow:0 1px 3px rgba(0,0,0,.04)}
+  .metric b{display:block;font-size:20px;line-height:1.2}
+  .metric span{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.03em}
+  .export-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+  .json-preview{margin-top:8px;max-height:160px;overflow:auto;border:1px solid var(--line);border-radius:8px;background:var(--card2);padding:8px;font:12px/1.45 ui-monospace,SFMono-Regular,Consolas,"Liberation Mono",monospace;white-space:pre-wrap;word-break:break-word;color:var(--muted)}
+  .warn-text{color:var(--warn);font-size:12px;margin-top:6px}
+  .file.match-person,.person-match{outline:2px solid var(--accent);outline-offset:1px;border-radius:6px;background:var(--accent-soft)!important}
+  .action-bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .action-bar select{padding:6px 12px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--text);font:13px/1.25 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;cursor:pointer;min-height:34px;-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%238b949e' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:28px;transition:border-color .15s,box-shadow .15s}
+  .action-bar select:focus{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
+  .action-bar select:hover{border-color:var(--accent)}
+  .action-bar .sep-bar{width:1px;height:26px;background:var(--line);margin:0 2px;flex:0 0 auto}
+  .action-bar .filter-input{flex:1;min-width:140px;padding:6px 10px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--text);font:13px/1.25 inherit;transition:border-color .15s}
+  .action-bar .filter-input:focus{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
+  .modal-overlay{position:fixed;inset:0;z-index:999;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center}
+  .modal-box{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:24px;max-width:520px;width:90%;box-shadow:0 8px 32px rgba(0,0,0,.18)}
+  .modal-box h2{margin:0 0 4px;font-size:17px}
+  .modal-box .sub{color:var(--muted);font-size:13px;margin-bottom:14px}
+  .modal-options{display:grid;gap:8px;margin-bottom:14px}
+  .modal-opt{display:flex;gap:10px;align-items:flex-start;border:1px solid var(--line);border-radius:8px;padding:10px;background:var(--card2);cursor:pointer}
+  .modal-opt:hover{border-color:var(--accent)}
+  .modal-opt input{margin-top:3px}
+  .modal-opt label{font-weight:600;cursor:pointer}
+  .modal-opt span{display:block;font-size:12px;color:var(--muted);font-weight:400}
+  .modal-btns{display:flex;gap:8px;justify-content:flex-end}
+  .modal-btns button{min-width:90px}
+  .report-modal{position:fixed;inset:0;z-index:999;background:rgba(0,0,0,.55);display:flex;align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto}
+  .report-modal-inner{background:var(--card);border:1px solid var(--line);border-radius:10px;max-width:1100px;width:100%;padding:20px;box-shadow:0 8px 32px rgba(0,0,0,.2);margin-bottom:20px}
+  .report-modal h2{margin:0 0 4px;font-size:18px}
+  .report-modal .sub{color:var(--muted);font-size:13px;margin-bottom:14px}
+  .report-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+  .report-tabs button{border-radius:999px;padding:4px 14px;font-size:12px}
+  .report-tabs button.active{background:var(--accent);border-color:var(--accent);color:#fff}
+  .report-section{display:grid;gap:12px}
+  .report-person{border:1px solid var(--line);border-radius:8px;padding:12px;background:var(--card2)}
+  .report-person h3{margin:0 0 6px;font-size:15px;display:flex;gap:10px;align-items:center}
+  .report-person h3 .count-badge{font-size:12px;background:var(--chipbg);padding:1px 10px;border-radius:999px;color:var(--muted);font-weight:400}
+  .report-person summary{cursor:pointer;padding:4px 0}
+  .report-person details{margin:0}
+  .report-item{display:flex;gap:10px;padding:4px 0;font-size:13px;border-bottom:1px solid var(--line);align-items:center}
+  .report-item:last-child{border-bottom:none}
+  .report-item .path{color:var(--muted);font-size:12px;min-width:0;flex:1;word-break:break-word}
+  .report-item .action{font-weight:600;white-space:nowrap}
+  .report-item .date{color:var(--muted);white-space:nowrap;font-size:12px}
+  .report-item .icon-rep{width:20px;text-align:center;flex:0 0 auto}
+  .report-close{position:sticky;bottom:0;padding:10px 0 0;text-align:center;background:var(--card)}
+  @media (max-width:1050px){
+    main{grid-template-columns:1fr}
+    .editor{position:static;max-height:none;overflow:visible}
+    .assignment{grid-template-columns:1fr}
+    .folder-actions{width:100%;margin-left:38px}
+    .summary-grid{grid-template-columns:1fr 1fr 1fr}
+    .action-bar .filter-input{min-width:100px}
+    .action-bar select{font-size:12px;padding:5px 7px}
+  }
+  @media (max-width:820px){
+    .action-bar{gap:4px}
+    .action-bar select{flex:1;min-width:0;font-size:12px}
+    .action-bar .filter-input{flex:1 1 100%;min-width:0;order:99}
+    .action-bar .sep-bar{display:none}
+  }
+  @media (max-width:640px){
+    header{padding:14px}
+    main{padding:12px}
+    .grid2,.summary-grid{grid-template-columns:1fr}
+    .folder-actions{margin-left:0}
+    .body{margin-left:12px;padding-left:9px}
+    .action-panel{padding:10px}
+    .action-bar{flex-direction:column;align-items:stretch}
+    .action-bar select{width:100%}
+    .action-bar .filter-input{width:100%;flex:1 1 auto}
+    #personFilter{flex:1 1 auto!important;min-width:0!important}
+    .modal-box{width:95%;padding:14px}
+    .report-modal-inner{padding:14px}
+    .report-item{flex-wrap:wrap;gap:4px}
+    .report-item .path{flex:1 1 100%}
+  }
+  @media print{.action-panel,.editor,.folder-actions,#legend{display:none!important}header{position:static}.body{border:none}main{display:block;max-width:none;padding:0 12px}.tree-wrap{border:none;box-shadow:none}details{break-inside:avoid}}
+</style>
+</head>
+<body>
+<header>
+  <h1 id="site">Visualiseur et editeur de droits SharePoint</h1>
+  <div class="sub" id="url">Ouvrez un fichier <code>architecture_*.json</code> ou glissez-le ici.</div>
+</header>
+<main>
+  <section class="viewer" aria-label="Architecture SharePoint">
+    <div class="action-panel">
+      <div class="action-title">
+        <span>Documents et actions</span>
+        <span id="docState">Aucun fichier charge</span>
+      </div>
+      <div class="action-bar">
+        <select id="actionMenu"><option value="">-- Actions --</option><option value="arch">Ouvrir architecture</option><option value="config">Charger config droits</option><option value="exemple">Exemple</option></select>
+        <input type="file" id="file" accept=".json" hidden><input type="file" id="configFile" accept=".json" hidden>
+        <select id="viewMenu"><option value="">-- Affichage --</option><option value="expand">Derouler tout</option><option value="collapse">Replier tout</option></select>
+        <input type="search" id="filter" class="filter-input" placeholder="Filtre dossier/fichier" title="Tapez un nom de dossier ou fichier pour filtrer">
+        <input type="search" id="personFilter" class="filter-input" placeholder="Filtre par personne" list="personList" title="Tapez un nom de personne pour voir ses modifications" style="min-width:160px;flex:0.6">
+        <datalist id="personList"></datalist>
+        <span class="sep-bar"></span>
+        <select id="exportMenu"><option value="">-- Exporter --</option><option value="pdf">PDF architecture</option><option value="pdfRights">PDF droits</option><option value="word">Word</option><option value="excel">Excel</option><option value="json">JSON architecture</option><option value="rapport">Rapport activite</option></select>
+      </div>
+      <div class="drop" id="drop">Glissez-deposez ici une architecture ou une config de droits JSON.</div>
+      <div class="load-progress hidden" id="loadProgress" role="status" aria-live="polite">
+        <div class="progress-head">
+          <span id="progressLabel">Chargement</span>
+          <strong id="progressPercent">0%</strong>
+        </div>
+        <div class="progress-track"><div class="progress-bar" id="progressBar"></div></div>
+        <div class="progress-detail" id="progressDetail">En attente du fichier.</div>
+      </div>
+    </div>
+    <div class="tree-wrap hidden" id="treeWrap">
+      <div id="tree"></div>
+      <div class="legend" id="legend"></div>
+    </div>
+  </section>
+
+  <aside class="editor" aria-label="Edition des droits">
+    <div class="editor-head">
+      <h2>Edition des droits</h2>
+      <div class="status" id="editorStatus">Chargez une architecture pour preparer la configuration.</div>
+    </div>
+
+    <section class="editor-section" id="authSection" style="display:none">
+      <p class="section-title">Authentification</p>
+      <div class="grid2">
+        <div class="field"><label for="tenantId">TenantId</label><input type="text" id="tenantId" placeholder="ex: tenant.onmicrosoft.com"></div>
+        <div class="field"><label for="clientId">ClientId</label><input type="text" id="clientId" placeholder="GUID de l'App Registration"></div>
+        <div class="field"><label for="certThumbprint">Empreinte certificat</label><input type="text" id="certThumbprint" placeholder="Certificat installe localement"></div>
+        <div class="field"><label for="certPath">Chemin certificat</label><input type="text" id="certPath" placeholder="ex: ..\cle.pfx"></div>
+        <div class="field"><label for="certPassword">Mot de passe</label><input type="password" id="certPassword" placeholder="si fichier .pfx"></div>
+        <div class="field"><label for="siteUrl">URL du site</label><input type="url" id="siteUrl" placeholder="https://tenant.sharepoint.com/sites/..."></div>
+      </div>
+    </section>
+
+    <section class="editor-section">
+      <p class="section-title">Groupes connus</p>
+      <div class="groups-row">
+        <input id="newGroup" type="text" placeholder="Nom du groupe Entra ID">
+        <button id="addGroup" type="button">Ajouter</button>
+      </div>
+      <div class="chips" id="groupChips"></div>
+      <datalist id="knownGroups"></datalist>
+    </section>
+
+    <section class="editor-section">
+      <p class="section-title">Dossier selectionne</p>
+      <div id="selectedPanel" class="selected-folder">
+        <div class="assignment-empty">Selectionnez un dossier dans l'arborescence.</div>
+      </div>
+    </section>
+
+    <section class="editor-section" id="permViewSection" style="display:none">
+      <p class="section-title">Vue droits du dossier</p>
+      <div id="permViewContent" style="font-size:12px;max-height:180px;overflow-y:auto"></div>
+    </section>
+
+    <section class="editor-section">
+      <p class="section-title">Export</p>
+      <div class="summary-grid">
+        <div class="metric"><b id="metricFolders">0</b><span>dossiers</span></div>
+        <div class="metric"><b id="metricConfigured">0</b><span>configures</span></div>
+        <div class="metric"><b id="metricAssignments">0</b><span>droits</span></div>
+      </div>
+      <div class="export-actions">
+        <button id="exportLatest" class="primary" type="button">Enregistrer latest</button>
+        <button id="exportDated" type="button">Copie datee</button>
+        <button id="copyJson" type="button">Copier JSON</button>
+      </div>
+      <div class="warn-text" id="exportWarning"></div>
+      <pre class="json-preview" id="jsonPreview">{}</pre>
+    </section>
+  </aside>
+</main>
+
+<script>
+window.onerror = (msg, src, line, col, err) => {
+  alert("ERREUR: "+msg+"\nFichier: "+src+"\nLigne: "+line+":"+col+"\nStack: "+(err&&err.stack?"\n"+err.stack.split("\n").slice(0,5).join("\n"):""));
+};
+let DATA = null;
+let FOLDERS = [];
+let FOLDER_BY_ID = new Map();
+let PERMISSION_EDITS = new Map();
+let EXTRA_PERMISSIONS = [];
+let SELECTED_ID = null;
+let KNOWN_GROUPS = [];
+let PENDING_CONFIG = null;
+let LAST_LOADED_NAME = "";
+let RENDER_TOKEN = 0;
+let ACTIVE_WORKER = null;
+
+const SEP = "\u001f";
+const ROLE_OPTIONS = ["Contrôle total", "Modification", "Collaboration", "Lecture"];
+const $ = s => document.querySelector(s);
+const setVal = (id, val) => { const el = document.getElementById(id); if(el) el.value = val; };
+const el = (t,c,x)=>{const e=document.createElement(t); if(c)e.className=c; if(x!=null)e.textContent=x; return e;};
+const tc = t => t==="SecurityGroup"?"sg" : (t==="SharePointGroup"?"spg" : "usr");
+const esc = s => String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+const safe = s => (s||"site").replace(/[^\w\-]+/g,"_");
+const norm = s => String(s||"").trim();
+const sleep = ms => new Promise(resolve=>setTimeout(resolve, ms));
+
+function normalizeRoles(p){
+  const values = [];
+  if(Array.isArray(p && p.Roles)) values.push(...p.Roles);
+  else if(p && p.Roles != null) values.push(p.Roles);
+  if(p && p.Role != null) values.push(p.Role);
+  return values.map(x=>String(x||"").trim()).filter(Boolean);
+}
+function normalizeMembers(p){
+  const raw = p && (p.Members || p.Membres || p.Users || p.Utilisateurs);
+  if(!raw) return [];
+  const list = Array.isArray(raw) ? raw : [raw];
+  return list.map(m=>{
+    if(m == null) return "";
+    if(typeof m === "string") return m.trim();
+    const name = m.Name || m.DisplayName || m.Title || m.LoginName || m.UserPrincipalName || m.Email || "";
+    const email = m.Email || m.UserPrincipalName || "";
+    return name && email && name !== email ? `${name} <${email}>` : (name || email);
+  }).filter(Boolean);
+}
+function normalizePermissions(list){
+  if(!Array.isArray(list)) return [];
+  return list.map(p=>({
+    Principal: p && (p.Principal || p.Name || p.DisplayName) || "",
+    Type: p && p.Type || "",
+    Roles: normalizeRoles(p || {}),
+    Members: normalizeMembers(p || {})
+  })).filter(p=>p.Principal || p.Type || p.Roles.length || p.Members.length);
+}
+function setLoadProgress(percent, label, detail){
+  const box = $("#loadProgress");
+  if(!box) return;
+  const pct = Math.max(0, Math.min(100, Math.round(percent||0)));
+  box.classList.remove("hidden");
+  $("#progressBar").style.width = pct + "%";
+  $("#progressPercent").textContent = pct + "%";
+  if(label) $("#progressLabel").textContent = label;
+  if(detail) $("#progressDetail").textContent = detail;
+}
+function hideLoadProgressSoon(){
+  setTimeout(()=>$("#loadProgress") && $("#loadProgress").classList.add("hidden"), 1400);
+}
+function fileSizeLabel(size){
+  if(!size && size!==0) return "";
+  const units = ["o","Ko","Mo","Go"];
+  let value = size, unit = 0;
+  while(value >= 1024 && unit < units.length-1){ value /= 1024; unit++; }
+  return `${value.toFixed(unit ? 1 : 0)} ${units[unit]}`;
+}
+function parseJsonInWorker(text, sourceName){
+  if(!window.Worker || !window.Blob || !window.URL) return Promise.reject(new Error("Worker indisponible"));
+  if(ACTIVE_WORKER) ACTIVE_WORKER.terminate();
+  const workerSource = `
+    self.onmessage = function(event){
+      try {
+        var parsed = JSON.parse(event.data.text);
+        var kind = parsed && parsed.Bibliotheques ? "architecture" : ((parsed && (parsed.Auth || parsed.Permissions)) ? "config" : "unknown");
+        self.postMessage({ok:true, parsed:parsed, kind:kind, sourceName:event.data.sourceName});
+      } catch (error) {
+        self.postMessage({ok:false, message:error && error.message ? error.message : String(error)});
+      }
+    };
+  `;
+  const url = URL.createObjectURL(new Blob([workerSource], {type:"application/javascript"}));
+  return new Promise((resolve, reject)=>{
+    const worker = new Worker(url);
+    ACTIVE_WORKER = worker;
+    worker.onmessage = event=>{
+      worker.terminate();
+      URL.revokeObjectURL(url);
+      ACTIVE_WORKER = null;
+      if(event.data && event.data.ok) resolve(event.data);
+      else reject(new Error((event.data && event.data.message) || "JSON invalide"));
+    };
+    worker.onerror = error=>{
+      worker.terminate();
+      URL.revokeObjectURL(url);
+      ACTIVE_WORKER = null;
+      reject(error);
+    };
+    worker.postMessage({text, sourceName});
+  });
+}
+async function parseJsonResponsive(text, sourceName){
+  setLoadProgress(63, "Analyse du JSON", "Parsing du fichier hors de l'interface...");
+  try{
+    return await parseJsonInWorker(text, sourceName);
+  }catch(workerError){
+    await sleep(30);
+    const parsed = JSON.parse(text);
+    const kind = parsed && parsed.Bibliotheques ? "architecture" : ((parsed && (parsed.Auth || parsed.Permissions)) ? "config" : "unknown");
+    return {ok:true, parsed, kind, sourceName};
+  }
+}
+
+function perms(f){
+  const w = el("div","perms");
+  if(f.HeritageRompu === false){ w.appendChild(el("span","badge inherit","heritage conserve")); return w; }
+  const list = normalizePermissions(f.Permissions||[]);
+  if(!list.length){ w.appendChild(el("span","badge none","unique - aucun groupe explicite")); return w; }
+  list.forEach(p=>{
+    const b=el("span","badge "+tc(p.Type));
+    b.textContent=(p.Principal||"principal")+" · "+(p.Roles.join(", ")||"-");
+    w.appendChild(b);
+  });
+  return w;
+}
+
+function fileRow(fi){
+  const r = el("div","file");
+  r.appendChild(el("span","ico","F"));
+  r.appendChild(el("span","name", fi.Name||"(fichier sans nom)"));
+  const meta = [];
+  if(fi.Modifie || fi.ModifiePar) meta.push("modifie"+(fi.Modifie?" le "+fi.Modifie:"")+(fi.ModifiePar?" par "+fi.ModifiePar:""));
+  if(meta.length) r.appendChild(el("span","count"," · "+meta.join(" · ")));
+  if(fi.Cree || fi.CreePar) r.title = "Cree"+(fi.Cree?" le "+fi.Cree:"")+(fi.CreePar?" par "+fi.CreePar:"");
+  r.dataset.name = (fi.Name||"").toLowerCase();
+  const fPersons = [fi.CreePar, fi.ModifiePar].filter(Boolean).join(" ").toLowerCase();
+  if(fPersons) r.dataset.persons = fPersons;
+  return r;
+}
+
+function folderId(libName, path){ return libName + SEP + path; }
+async function collectFolders(data, token){
+  FOLDERS = [];
+  FOLDER_BY_ID = new Map();
+  const stack = [];
+  (data.Bibliotheques||[]).forEach(l=>{
+    const libName = l.Name || l.Title || "Documents";
+    const folders = l.Dossiers || [];
+    for(let i=folders.length-1;i>=0;i--) stack.push({folder:folders[i], libName, parentPath:"", parentId:"", depth:0});
+  });
+  let processed = 0;
+  while(stack.length){
+    if(token !== RENDER_TOKEN) return;
+    const item = stack.pop();
+    const f = item.folder;
+    const name = f.Name || "(dossier sans nom)";
+    const path = item.parentPath ? item.parentPath + "/" + name : name;
+    const id = folderId(item.libName, path);
+    const meta = {id, library:item.libName, path, name, depth:item.depth, parentId:item.parentId, node:f};
+    FOLDERS.push(meta);
+    FOLDER_BY_ID.set(id, meta);
+    const children = f.Dossiers || [];
+    for(let i=children.length-1;i>=0;i--) stack.push({folder:children[i], libName:item.libName, parentPath:path, parentId:id, depth:item.depth+1});
+    processed++;
+    if(processed % 500 === 0){
+      setLoadProgress(70, "Indexation", `${processed} dossier(s) indexes sans bloquer l'interface...`);
+      await sleep(0);
+    }
+  }
+  setLoadProgress(78, "Indexation terminee", `${FOLDERS.length} dossier(s) prets pour l'edition.`);
+}
+
+function editStateText(id){
+  const entry = PERMISSION_EDITS.get(id);
+  const count = entry ? validAssignments(entry).length : 0;
+  return count>0 ? `${count} droit(s)${entry.ResetPermissions ? " + reset" : ""}` : "non configure";
+}
+function makeCaret(label, detailsEl){
+  const caret = el("span","caret","▶");
+  caret.setAttribute("role","button");
+  caret.setAttribute("tabindex","0");
+  caret.setAttribute("aria-label",label);
+  const sync = ()=>caret.setAttribute("aria-expanded", detailsEl.open ? "true" : "false");
+  const toggle = ()=>{ detailsEl.open = !detailsEl.open; sync(); };
+  caret.addEventListener("click", ev=>{ ev.preventDefault(); ev.stopPropagation(); toggle(); });
+  caret.addEventListener("keydown", ev=>{
+    if(ev.key==="Enter" || ev.key===" "){
+      ev.preventDefault();
+      ev.stopPropagation();
+      toggle();
+    }
+  });
+  detailsEl.addEventListener("toggle", sync);
+  sync();
+  return caret;
+}
+function folder(f, libName, parentPath){
+  const name = f.Name || "(dossier sans nom)";
+  const path = parentPath ? parentPath + "/" + name : name;
+  const id = folderId(libName, path);
+  const d = el("details","folder");
+  d.dataset.id = id;
+  d.dataset.name = (name+" "+path+" "+libName).toLowerCase();
+  const personsSet = new Set([f.CreePar, f.ModifiePar].filter(Boolean));
+  (f.Fichiers||[]).forEach(fi=>{ if(fi.CreePar) personsSet.add(fi.CreePar); if(fi.ModifiePar) personsSet.add(fi.ModifiePar); });
+  (f.Dossiers||[]).forEach(dd=>{ if(dd.CreePar) personsSet.add(dd.CreePar); if(dd.ModifiePar) personsSet.add(dd.ModifiePar); });
+  const fp = [...personsSet].join(" ");
+  if(fp) d.dataset.persons = fp.toLowerCase();
+  const s = el("summary");
+  s.addEventListener("click", ev=>{
+    ev.preventDefault();
+    if(ev.target.closest(".caret,button")) return;
+    selectFolder(id);
+  });
+  s.addEventListener("keydown", ev=>{
+    if(ev.target===s && (ev.key==="Enter" || ev.key===" ")){
+      ev.preventDefault();
+      selectFolder(id);
+    }
+  });
+  s.appendChild(makeCaret("Derouler ou replier le dossier "+name, d));
+  s.appendChild(el("span","ico","D"));
+  const main = el("span","folder-main");
+  const line = el("span","folder-line");
+  line.appendChild(el("span","name", name));
+  line.appendChild(el("span","count", `- ${(f.Dossiers||[]).length} dossier(s), ${(f.Fichiers||[]).length} fichier(s)`+(f.ModifiePar?` · modifie par ${f.ModifiePar}`:"")));
+  const state = el("span","badge edit-state",editStateText(id));
+  line.appendChild(state);
+  main.appendChild(line);
+  main.appendChild(el("span","folder-path", path));
+  s.appendChild(main);
+  const actions = el("span","folder-actions");
+  const editBtn = el("button","icon","Droits");
+  editBtn.type = "button";
+  editBtn.title = "Modifier les droits de ce dossier";
+  editBtn.addEventListener("click", ev=>{ ev.preventDefault(); ev.stopPropagation(); selectFolder(id); });
+  actions.appendChild(editBtn);
+  s.appendChild(actions);
+  d.appendChild(s);
+  d.addEventListener("toggle",()=>{ if(d.open) ensureFolderBody(d, f, libName, path); });
+  return d;
+}
+
+function ensureFolderBody(d, f, libName, path){
+  if(d.dataset.loaded === "1") return;
+  const b = el("div","body");
+  b.appendChild(perms(f));
+  (f.Dossiers||[]).forEach(x=> b.appendChild(folder(x, libName, path)));
+  (f.Fichiers||[]).forEach(fi=> b.appendChild(fileRow(fi)));
+  d.appendChild(b);
+  d.dataset.loaded = "1";
+}
+
+function library(l){
+  const libName = l.Name || l.Title || "Documents";
+  const d = el("details","lib");
+  const s=el("summary");
+  s.addEventListener("click", ev=>ev.preventDefault());
+  s.addEventListener("keydown", ev=>{
+    if(ev.target===s && (ev.key==="Enter" || ev.key===" ")){
+      ev.preventDefault();
+    }
+  });
+  s.appendChild(makeCaret("Derouler ou replier la bibliotheque "+libName, d));
+  s.appendChild(el("span","ico","B"));
+  const main = el("span","folder-main");
+  const line = el("span","folder-line");
+  line.appendChild(el("span","name", libName));
+  let cnt = `- ${(l.Dossiers||[]).length} dossier(s)`;
+  if(l.NomInterne && l.NomInterne.toLowerCase() !== libName.toLowerCase()) cnt += ` · nom interne : ${l.NomInterne}`;
+  line.appendChild(el("span","count", cnt));
+  main.appendChild(line);
+  s.appendChild(main);
+  d.appendChild(s);
+  d.addEventListener("toggle",()=>{ if(d.open) ensureLibraryBody(d, l, libName); });
+  return d;
+}
+
+function ensureLibraryBody(d, l, libName){
+  if(d.dataset.loaded === "1") return;
+  const b = el("div","body");
+  (l.Dossiers||[]).forEach(f=> b.appendChild(folder(f, libName, "")));
+  (l.Fichiers||[]).forEach(fi=> b.appendChild(fileRow(fi)));
+  d.appendChild(b);
+  d.dataset.loaded = "1";
+}
+
+async function render(data){
+  const token = ++RENDER_TOKEN;
+  DATA = data;
+  SELECTED_ID = null;
+  PERMISSION_EDITS.clear();
+  EXTRA_PERMISSIONS = [];
+  setVal("personFilter", "");
+  $("#treeWrap").classList.remove("hidden");
+  $("#docState").textContent = LAST_LOADED_NAME ? `Charge : ${LAST_LOADED_NAME}` : "Architecture chargee";
+  $("#site").textContent = (data.Site&&data.Site.Titre || "Architecture SharePoint");
+  $("#url").textContent = ((data.Site&&data.Site.Url)||"") + ((data.Site&&data.Site.CaptureLe)? "  •  capture le "+data.Site.CaptureLe : "");
+  if(data.Site && data.Site.Url) setVal("siteUrl", data.Site.Url);
+  const tree = $("#tree"); tree.innerHTML='<div class="empty-note">Preparation de l\'arborescence...</div>';
+  setLoadProgress(68, "Indexation", "Preparation des dossiers pour l'edition...");
+  await collectFolders(data, token);
+  if(token !== RENDER_TOKEN) return;
+  tree.innerHTML="";
+  const libs = data.Bibliotheques||[];
+  for(let i=0;i<libs.length;i++){
+    tree.appendChild(library(libs[i]));
+    if(i % 8 === 0){
+      setLoadProgress(82 + Math.min(14, Math.round((i / Math.max(1, libs.length)) * 14)), "Rendu progressif", `${i+1}/${libs.length} bibliotheque(s) ajoutee(s). Les branches s'ouvrent a la demande.`);
+      await sleep(0);
+    }
+  }
+  $("#legend").textContent = "Legende : B=bibliotheque · D=dossier · F=fichier · droits actuels lus dans SharePoint.";
+  personsFromArchitecture(data);
+  seedGroupsFromArchitecture(data);
+  if(PENDING_CONFIG){
+    const cfg = PENDING_CONFIG;
+    PENDING_CONFIG = null;
+    importPermissionConfig(cfg, true);
+  }else{
+    renderGroups();
+    renderEditor();
+    updateSummary();
+    updateFolderMarkers();
+  }
+  setLoadProgress(100, "Pret", `${FOLDERS.length} dossier(s) charges. Ouvrez les bibliotheques pour afficher les branches.`);
+  hideLoadProgressSoon();
+}
+
+async function loadText(t, sourceName){
+  try{
+    LAST_LOADED_NAME = sourceName || "";
+    const result = await parseJsonResponsive(t, sourceName);
+    const parsed = result.parsed;
+    if(parsed.Bibliotheques){ await render(parsed); return; }
+    if(parsed.Auth || parsed.Permissions){
+      importPermissionConfig(parsed);
+      setLoadProgress(100, "Configuration chargee", sourceName || "Configuration de droits chargee");
+      hideLoadProgressSoon();
+      return;
+    }
+    alert("JSON reconnu, mais ce n'est ni une architecture ni une configuration de droits.");
+  }catch(e){
+    setLoadProgress(100, "Erreur JSON", e && e.message ? e.message : "JSON invalide");
+    alert("JSON invalide : "+e.message+(e.stack ? "\n\nStack: "+e.stack.split("\n").slice(0,4).join("\n") : ""));
+  }
+}
+
+function addKnownGroup(group){
+  const g = norm(group);
+  if(!g) return;
+  if(!KNOWN_GROUPS.some(x=>x.toLowerCase()===g.toLowerCase())){
+    KNOWN_GROUPS.push(g);
+    KNOWN_GROUPS.sort((a,b)=>a.localeCompare(b,"fr"));
+  }
+}
+function seedGroupsFromArchitecture(data){
+  const addFromNode = node=>{
+    normalizePermissions(node && node.Permissions || []).forEach(p=>{
+      if(p.Principal) addKnownGroup(p.Principal);
+    });
+  };
+  addFromNode(data.Site);
+  (data.Bibliotheques||[]).forEach(addFromNode);
+  FOLDERS.forEach(meta=>{
+    addFromNode(meta.node);
+  });
+}
+function renderGroups(){
+  const chips = $("#groupChips"); chips.innerHTML="";
+  const list = $("#knownGroups"); list.innerHTML="";
+  KNOWN_GROUPS.forEach(g=>{
+    const opt=document.createElement("option"); opt.value=g; list.appendChild(opt);
+    const chip=el("span","chip");
+    chip.appendChild(el("span","",g));
+    const x=el("button","", "×");
+    x.type="button"; x.title="Retirer ce groupe de la liste";
+    x.addEventListener("click",()=>{ KNOWN_GROUPS=KNOWN_GROUPS.filter(v=>v!==g); renderGroups(); });
+    chip.appendChild(x);
+    chips.appendChild(chip);
+  });
+}
+
+function selectFolder(id){
+  SELECTED_ID = id;
+  document.querySelectorAll("details.folder.selected").forEach(d=>d.classList.remove("selected"));
+  const node = [...document.querySelectorAll("details.folder")].find(d=>d.dataset.id===id);
+  if(node) node.classList.add("selected");
+  renderEditor();
+}
+
+function entryFor(id){
+  if(!PERMISSION_EDITS.has(id)){
+    PERMISSION_EDITS.set(id,{Assignments:[]});
+  }
+  return PERMISSION_EDITS.get(id);
+}
+function validAssignments(entry){
+  return (entry.Assignments||[]).filter(a=>norm(a.GroupName) && (a.Access==="Deny" || norm(a.Role)));
+}
+function configuredEntries(){
+  return [...PERMISSION_EDITS.entries()].filter(([,entry])=>validAssignments(entry).length);
+}
+
+function renderEditor(){
+  $("#editorStatus").textContent = DATA ? `${FOLDERS.length} dossier(s) charges pour edition.` : "Chargez une architecture pour preparer la configuration.";
+  const panel = $("#selectedPanel");
+  panel.innerHTML = "";
+  if(!DATA){
+    panel.appendChild(el("div","assignment-empty","Chargez une architecture avant de choisir les droits."));
+    updatePreview();
+    return;
+  }
+  if(!SELECTED_ID || !FOLDER_BY_ID.has(SELECTED_ID)){
+    panel.appendChild(el("div","assignment-empty","Selectionnez un dossier dans l'arborescence."));
+    updatePreview();
+    return;
+  }
+  const meta = FOLDER_BY_ID.get(SELECTED_ID);
+  const entry = PERMISSION_EDITS.get(SELECTED_ID) || {Assignments:[]};
+  panel.appendChild(el("div","selected-title",meta.name));
+  panel.appendChild(el("div","selected-meta",`${meta.library} / ${meta.path}`));
+  const current = el("div","current-perms");
+  current.appendChild(el("span","badge inherit","droits actuels"));
+  const currentList = normalizePermissions(meta.node.Permissions||[]);
+  if(meta.node.HeritageRompu===false) current.appendChild(el("span","badge inherit","heritage conserve"));
+  else if(!currentList.length) current.appendChild(el("span","badge none","aucun groupe explicite"));
+  else currentList.forEach(p=>{
+    const b=el("span","badge "+tc(p.Type));
+    b.textContent=(p.Principal||"principal")+" · "+(p.Roles.join(", ")||"-");
+    current.appendChild(b);
+  });
+  panel.appendChild(current);
+
+  const actions = el("div","quick-actions");
+  const addBtn = el("button","primary","Ajouter un droit");
+  addBtn.type = "button";
+  addBtn.addEventListener("click",()=>addAssignment(SELECTED_ID));
+  const clearBtn = el("button","ghost","Vider les lignes");
+  clearBtn.type = "button";
+  clearBtn.addEventListener("click",()=>{ entryFor(SELECTED_ID).Assignments=[]; renderEditor(); updateFolderMarkers(); updateSummary(); });
+  const inheritBtn = el("button","danger","Ne rien changer");
+  inheritBtn.type = "button";
+  inheritBtn.addEventListener("click",()=>{ PERMISSION_EDITS.delete(SELECTED_ID); renderEditor(); updateFolderMarkers(); updateSummary(); });
+  actions.appendChild(addBtn);
+  actions.appendChild(clearBtn);
+  actions.appendChild(inheritBtn);
+  panel.appendChild(actions);
+
+  const resetWrap = el("label","reset-option");
+  const reset = document.createElement("input");
+  reset.type = "checkbox";
+  reset.checked = !!entry.ResetPermissions;
+  reset.addEventListener("change",()=>{
+    entryFor(SELECTED_ID).ResetPermissions = reset.checked;
+    updateFolderMarkers();
+    updateSummary();
+    updatePreview();
+  });
+  const resetText = el("div","");
+  resetText.appendChild(el("strong","", "Remplacer les droits actuels avant appliquer"));
+  resetText.appendChild(el("span","", "Le script remet le dossier a zero puis applique uniquement les lignes ci-dessous."));
+  resetWrap.appendChild(reset);
+  resetWrap.appendChild(resetText);
+  panel.appendChild(resetWrap);
+
+  const list = el("div","assignment-list");
+  if(!entry.Assignments || !entry.Assignments.length){
+    list.appendChild(el("div","assignment-empty","Aucun nouveau droit defini pour ce dossier."));
+  }else{
+    entry.Assignments.forEach((assignment,index)=>list.appendChild(assignmentRow(SELECTED_ID, assignment, index)));
+  }
+  panel.appendChild(list);
+
+  const permViewSection = $("#permViewSection");
+  const permViewContent = $("#permViewContent");
+  if(permViewSection && permViewContent){
+    permViewSection.style.display = "block";
+    const permsList = normalizePermissions(meta.node.Permissions||[]);
+    if(meta.node.HeritageRompu===false){
+      permViewContent.innerHTML = "<span class=\"badge inherit\">Heritage conserve depuis le parent</span>";
+    }else if(!permsList.length){
+      permViewContent.innerHTML = "<span class=\"badge none\">Aucun droit explicite</span>";
+    }else{
+      permViewContent.innerHTML = permsList.map(p=>
+        "<div style=\"padding:3px 0;border-bottom:1px solid var(--line);display:flex;gap:8px;align-items:center\">"+
+          "<span class=\"badge "+tc(p.Type)+"\">"+(p.Principal||"")+"</span>"+
+          "<span style=\"color:var(--muted);font-size:11px\">"+(p.Type||"")+"</span>"+
+          "<span style=\"margin-left:auto\">"+(p.Roles.join(", ")||"-")+"</span>"+
+        "</div>"
+      ).join("");
+    }
+  }
+
+  updatePreview();
+}
+
+function addAssignment(id){
+  if(!id || !FOLDER_BY_ID.has(id)) return;
+  const entry = entryFor(id);
+  const suggested = suggestedGroupFor(FOLDER_BY_ID.get(id));
+  entry.Assignments.push({GroupName:suggested, Role:"Lecture"});
+  renderEditor();
+  updateFolderMarkers();
+  updateSummary();
+  focusLastAssignment();
+}
+function assignmentRow(id, assignment, index){
+  const row = el("div","assignment"+(norm(assignment.GroupName) ? "" : " invalid"));
+  const group = document.createElement("input");
+  group.type = "text";
+  group.placeholder = "Nom exact du groupe";
+  group.value = assignment.GroupName||"";
+  group.setAttribute("list","knownGroups");
+  group.setAttribute("aria-label","Nom du groupe");
+  group.title = "Nom exact du groupe Entra ID ou SharePoint";
+  group.addEventListener("input",()=>{
+    assignment.GroupName=group.value;
+    row.classList.toggle("invalid", !norm(group.value));
+    updateSummary();
+    updateFolderMarkers();
+    updatePreview();
+  });
+  group.addEventListener("blur",()=>{ addKnownGroup(group.value); renderGroups(); });
+  const role = document.createElement("select");
+  ROLE_OPTIONS.forEach(r=>{
+    const o=document.createElement("option"); o.value=r; o.textContent=r; role.appendChild(o);
+  });
+  if(assignment.Role && !ROLE_OPTIONS.includes(assignment.Role)){
+    const custom=document.createElement("option"); custom.value=assignment.Role; custom.textContent=assignment.Role; role.appendChild(custom);
+  }
+  const deny=document.createElement("option"); deny.value="__deny"; deny.textContent="Deny / masquer"; role.appendChild(deny);
+  role.value = assignment.Access==="Deny" ? "__deny" : (assignment.Role||"Lecture");
+  role.addEventListener("change",()=>{
+    if(role.value==="__deny"){ delete assignment.Role; assignment.Access="Deny"; }
+    else { assignment.Role=role.value; delete assignment.Access; }
+    updateSummary(); updateFolderMarkers(); updatePreview();
+  });
+  const remove = el("button","danger icon","Retirer");
+  remove.type = "button";
+  remove.addEventListener("click",()=>{
+    const groupName = norm(assignment.GroupName) || "ce groupe";
+    const overlay = document.createElement("div");
+    overlay.className = "modal-overlay";
+    overlay.innerHTML = `<div class="modal-box">
+      <h2>Confirmer la suppression</h2>
+      <div class="sub">Voulez-vous vraiment retirer <b>${esc(groupName)}</b> de ce dossier ?</div>
+      <div class="modal-btns">
+        <button id="confirmNo" type="button">Annuler</button>
+        <button id="confirmYes" class="danger" type="button">Supprimer</button>
+      </div>
+    </div>`;
+    overlay.addEventListener("click", e=>{ if(e.target===overlay) overlay.remove(); });
+    document.body.appendChild(overlay);
+    overlay.querySelector("#confirmNo").addEventListener("click", ()=>overlay.remove());
+    overlay.querySelector("#confirmYes").addEventListener("click",()=>{
+      const entry = entryFor(id);
+      entry.Assignments.splice(index,1);
+      if(!entry.Assignments.length) PERMISSION_EDITS.set(id, entry);
+      renderEditor();
+      updateFolderMarkers();
+      updateSummary();
+      overlay.remove();
+    });
+  });
+  row.appendChild(group);
+  row.appendChild(role);
+  row.appendChild(remove);
+  return row;
+}
+function suggestedGroupFor(meta){
+  const current = (meta && meta.node && meta.node.Permissions) || [];
+  const security = current.find(p=>p.Type==="SecurityGroup" && p.Principal);
+  if(security) return security.Principal;
+  return KNOWN_GROUPS[0] || "";
+}
+function focusLastAssignment(){
+  setTimeout(()=>{
+    const rows = [...document.querySelectorAll("#selectedPanel .assignment")];
+    const last = rows[rows.length-1];
+    if(last){
+      const input = last.querySelector("input");
+      if(input){ input.focus(); input.select(); }
+    }
+  },0);
+}
+
+function collectAuth(){
+  const g = id => { const el = document.getElementById(id); return el ? el.value : ""; };
+  return {
+    TenantId: norm(g("tenantId")),
+    ClientId: norm(g("clientId")),
+    CertificateThumbprint: norm(g("certThumbprint")),
+    CertificatePath: norm(g("certPath")),
+    CertificatePassword: g("certPassword") || ""
+  };
+}
+function assignmentForExport(a){
+  const out = {GroupName:norm(a.GroupName)};
+  if(a.Access==="Deny") out.Access = "Deny";
+  else out.Role = norm(a.Role);
+  return out;
+}
+function buildConfig(){
+  const permissions = configuredEntries().map(([id,entry])=>{
+    const meta = FOLDER_BY_ID.get(id);
+    const out = {
+      Library: meta.library,
+      FolderPath: meta.path,
+      Assignments: validAssignments(entry).map(assignmentForExport)
+    };
+    if(entry.ResetPermissions) out.ResetPermissions = true;
+    return out;
+  });
+  EXTRA_PERMISSIONS.forEach(p=>permissions.push(p));
+  return {
+    Auth: collectAuth(),
+    SiteUrl: norm($("#siteUrl") ? $("#siteUrl").value : ""),
+    Permissions: permissions
+  };
+}
+function validateConfig(config){
+  const warnings = [];
+  if(!config.SiteUrl) warnings.push("SiteUrl manquant");
+  if(!config.Auth.TenantId) warnings.push("TenantId manquant");
+  if(!config.Auth.ClientId) warnings.push("ClientId manquant");
+  if(!config.Auth.CertificateThumbprint && !config.Auth.CertificatePath) warnings.push("certificat manquant");
+  if(config.Auth.CertificatePath && config.Auth.CertificatePath.toLowerCase()==="cle.cer") warnings.push("si le JSON est dans resultats, utiliser ..\\cle.cer");
+  if(!config.Permissions.length) warnings.push("aucun dossier configure");
+  config.Permissions.forEach(p=>{
+    (p.Assignments||[]).forEach(a=>{
+      if(!a.GroupName) warnings.push(`groupe manquant sur ${p.FolderPath}`);
+      if(!a.Access && !a.Role) warnings.push(`role manquant sur ${p.FolderPath}`);
+    });
+  });
+  return warnings;
+}
+function updateSummary(){
+  $("#metricFolders").textContent = FOLDERS.length;
+  const configured = configuredEntries();
+  $("#metricConfigured").textContent = configured.length + (EXTRA_PERMISSIONS.length ? `+${EXTRA_PERMISSIONS.length}` : "");
+  const count = configured.reduce((n,[,entry])=>n+validAssignments(entry).length,0) + EXTRA_PERMISSIONS.reduce((n,p)=>n+(p.Assignments||[]).length,0);
+  $("#metricAssignments").textContent = count;
+  updatePreview();
+}
+function updatePreview(){
+  const config = buildConfig();
+  const warnings = validateConfig(config);
+  $("#exportWarning").textContent = warnings.length ? warnings.slice(0,3).join(" · ") : "";
+  $("#jsonPreview").textContent = JSON.stringify(config,null,2);
+}
+function updateFolderMarkers(){
+  document.querySelectorAll("details.folder").forEach(d=>{
+    const id = d.dataset.id;
+    const entry = PERMISSION_EDITS.get(id);
+    const count = entry ? validAssignments(entry).length : 0;
+    d.classList.toggle("configured", count>0);
+    const state = d.querySelector("summary .edit-state");
+    if(state) state.textContent = count>0 ? `${count} droit(s)${entry.ResetPermissions ? " + reset" : ""}` : "non configure";
+  });
+}
+
+function importPermissionConfig(config, silent){
+  if(!silent) $("#docState").textContent = LAST_LOADED_NAME ? `Config chargee : ${LAST_LOADED_NAME}` : "Configuration de droits chargee";
+  if(config.Auth){
+    setVal("tenantId", config.Auth.TenantId || "");
+    setVal("clientId", config.Auth.ClientId || "");
+    setVal("certThumbprint", config.Auth.CertificateThumbprint || "");
+    const currPath = document.getElementById("certPath");
+    setVal("certPath", config.Auth.CertificatePath || (currPath ? currPath.value : "") || "");
+    setVal("certPassword", config.Auth.CertificatePassword || "");
+  }
+  if(!DATA) PENDING_CONFIG = config;
+  if(config.SiteUrl) setVal("siteUrl", config.SiteUrl);
+  EXTRA_PERMISSIONS = [];
+  (config.Permissions||[]).forEach(p=>{
+    (p.Assignments||[]).forEach(a=>addKnownGroup(a.GroupName));
+    const id = folderId(p.Library||"Documents", p.FolderPath||"");
+    const clean = {
+      ResetPermissions: !!p.ResetPermissions,
+      Assignments:(p.Assignments||[]).map(a=>a.Access==="Deny" ? {GroupName:a.GroupName||"", Access:"Deny"} : {GroupName:a.GroupName||"", Role:a.Role||"Lecture"})
+    };
+    if(FOLDER_BY_ID.has(id)) PERMISSION_EDITS.set(id, clean);
+    else if(p.Library && p.FolderPath) EXTRA_PERMISSIONS.push({
+      Library:p.Library,
+      FolderPath:p.FolderPath,
+      Assignments:clean.Assignments.map(assignmentForExport)
+    });
+  });
+  renderGroups();
+  renderEditor();
+  updateFolderMarkers();
+  updateSummary();
+  if(!silent) alert(DATA ? "Configuration de droits chargee." : "Configuration chargee. Ouvrez aussi l'architecture pour l'editer visuellement.");
+}
+
+function download(blob, name){
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(blob);
+  a.download=name;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href),1500);
+}
+async function saveOrDownload(blob, name){
+  if(window.showSaveFilePicker){
+    try{
+      const handle = await window.showSaveFilePicker({
+        suggestedName:name,
+        types:[{description:"Configuration JSON",accept:{"application/json":[".json"]}}]
+      });
+      const writable = await handle.createWritable();
+      await writable.write(blob);
+      await writable.close();
+      return;
+    }catch(e){
+      if(e && e.name==="AbortError") return;
+    }
+  }
+  download(blob, name);
+}
+function needData(){ if(!DATA){ alert("Ouvrez d'abord un fichier architecture_*.json."); return false;} return true; }
+async function exportPermissions(name, preferSave){
+  if(!needData()) return;
+  const config = buildConfig();
+  const warnings = validateConfig(config);
+  if(warnings.length && !confirm("Verifier avant production :\n- "+warnings.join("\n- ")+"\n\nTelecharger quand meme ?")) return;
+  const blob = new Blob([JSON.stringify(config,null,2)],{type:"application/json;charset=utf-8"});
+  if(preferSave) await saveOrDownload(blob, name);
+  else download(blob, name);
+}
+function stamp(){
+  const d = new Date();
+  const p = n => String(n).padStart(2,"0");
+  return d.getFullYear()+p(d.getMonth()+1)+p(d.getDate())+"-"+p(d.getHours())+p(d.getMinutes())+p(d.getSeconds());
+}
+async function copyJson(){
+  const text = JSON.stringify(buildConfig(),null,2);
+  try{
+    await navigator.clipboard.writeText(text);
+    alert("JSON copie dans le presse-papiers.");
+  }catch(e){
+    alert("Copie impossible dans ce navigateur. Utilisez l'aperçu JSON.");
+  }
+}
+
+/* ---------- RECHERCHE ---------- */
+function doFilter(q){
+  q = (q||"").toLowerCase().trim();
+  const T = $("#tree");
+  if(!T) return;
+  const all = [...T.querySelectorAll("details.folder, .file")];
+  all.forEach(n=>{ n.classList.remove("hidden"); n.classList.remove("match"); });
+  if(!q){ T.querySelectorAll("details.folder").forEach(d=>d.open=false); T.querySelectorAll("details.lib").forEach(d=>d.open=true); return; }
+  all.forEach(n=>n.classList.add("hidden"));
+  const reveal = n =>{ n.classList.remove("hidden"); let p=n.parentElement; while(p && p!==T){ if(p.tagName==="DETAILS"){p.classList.remove("hidden"); p.open=true;} p=p.parentElement; } };
+  let count=0;
+  all.forEach(n=>{
+    if((n.dataset.name||"").includes(q)){
+      reveal(n); count++;
+      if(n.classList.contains("file")) n.classList.add("match");
+      if(n.tagName==="DETAILS"){ n.querySelectorAll("details.folder, .file").forEach(x=>x.classList.remove("hidden")); n.querySelectorAll("details").forEach(d=>d.open=true); }
+    }
+  });
+  $("#filter").title = count ? count+" resultat(s)" : "Aucun resultat";
+}
+
+/* ---------- ACTIVITE PAR PERSONNE ---------- */
+let PERSONS_LIST = [];
+function collectPersons(data){
+  const set = new Set();
+  const walk = (node, lib, parentPath) => {
+    const path = parentPath ? parentPath + "/" + node.Name : node.Name;
+    if(node.CreePar) set.add(node.CreePar);
+    if(node.ModifiePar) set.add(node.ModifiePar);
+    (node.Fichiers||[]).forEach(f=>{
+      if(f.CreePar) set.add(f.CreePar);
+      if(f.ModifiePar) set.add(f.ModifiePar);
+    });
+    (node.Dossiers||[]).forEach(d=> walk(d, lib, path));
+  };
+  (data.Bibliotheques||[]).forEach(l=> walk(l, l.Name, ""));
+  return [...set].filter(Boolean).sort((a,b)=>a.localeCompare(b,"fr"));
+}
+function personsFromArchitecture(data){
+  PERSONS_LIST = collectPersons(data);
+  const list = $("#personList"); list.innerHTML = "";
+  PERSONS_LIST.forEach(p=>{ const o=document.createElement("option"); o.value=p; list.appendChild(o); });
+}
+function doPersonFilter(q){
+  q = (q||"").toLowerCase().trim();
+  const els = document.querySelectorAll("#tree .file, #tree details.folder");
+  els.forEach(n=> n.classList.remove("person-match","match-person"));
+  if(!q){ $("#personFilter").title = "Tapez un nom pour filtrer"; return; }
+  let count=0;
+  els.forEach(n=>{
+    const persons = (n.dataset.persons||"").toLowerCase();
+    if(persons.includes(q)){
+      n.classList.add("person-match"); count++;
+      let p = n.parentElement;
+      while(p && p.id !== "tree"){ if(p.tagName==="DETAILS"){p.classList.add("person-match"); p.open=true;} p=p.parentElement; }
+    }
+  });
+  $("#personFilter").title = count ? count+" element(s) par "+q : "Aucun element trouve";
+}
+function buildPersonDataset(node, lib, parentPath, rows){
+  const path = parentPath ? parentPath + "/" + node.Name : node.Name;
+  const entry = {name:node.Name, path, lib, type:"Dossier", creePar:node.CreePar||"", cree:node.Cree||"", modifiePar:node.ModifiePar||"", modifie:node.Modifie||""};
+  if(entry.creePar || entry.modifiePar) rows.push(entry);
+  (node.Fichiers||[]).forEach(f=>{
+    const fe = {name:f.Name, path:path+"/"+f.Name, lib, type:"Fichier", creePar:f.CreePar||"", cree:f.Cree||"", modifiePar:f.ModifiePar||"", modifie:f.Modifie||""};
+    if(fe.creePar || fe.modifiePar) rows.push(fe);
+  });
+  (node.Dossiers||[]).forEach(d=> buildPersonDataset(d, lib, path, rows));
+}
+function generateActivityReport(){
+  if(!needData()) return;
+  const rows = [];
+  (DATA.Bibliotheques||[]).forEach(l=> buildPersonDataset(l, l.Name, "", rows));
+  const byPerson = {};
+  rows.forEach(r=>{
+    const persons = [...new Set([r.creePar, r.modifiePar].filter(Boolean))];
+    persons.forEach(p=>{
+      if(!byPerson[p]) byPerson[p] = [];
+      byPerson[p].push(r);
+    });
+  });
+  const sorted = Object.keys(byPerson).sort((a,b)=>a.localeCompare(b,"fr"));
+  const siteTitle = DATA.Site && DATA.Site.Titre || "Architecture";
+  const siteUrl = DATA.Site && DATA.Site.Url || "";
+  const captured = DATA.Site && DATA.Site.CaptureLe || "";
+  let body = sorted.map(person=>{
+    const items = byPerson[person];
+    const created = items.filter(i=>i.creePar===person);
+    const modified = items.filter(i=>i.modifiePar===person && i.creePar!==person);
+    const both = items.filter(i=>i.creePar===person && i.modifiePar===person);
+    return `<details class="report-person" open>
+      <summary><h3>${esc(person)} <span class="count-badge">${items.length} element(s)</span></h3></summary>
+      ${items.map(i=>`<div class="report-item">
+        <span class="icon-rep">${i.type==="Dossier"?"[D]":"[F]"}</span>
+        <span class="action">${i.modifiePar===person && i.creePar===person?"A cree et modifie":(i.creePar===person?"A cree":"A modifie")}</span>
+        <span class="path"><b>${esc(i.name)}</b> dans ${esc(i.lib)} / ${esc(i.path)}</span>
+        <span class="date">${i.modifiePar===person?(i.modifie?"le "+esc(i.modifie):""):(i.cree?"le "+esc(i.cree):"")}</span>
+      </div>`).join("")}
+    </details>`;
+  }).join("");
+  const html = `<!doctype html><html lang="fr"><head><meta charset="utf-8"><title>Rapport d'activite - ${esc(siteTitle)}</title>
+  <style>
+    body{font-family:Arial,Calibri,sans-serif;color:#172033;margin:24px;font-size:13px}
+    h1{font-size:20px;margin:0 0 4px} .meta{color:#5b667a;margin-bottom:16px;font-size:12px;line-height:1.45}
+    details.report-person{border:1px solid #d0d7de;border-radius:8px;padding:8px 12px;margin-bottom:10px}
+    details.report-person summary{cursor:pointer;padding:2px 0}
+    details.report-person h3{display:inline;font-size:15px;margin:0}
+    .count-badge{font-size:12px;background:#eef2f6;padding:1px 10px;border-radius:999px;color:#656d76;font-weight:400;margin-left:8px}
+    .report-item{display:flex;gap:10px;padding:5px 0;border-bottom:1px solid #eef2f6;align-items:center;font-size:13px}
+    .report-item:last-child{border-bottom:none}
+    .report-item .path{color:#555;font-size:12px;flex:1;word-break:break-word}
+    .report-item .action{font-weight:600;white-space:nowrap;font-size:12px;color:#0969da}
+    .report-item .date{color:#5b667a;white-space:nowrap;font-size:12px}
+    @media print{body{margin:12mm} details.report-person{break-inside:avoid}}
+  </style></head><body>
+    <h1>Rapport d'activite - ${esc(siteTitle)}</h1>
+    <div class="meta">${esc(siteUrl)}${captured?"<br>Capture le "+esc(captured):""}<br>${sorted.length} personne(s) - ${rows.length} element(s)</div>
+    ${body || "<p>Aucune activite dans cette architecture.</p>"}
+  </body></html>`;
+  printReportHtml(html, "rapport-activite-"+safe(siteTitle)+"-"+stamp()+".html");
+}
+function showActivityReportModal(){
+  if(!needData()) return;
+  const rows = [];
+  (DATA.Bibliotheques||[]).forEach(l=> buildPersonDataset(l, l.Name, "", rows));
+  const byPerson = {};
+  rows.forEach(r=>{
+    const persons = [...new Set([r.creePar, r.modifiePar].filter(Boolean))];
+    persons.forEach(p=>{
+      if(!byPerson[p]) byPerson[p] = [];
+      byPerson[p].push(r);
+    });
+  });
+  const sorted = Object.keys(byPerson).sort((a,b)=>a.localeCompare(b,"fr"));
+  const siteTitle = DATA.Site && DATA.Site.Titre || "Architecture";
+  const siteUrl = DATA.Site && DATA.Site.Url || "";
+  const captured = DATA.Site && DATA.Site.CaptureLe || "";
+  const allTotal = rows.length;
+  const personHtml = sorted.map(person=>{
+    const items = byPerson[person];
+    return `<details class="report-person" open>
+      <summary><h3>${esc(person)} <span class="count-badge">${items.length}</span></h3></summary>
+      ${items.map(i=>`<div class="report-item">
+        <span class="icon-rep">${i.type==="Dossier"?"[D]":"[F]"}</span>
+        <span class="action">${i.modifiePar===person && i.creePar===person?"A cree et modifie":(i.creePar===person?"A cree":"A modifie")}</span>
+        <span class="path"><b>${esc(i.name)}</b> — ${esc(i.lib)} / ${esc(i.path)}</span>
+        <span class="date">${i.modifiePar===person?(i.modifie?"le "+esc(i.modifie):""):(i.cree?"le "+esc(i.cree):"")}</span>
+      </div>`).join("")}
+    </details>`;
+  }).join("");
+  const overlay = document.createElement("div");
+  overlay.className = "report-modal";
+  overlay.innerHTML = `<div class="report-modal-inner">
+    <h2>Rapport d'activité</h2>
+    <div class="sub">${esc(siteTitle)} — ${esc(siteUrl)}${captured?" — Capture le "+esc(captured):""} — ${sorted.length} personne(s), ${allTotal} element(s)</div>
+    <div class="report-tabs">
+      <button class="active" data-sort="alpha">A-Z</button>
+      <button data-sort="count">Par volume</button>
+    </div>
+    <div class="report-section" id="reportSection">${personHtml}</div>
+    <div class="report-close"><button class="primary" id="reportCloseBtn">Fermer</button></div>
+  </div>`;
+  overlay.addEventListener("click", e=>{ if(e.target===overlay) overlay.remove(); });
+  overlay.querySelector("#reportCloseBtn").addEventListener("click", ()=>overlay.remove());
+  document.body.appendChild(overlay);
+}
+
+async function expandAllProgressively(){
+  if(!DATA) return;
+  if(FOLDERS.length > 5000 && !confirm(`Cette architecture contient ${FOLDERS.length} dossiers. Tout derouler peut prendre du temps. Continuer ?`)) return;
+  let opened = 0;
+  setLoadProgress(0, "Deroulement progressif", "Ouverture des branches par lots...");
+  while(true){
+    const closed = [...document.querySelectorAll("#tree details:not([open])")];
+    if(!closed.length) break;
+    for(let i=0;i<closed.length;i++){
+      closed[i].open = true;
+      opened++;
+      if(opened % 80 === 0){
+        const pct = Math.min(99, Math.round((opened / Math.max(1, FOLDERS.length)) * 100));
+        setLoadProgress(pct, "Deroulement progressif", `${opened} branche(s) ouverte(s).`);
+        await sleep(0);
+      }
+    }
+    await sleep(0);
+  }
+  setLoadProgress(100, "Deroulement termine", `${opened} branche(s) ouverte(s).`);
+  hideLoadProgressSoon();
+}
+
+/* ---------- EXPORTS ARCHITECTURE ---------- */
+function architectureReportHtml(){
+  const title = "Architecture SharePoint";
+  const siteTitle = DATA.Site && DATA.Site.Titre || "";
+  const siteUrl = DATA.Site && DATA.Site.Url || "";
+  const captured = DATA.Site && DATA.Site.CaptureLe || "";
+  let body = "";
+  const sitePerms = normalizePermissions(DATA.Site && DATA.Site.Permissions || []);
+  if(sitePerms.length){
+    const siteRights = sitePerms.map(p=>"<b>"+esc(p.Principal)+"</b> ("+esc(p.Type)+") : "+esc(p.Roles.join(", "))).join(" &nbsp;|&nbsp; ");
+    body += "<h2>Site</h2><p class=\"rights\">"+siteRights+"</p>";
+  }
+  (DATA.Bibliotheques||[]).forEach(l=>{
+    const libName = l.Name || l.Title || "Documents";
+    const libPerms = normalizePermissions(l.Permissions||[]);
+    const libRights = libPerms.length
+      ? libPerms.map(p=>"<b>"+esc(p.Principal)+"</b> ("+esc(p.Type)+") : "+esc(p.Roles.join(", "))).join(" &nbsp;|&nbsp; ")
+      : "<i>droits bibliotheque non captures ou aucun droit explicite</i>";
+    body += "<h2>[B] "+esc(libName)+"</h2><p class=\"rights\">"+libRights+"</p>";
+    (l.Dossiers||[]).forEach(f=> body+=reportHtml(f,0));
+  });
+  return `<!doctype html><html lang="fr"><head><meta charset="utf-8"><title>${esc(title)}</title>
+  <style>
+    body{font-family:Calibri,Arial,sans-serif;color:#172033;margin:24px;font-size:12px}
+    h1{font-size:22px;margin:0 0 6px} h2{font-size:16px;margin:18px 0 8px;border-bottom:1px solid #c8d0dc;padding-bottom:4px}
+    .meta{color:#5b667a;margin-bottom:16px;line-height:1.45}.rights{margin:4px 0 10px;color:#333}
+    p{break-inside:avoid;word-break:break-word}
+    @media print{body{margin:12mm}}
+  </style></head><body>
+    <h1>${esc(title)}${siteTitle ? " - "+esc(siteTitle) : ""}</h1>
+    <div class="meta">${esc(siteUrl)}${captured ? "<br>Capture le "+esc(captured) : ""}</div>
+    ${body || "<p>Aucune bibliotheque dans le JSON.</p>"}
+  </body></html>`;
+}
+function showExportPdfModal(mode){
+  if(!needData())return;
+  const siteTitle = DATA.Site && DATA.Site.Titre || "architecture";
+  const allGroups = [...new Set((DATA.Bibliotheques||[]).flatMap(l=>{const g=[]; collectAllPrincipals(l,g); return g;}).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"fr"));
+  const modal = document.createElement("div");
+  modal.className = "modal-overlay";
+  modal.innerHTML = `<div class="modal-box">
+    <h2>Exporter en PDF</h2>
+    <div class="sub">${esc(siteTitle)} — Choisissez ce qui doit apparaitre</div>
+    <div class="modal-options">
+      <label class="modal-opt"><input type="radio" name="pdfChoice" value="all" checked><div><label>Tout afficher</label><span>Arborescence complete avec tous les groupes et droits</span></div></label>
+      <label class="modal-opt"><input type="radio" name="pdfChoice" value="groups"><div><label>Groupes et droits uniquement</label><span>Tableau des permissions sans l'arborescence</span></div></label>
+      <label class="modal-opt"><input type="radio" name="pdfChoice" value="person"><div><label>Par personne / groupe specifique</label><span>Filtrer le rapport pour un groupe ou un utilisateur</span></div></label>
+    </div>
+    <div id="pdfPersonChoices" style="display:none;margin-bottom:14px">
+      <select id="pdfPersonSelect" style="width:100%"><option value="">-- Choisir un groupe ou utilisateur --</option>${allGroups.map(g=>`<option value="${esc(g)}">${esc(g)}</option>`).join("")}</select>
+    </div>
+    <div class="modal-btns">
+      <button id="pdfModalCancel" type="button">Annuler</button>
+      <button id="pdfModalConfirm" class="primary" type="button">Exporter PDF</button>
+    </div>
+  </div>`;
+  modal.addEventListener("click", e=>{ if(e.target===modal) modal.remove(); });
+  document.body.appendChild(modal);
+  modal.querySelector("#pdfModalCancel").addEventListener("click", ()=>modal.remove());
+  modal.querySelectorAll("input[name=pdfChoice]").forEach(r=>r.addEventListener("change",()=>{
+    modal.querySelector("#pdfPersonChoices").style.display = r.value==="person" ? "block" : "none";
+  }));
+  modal.querySelector("#pdfModalConfirm").addEventListener("click",()=>{
+    const choice = modal.querySelector("input[name=pdfChoice]:checked");
+    if(!choice) return;
+    modal.remove();
+    const loadingEl = document.createElement("div");
+    loadingEl.className = "modal-overlay";
+    loadingEl.innerHTML = '<div class="modal-box" style="text-align:center"><h2>Generation du PDF...</h2><div class="sub" style="margin:10px 0">Veuillez patienter pendant la creation du document.</div><div class="progress-track" style="margin:10px 0"><div class="progress-bar" id="pdfProgressBar" style="width:30%"></div></div></div>';
+    document.body.appendChild(loadingEl);
+    const step = (pct)=>setTimeout(()=>{const el=document.getElementById("pdfProgressBar"); if(el) el.style.width=pct+"%";},0);
+    step(45);
+    if(choice.value==="all" || choice.value==="groups"){
+      const rows = collectPermissionReportRows();
+      step(75);
+      setTimeout(()=>{
+        exportRightsPDF(rows);
+        loadingEl.remove();
+      },0);
+    }else{
+      const sel = modal.querySelector("#pdfPersonSelect");
+      const selectedPerson = sel ? sel.value : "";
+      if(selectedPerson){
+        const rows = collectPermissionReportRows();
+        const filtered = rows.filter(r=>r.principal===selectedPerson);
+        step(75);
+        setTimeout(()=>{
+          exportPersonFilteredPdf(filtered, selectedPerson);
+          loadingEl.remove();
+        },0);
+      }else{
+        loadingEl.remove();
+        alert("Veuillez selectionner un groupe ou un utilisateur.");
+      }
+    }
+  });
+}
+function collectAllPrincipals(node, acc){
+  (node.Permissions||[]).forEach(p=>{ if(p.Principal) acc.push(p.Principal); });
+  if(node.HeritageRompu===false) return;
+  (node.Dossiers||[]).forEach(d=> collectAllPrincipals(d, acc));
+}
+function exportPersonFilteredPdf(filteredRows, personName){
+  if(!filteredRows.length){ alert("Aucune donnee pour ce groupe."); return; }
+  const siteTitle = DATA.Site && DATA.Site.Titre || "Architecture SharePoint";
+  const siteUrl = DATA.Site && DATA.Site.Url || "";
+  const captured = DATA.Site && DATA.Site.CaptureLe || "";
+  const doc = new jspdf.jsPDF({orientation:"landscape",unit:"mm",format:"a4"});
+  doc.setFont("helvetica","bold");
+  doc.setFontSize(16);
+  doc.text("Rapport d'acces : "+personName, 14, 16);
+  doc.setFont("helvetica","normal");
+  doc.setFontSize(9);
+  doc.text(siteTitle+" — "+siteUrl, 14, 23);
+  if(captured) doc.text("Capture le "+captured, 14, 28);
+  doc.text(filteredRows.length+" element(s)", 14, 33);
+  const headers = [["Objet","Bibliotheque","Chemin","Heritage","Groupe","Type","Membres","Droits"]];
+  const data = filteredRows.map(r=>[r.kind,r.library,r.path,r.heritage,r.principal,r.type,r.members,r.roles]);
+  doc.autoTable({
+    startY: 37,
+    head: headers,
+    body: data,
+    styles:{fontSize:7,cellPadding:1.5,overflow:"linebreak",halign:"left"},
+    headStyles:{fillColor:[41,128,185],fontSize:7,halign:"left",textColor:255},
+    alternateRowStyles:{fillColor:[245,247,250]},
+    margin:{left:10,right:10},
+    tableLineColor:[200,200,200],
+    tableLineWidth:0.1,
+    columnStyles:{
+      0:{cellWidth:16},
+      1:{cellWidth:30},
+      2:{cellWidth:50},
+      3:{cellWidth:22},
+      6:{cellWidth:30}
+    }
+  });
+  doc.save("rapport-"+safe(personName)+"-"+stamp()+".pdf");
+}
+function permissionRowsFor(kind, libraryName, path, node, rows, parentEffective){
+  const permsList = normalizePermissions(node && node.Permissions || []);
+  const hasHeritage = node && Object.prototype.hasOwnProperty.call(node, "HeritageRompu");
+  const inherits = hasHeritage && node.HeritageRompu===false;
+  const parentList = Array.isArray(parentEffective) ? parentEffective : [];
+  const effectiveList = inherits ? (parentList.length ? parentList : permsList) : permsList;
+  const heritageLabel = hasHeritage ? (inherits ? "conserve (herite du parent)" : "rompu") : "non capture";
+  if(effectiveList.length){
+    effectiveList.forEach(p=>{
+      rows.push({
+        kind,
+        library: libraryName,
+        path: path || libraryName,
+        heritage: heritageLabel,
+        principal: p.Principal || "",
+        type: p.Type || "",
+        members: p.Members.join(", ") || (p.Type==="User" ? p.Principal : ""),
+        roles: p.Roles.join(", ")
+      });
+    });
+  }else{
+    rows.push({
+      kind,
+      library: libraryName,
+      path: path || libraryName,
+      heritage: heritageLabel,
+      principal: inherits ? "Heritage du parent non capture" : "Aucun principal explicite dans le JSON",
+      type: "",
+      members: "",
+      roles: inherits ? "Droits herites non disponibles dans ce JSON" : ""
+    });
+  }
+  return effectiveList;
+}
+function collectPermissionReportRows(){
+  const rows = [];
+  const siteTitle = DATA.Site && DATA.Site.Titre || "Site SharePoint";
+  const sitePath = DATA.Site && DATA.Site.Url || siteTitle;
+  const siteEffective = permissionRowsFor("Site", siteTitle, sitePath, DATA.Site || {}, rows, []);
+  (DATA.Bibliotheques||[]).forEach(lib=>{
+    const libName = lib.Name || lib.Title || "Documents";
+    const libEffective = permissionRowsFor("Bibliotheque", libName, libName, lib, rows, siteEffective);
+    const stack = [];
+    (lib.Dossiers||[]).slice().reverse().forEach(folder=>stack.push({node:folder, path:folder.Name||"(dossier sans nom)", parentEffective:libEffective}));
+    while(stack.length){
+      const item = stack.pop();
+      const effective = permissionRowsFor("Dossier", libName, item.path, item.node, rows, item.parentEffective);
+      (item.node.Dossiers||[]).slice().reverse().forEach(child=>{
+        const childName = child.Name || "(dossier sans nom)";
+        stack.push({node:child, path:item.path + "/" + childName, parentEffective:effective});
+      });
+    }
+  });
+  return rows;
+}
+function printReportHtml(html, fallbackName){
+  const win = window.open("", "_blank");
+  if(!win){
+    download(new Blob([html],{type:"text/html;charset=utf-8"}), fallbackName);
+    alert("Ouverture bloque par le navigateur. Le rapport HTML a ete telecharge.");
+    return;
+  }
+  win.document.open();
+  win.document.write(html);
+  win.document.close();
+  setTimeout(()=>{ try{ win.focus(); win.print(); }catch(e){} }, 500);
+}
+function exportRightsPDF(rows){
+  if(!needData())return;
+  if(!rows) rows = collectPermissionReportRows();
+  const siteTitle = DATA.Site && DATA.Site.Titre || "Architecture SharePoint";
+  const siteUrl = DATA.Site && DATA.Site.Url || "";
+  const captured = DATA.Site && DATA.Site.CaptureLe || "";
+  const doc = new jspdf.jsPDF({orientation:"landscape",unit:"mm",format:"a4"});
+  doc.setFont("helvetica","bold");
+  doc.setFontSize(16);
+  doc.text("Rapport groupes, utilisateurs et droits", 14, 16);
+  doc.setFont("helvetica","normal");
+  doc.setFontSize(9);
+  doc.text(siteTitle, 14, 23);
+  if(siteUrl) doc.text(siteUrl, 14, 28);
+  if(captured) doc.text("Capture le "+captured, 14, 33);
+  doc.text(rows.length+" ligne(s)", 14, 38);
+  const headers = [["Objet","Bibliotheque","Chemin","Heritage","Groupe / utilisateur","Type","Membres","Droits"]];
+  const data = rows.map(r=>[r.kind,r.library,r.path,r.heritage,r.principal,r.type,r.members,r.roles]);
+  doc.autoTable({
+    startY: 42,
+    head: headers,
+    body: data,
+    styles:{fontSize:7,cellPadding:1.5,overflow:"linebreak",halign:"left"},
+    headStyles:{fillColor:[41,128,185],fontSize:7,halign:"left",textColor:255},
+    alternateRowStyles:{fillColor:[245,247,250]},
+    margin:{left:10,right:10},
+    tableLineColor:[200,200,200],
+    tableLineWidth:0.1,
+    columnStyles:{
+      0:{cellWidth:16},
+      1:{cellWidth:30},
+      2:{cellWidth:50},
+      3:{cellWidth:22},
+      6:{cellWidth:30}
+    }
+  });
+  doc.save("rapport-groupes-droits-"+safe(siteTitle)+"-"+stamp()+".pdf");
+}
+function reportHtml(f, depth){
+  const pad = depth*20;
+  const list = normalizePermissions(f.Permissions||[]);
+  const pt = (f.HeritageRompu===false)?"<i>heritage conserve</i>"
+    : (!list.length?"<i>unique - aucun groupe explicite</i>"
+    : list.map(p=>"<b>"+esc(p.Principal)+"</b> ("+esc(p.Type)+") : "+esc(p.Roles.join(", "))).join(" &nbsp;|&nbsp; "));
+  let h="<p style=\"margin:6px 0 2px "+pad+"px\">[D] <b>"+esc(f.Name)+"</b>"+(f.ModifiePar?" <span style=\"color:#777\">- modifie par "+esc(f.ModifiePar)+"</span>":"")+"<br><span style=\"margin-left:18px;color:#333\">"+pt+"</span></p>";
+  (f.Fichiers||[]).forEach(fi=> h+="<p style=\"margin:1px 0 1px "+(pad+18)+"px;color:#555\">[F] "+esc(fi.Name)+(fi.Modifie?" <span style=\"color:#999\">("+esc(fi.Modifie)+")</span>":"")+"</p>");
+  (f.Dossiers||[]).forEach(s=> h+=reportHtml(s, depth+1));
+  return h;
+}
+function exportWord(){
+  if(!needData())return;
+  let h="<html xmlns:o=\"urn:schemas-microsoft-com:office:office\" xmlns:w=\"urn:schemas-microsoft-com:office:word\"><head><meta charset=\"utf-8\">"
+    +"<style>body{font-family:Calibri,Arial;font-size:11pt} h1{font-size:18pt} h2{font-size:14pt;color:#0969da;border-bottom:1px solid #ccc}</style></head><body>";
+  h+="<h1>Architecture SharePoint - "+esc(DATA.Site&&DATA.Site.Titre||"")+"</h1>";
+  h+="<p>"+esc(DATA.Site&&DATA.Site.Url||"")+"<br>Capture le "+esc(DATA.Site&&DATA.Site.CaptureLe||"")+"</p>";
+  (DATA.Bibliotheques||[]).forEach(l=>{ h+="<h2>[B] "+esc(l.Name)+"</h2>"; (l.Dossiers||[]).forEach(f=> h+=reportHtml(f,0)); });
+  h+="</body></html>";
+  download(new Blob(["\ufeff"+h],{type:"application/msword"}), "architecture-"+safe(DATA.Site&&DATA.Site.Titre)+".doc");
+}
+function walk(node, lib, parent, rows){
+  (node.Dossiers||[]).forEach(f=>{
+    const path = parent? parent+"/"+f.Name : f.Name;
+    const list = normalizePermissions(f.Permissions||[]);
+    if(f.HeritageRompu===false){ rows.push([lib, path, "non (herite)","","","","", f.ModifiePar||""]); }
+    else if(!list.length){ rows.push([lib, path, "oui","(aucun groupe explicite)","","","", f.ModifiePar||""]); }
+    else list.forEach(p=> rows.push([lib, path, "oui", p.Principal, p.Type, p.Members.join(", "), p.Roles.join(", "), f.ModifiePar||""]));
+    walk(f, lib, path, rows);
+  });
+}
+function exportExcel(){
+  if(!needData())return;
+  const rows=[["Bibliotheque","Dossier (chemin)","Heritage rompu","Groupe / Principal","Type","Membres / utilisateurs","Roles","Modifie par"]];
+  (DATA.Bibliotheques||[]).forEach(l=> walk(l, l.Name, "", rows));
+  const csv = rows.map(r=> r.map(c=>"\""+String(c==null?"":c).replace(/"/g,"\"\"")+"\"").join(";")).join("\r\n");
+  download(new Blob(["\ufeff"+csv],{type:"text/csv;charset=utf-8"}), "architecture-"+safe(DATA.Site&&DATA.Site.Titre)+".csv");
+}
+function exportArchitectureJson(){
+  if(!needData())return;
+  download(new Blob([JSON.stringify(DATA,null,2)],{type:"application/json;charset=utf-8"}), "architecture-"+safe(DATA.Site&&DATA.Site.Titre)+"-"+stamp()+".json");
+}
+
+/* ---------- UI ---------- */
+function readFile(file){
+  if(!file) return;
+  if(ACTIVE_WORKER){ ACTIVE_WORKER.terminate(); ACTIVE_WORKER = null; }
+  const r = new FileReader();
+  setLoadProgress(0, "Lecture du fichier", `${file.name} (${fileSizeLabel(file.size)})`);
+  r.onprogress = event=>{
+    if(event.lengthComputable){
+      const pct = 5 + ((event.loaded / Math.max(1, event.total)) * 55);
+      setLoadProgress(pct, "Lecture du fichier", `${file.name} - ${fileSizeLabel(event.loaded)} / ${fileSizeLabel(event.total)}`);
+    }
+  };
+  r.onerror = ()=>alert("Lecture impossible : "+(r.error && r.error.message ? r.error.message : "erreur fichier"));
+  r.onload = async ()=>{
+    setLoadProgress(60, "Lecture terminee", "Analyse du JSON...");
+    await loadText(r.result, file.name);
+  };
+  r.readAsText(file);
+}
+$("#file").addEventListener("change", e=>{ const f=e.target.files[0]; if(f) readFile(f); e.target.value=""; });
+$("#configFile").addEventListener("change", e=>{ const f=e.target.files[0]; if(f) readFile(f); e.target.value=""; });
+$("#actionMenu").addEventListener("change", function(){
+  const v=this.value;
+  if(v==="arch") $("#file").click();
+  else if(v==="config") $("#configFile").click();
+  else if(v==="exemple") render(DEMO);
+  this.value="";
+});
+$("#viewMenu").addEventListener("change", function(){
+  const v=this.value;
+  if(v==="expand") expandAllProgressively();
+  else if(v==="collapse") document.querySelectorAll("#tree details").forEach(d=>d.open=false);
+  this.value="";
+});
+$("#exportMenu").addEventListener("change", function(){
+  const v=this.value;
+  if(v==="pdf") showExportPdfModal("architecture");
+  else if(v==="pdfRights") showExportPdfModal("droits");
+  else if(v==="word") exportWord();
+  else if(v==="excel") exportExcel();
+  else if(v==="json") exportArchitectureJson();
+  else if(v==="rapport") showActivityReportModal();
+  this.value="";
+});
+$("#filter").addEventListener("input", e=> doFilter(e.target.value));
+$("#personFilter").addEventListener("input", e=> doPersonFilter(e.target.value));
+$("#addGroup").addEventListener("click", ()=>{ const ng = $("#newGroup"); if(!ng) return; addKnownGroup(ng.value); ng.value=""; renderGroups(); });
+const newGroupEl = $("#newGroup"); if(newGroupEl) newGroupEl.addEventListener("keydown", e=>{ if(e.key==="Enter"){ e.preventDefault(); const btn = $("#addGroup"); if(btn) btn.click(); } });
+["tenantId","clientId","certThumbprint","certPath","certPassword","siteUrl"].forEach(id=>{ const el = document.getElementById(id); if(el) el.addEventListener("input", updatePreview); });
+$("#exportLatest").addEventListener("click", ()=>exportPermissions("config-permissions-latest.json", true));
+$("#exportDated").addEventListener("click", ()=>exportPermissions("config-permissions-"+stamp()+".json"));
+$("#copyJson").addEventListener("click", copyJson);
+const drop=$("#drop");
+["dragover","dragenter"].forEach(ev=>document.addEventListener(ev,e=>{e.preventDefault();drop.classList.add("hl");}));
+["dragleave","drop"].forEach(ev=>document.addEventListener(ev,e=>{e.preventDefault();drop.classList.remove("hl");}));
+document.addEventListener("drop", e=>{ const f=e.dataTransfer.files[0]; if(f) readFile(f); });
+
+const DEMO={Site:{Titre:"L'AGENCE X (exemple)",Url:"https://lagencexci.sharepoint.com/sites/LAGENCEX",CaptureLe:"2026-07-10 14:30"},
+ Bibliotheques:[{Name:"Documents",Type:"Bibliotheque",Dossiers:[
+  {Name:"Direction",ModifiePar:"Application SharePoint",HeritageRompu:true,Permissions:[
+    {Principal:"Proprietaires L'AGENCE X",Type:"SharePointGroup",Roles:["Contrôle total"]},
+    {Principal:"G_AGENCE_X_DIRECTION",Type:"SecurityGroup",Roles:["Modification"]}],
+   Dossiers:[{Name:"Contrats",HeritageRompu:false,Permissions:[],Dossiers:[],Fichiers:[{Name:"contrat-cadre.docx",Cree:"2026-06-30",CreePar:"Pascal N'DRI",Modifie:"2026-07-09",ModifiePar:"Pascal N'DRI"}]}],
+   Fichiers:[{Name:"Budget_2026.xlsx",Cree:"2026-06-01",CreePar:"Marie K.",Modifie:"2026-07-08",ModifiePar:"Pascal N'DRI"}]},
+  {Name:"Commercial",ModifiePar:"Application SharePoint",HeritageRompu:true,Permissions:[{Principal:"G_AGENCE_X_COMMERCIAL",Type:"SecurityGroup",Roles:["Collaboration"]}],Dossiers:[],Fichiers:[{Name:"Pipeline.xlsx",Cree:"2026-07-05",CreePar:"Marie K.",Modifie:"2026-07-06",ModifiePar:"Marie K."}]},
+  {Name:"Confidentiel",ModifiePar:"Application SharePoint",HeritageRompu:true,Permissions:[],Dossiers:[],Fichiers:[]}
+ ],Fichiers:[{Name:"Accueil.docx",Modifie:"2026-07-07"}]}]};
+updateSummary();
+</script>
+</body>
+</html>

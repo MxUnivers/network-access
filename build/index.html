@@ -47,18 +47,25 @@
   .action-block{border:1px solid var(--line);border-radius:8px;padding:10px;background:var(--card2);min-width:0}
   .action-block h3{margin:0 0 8px;font-size:13px}
   .action-block .toolbar{gap:6px}
+  .action-runner{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px;width:100%;margin-top:8px}
   .drop{border:2px dashed var(--line);border-radius:8px;padding:12px;text-align:center;color:var(--muted);background:var(--card);min-height:66px;display:flex;align-items:center;justify-content:center}
   .drop.hl{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+  .load-progress{margin-top:10px;border:1px solid var(--line);border-radius:8px;background:var(--card2);padding:10px;display:grid;gap:7px}
+  .progress-head{display:flex;justify-content:space-between;gap:10px;color:var(--muted);font-size:12px}
+  .progress-track{height:10px;border-radius:999px;background:var(--chipbg);overflow:hidden;border:1px solid var(--line)}
+  .progress-bar{height:100%;width:0;background:var(--accent);transition:width .18s ease}
+  .progress-detail{font-size:12px;color:var(--muted);word-break:break-word}
   .tree-wrap{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px;box-shadow:var(--shadow)}
   .empty-note{color:var(--muted);font-size:13px;padding:14px}
   details{margin:2px 0}
-  summary{list-style:none;cursor:pointer;display:flex;align-items:flex-start;gap:8px;padding:5px 8px;border-radius:8px;min-height:34px}
+  summary{list-style:none;cursor:default;display:flex;align-items:flex-start;gap:8px;padding:5px 8px;border-radius:8px;min-height:34px}
   summary::-webkit-details-marker{display:none}
   summary:hover{background:var(--chipbg)}
   details.folder.selected>summary{background:var(--accent-soft);box-shadow:inset 3px 0 0 var(--accent)}
   details.folder.configured>summary .edit-state{color:var(--good);border-color:rgba(26,127,55,.35);background:rgba(26,127,55,.09)}
-  .caret{width:18px;color:var(--muted);transition:transform .15s,background .15s;flex:0 0 auto;margin-top:1px;cursor:pointer;text-align:center;border-radius:4px}
-  .caret:hover{background:var(--chipbg);color:var(--accent)}
+  .caret{width:24px;height:24px;color:var(--muted);transition:transform .15s;flex:0 0 auto;margin-top:-1px;display:inline-flex;align-items:center;justify-content:center;border-radius:6px;cursor:pointer;user-select:none}
+  .caret:hover{background:var(--accent-soft);color:var(--accent)}
+  details.folder>summary{cursor:pointer}
   details[open]>summary .caret{transform:rotate(90deg)}
   .ico{width:18px;text-align:center;flex:0 0 auto}
   .folder-main{min-width:0;flex:1}
@@ -72,10 +79,10 @@
   .badge{font-size:12px;padding:2px 8px;border-radius:999px;background:var(--chipbg);border:1px solid var(--line);display:inline-flex;align-items:center;gap:4px;max-width:100%}
   .badge.sg{color:var(--sg)}.badge.spg{color:var(--spg)}.badge.usr{color:var(--usr)}.badge.inherit{color:var(--muted)}.badge.none{color:var(--danger)}
   .badge.edit-state{white-space:nowrap;color:var(--muted)}
-  .file{display:flex;align-items:center;gap:8px;padding:3px 8px;color:var(--muted);border-radius:6px}.file .name{font-weight:400;color:var(--text)}
+  .file{display:flex;align-items:center;gap:8px;padding:3px 8px;color:var(--muted);border-radius:6px;min-height:32px}.file .name{font-weight:400;color:var(--text);min-width:0;word-break:break-word}.file-actions{display:flex;gap:4px;margin-left:auto;opacity:.72}.file-actions button{min-height:26px;padding:3px 7px;font-size:12px}.file:hover .file-actions,.file:focus-within .file-actions{opacity:1}
   .file.match{background:var(--hit)}
   .hidden{display:none!important}.legend{color:var(--muted);font-size:12px;margin-top:10px}
-  .editor{position:sticky;top:102px;background:var(--card);border:1px solid var(--line);border-radius:8px;box-shadow:var(--shadow);overflow:hidden}
+  .editor{position:sticky;top:102px;max-height:calc(100vh - 118px);overflow-y:auto;scrollbar-gutter:stable;background:var(--card);border:1px solid var(--line);border-radius:8px;box-shadow:var(--shadow)}
   .editor-head{padding:12px 14px;border-bottom:1px solid var(--line);background:var(--card2)}
   .editor-head h2{font-size:15px;margin:0 0 3px}
   .editor-head .status{color:var(--muted);font-size:12px}
@@ -83,6 +90,7 @@
   .editor-section:last-child{border-bottom:none}
   .section-title{font-size:12px;text-transform:uppercase;color:var(--muted);font-weight:700;letter-spacing:.04em;margin:0 0 8px}
   .grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .grid1{display:grid;grid-template-columns:1fr;gap:8px}
   .field{display:flex;flex-direction:column;gap:4px;min-width:0}
   .field label{font-size:12px;color:var(--muted)}
   .field small{font-size:11px;color:var(--muted)}
@@ -95,7 +103,24 @@
   .selected-folder{display:grid;gap:8px}
   .selected-title{font-weight:700;font-size:14px;word-break:break-word}
   .selected-meta{color:var(--muted);font-size:12px;word-break:break-word}
-  .current-perms{display:flex;gap:6px;flex-wrap:wrap}
+  .rights-search-results{display:grid;gap:6px;margin-top:8px;max-height:260px;overflow:auto}.rights-result{display:block;width:100%;text-align:left;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:var(--card2);color:var(--text);cursor:pointer}.rights-result:hover{border-color:var(--accent);background:var(--accent-soft)}.rights-result strong,.rights-result span{display:block;word-break:break-word}.rights-result span{color:var(--muted);font-size:11px}.search-empty{color:var(--muted);font-size:12px;padding:7px 0}.structure-error{color:var(--danger);font-size:12px;min-height:18px;margin-top:6px}
+  .selected-facts{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+  .fact{border:1px solid var(--line);border-radius:8px;background:var(--card2);padding:7px;min-width:0}
+  .fact b{display:block;font-size:12px;word-break:break-word}
+  .fact span{display:block;font-size:11px;color:var(--muted);word-break:break-word}
+  .current-perms{display:grid;gap:8px}
+  .rights-heading{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+  .rights-heading strong{font-size:12px}
+  .rights-source{font-size:11px;color:var(--muted)}
+  .rights-list{display:grid;gap:7px}
+  .right-row{border:1px solid var(--line);border-radius:8px;background:var(--card2);padding:8px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px}
+  .right-principal,.right-members{min-width:0}
+  .right-name{font-weight:700;word-break:break-word}
+  .right-meta{display:flex;gap:5px;flex-wrap:wrap;margin-top:4px}
+  .right-label{display:block;color:var(--muted);font-size:11px;margin-bottom:3px}
+  .member-list{display:grid;gap:3px}
+  .member-line{font-size:12px;word-break:break-word}
+  .member-line .member-type{color:var(--muted);font-size:11px}
   .quick-actions{display:flex;gap:8px;flex-wrap:wrap}
   .reset-option{display:flex;gap:8px;align-items:flex-start;border:1px solid var(--line);border-radius:8px;padding:8px;background:var(--card2);font-size:13px}
   .reset-option input{margin-top:3px}
@@ -111,49 +136,22 @@
   .export-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
   .json-preview{margin-top:8px;max-height:160px;overflow:auto;border:1px solid var(--line);border-radius:8px;background:var(--card2);padding:8px;font:12px/1.45 ui-monospace,SFMono-Regular,Consolas,"Liberation Mono",monospace;white-space:pre-wrap;word-break:break-word;color:var(--muted)}
   .warn-text{color:var(--warn);font-size:12px;margin-top:6px}
-  /* --- Selection --- */
-  .selbox{width:16px;height:16px;flex:0 0 auto;margin-top:3px;cursor:pointer;accent-color:var(--accent)}
-  details.folder.picked>summary{background:rgba(9,105,218,.06)}
-  .file .selbox{margin-top:0}
-  .selbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:8px 10px;margin-bottom:8px;border:1px solid var(--line);border-radius:8px;background:var(--card2);font-size:13px}
-  .selbar .count{font-weight:600;color:var(--text)}
-  .selbar .spacer{flex:1}
-  /* --- Bascule de vue --- */
-  .viewtabs{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
-  .viewtabs button{border:none;border-radius:0;min-height:32px}
-  .viewtabs button.active{background:var(--accent);color:#fff}
-  /* --- Vue par groupe --- */
-  .group-card{border:1px solid var(--line);border-radius:8px;margin:8px 0;background:var(--card);overflow:hidden}
-  .group-card>h3{margin:0;padding:9px 12px;font-size:14px;display:flex;align-items:center;gap:8px;background:var(--card2);border-bottom:1px solid var(--line)}
-  .group-card .g-count{margin-left:auto;font-size:12px;color:var(--muted);font-weight:400}
-  .group-loc{display:flex;gap:8px;align-items:center;padding:6px 12px;border-bottom:1px solid var(--line);font-size:13px}
-  .group-loc:last-child{border-bottom:none}
-  .group-loc .lvl{margin-left:auto;font-size:12px;padding:1px 8px;border-radius:999px;background:var(--chipbg);border:1px solid var(--line)}
-  .group-loc .g-path{color:var(--muted);word-break:break-word}
-  /* --- Menu Actions --- */
-  .menu-wrap{position:relative;display:inline-block}
-  .menu{position:absolute;right:0;top:calc(100% + 4px);z-index:30;min-width:220px;background:var(--card);border:1px solid var(--line);border-radius:10px;box-shadow:0 8px 24px rgba(31,35,40,.16);padding:6px;display:none}
-  .menu.open{display:block}
-  .menu .mi{display:flex;width:100%;gap:8px;align-items:center;border:none;background:transparent;border-radius:7px;padding:8px 10px;text-align:left;min-height:34px}
-  .menu .mi:hover{background:var(--accent-soft);color:var(--accent)}
-  .menu .mlabel{font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);padding:6px 10px 2px}
-  .menu hr{border:none;border-top:1px solid var(--line);margin:5px 4px}
-  /* --- Modal --- */
-  .modal-back{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;z-index:50;padding:16px}
-  .modal-back.open{display:flex}
-  .modal{background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:0 12px 40px rgba(0,0,0,.3);width:min(460px,100%);max-height:90vh;overflow:auto}
-  .modal-head{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border-bottom:1px solid var(--line)}
-  .modal-head h2{margin:0;font-size:16px}
-  .modal-body{padding:14px 16px;display:grid;gap:10px}
-  .modal-foot{padding:12px 16px;border-top:1px solid var(--line);display:flex;gap:8px;justify-content:flex-end}
-  .radio-row{display:flex;gap:6px;align-items:flex-start;font-size:13px}
-  .save-flash{color:var(--good);font-size:12px}
-  @media (max-width:1050px){main{grid-template-columns:1fr}.editor{position:static}.assignment{grid-template-columns:1fr}.folder-actions{width:100%;margin-left:38px}.summary-grid{grid-template-columns:1fr 1fr 1fr}.action-grid{grid-template-columns:1fr}}
-  @media (max-width:640px){header{padding:14px}main{padding:12px}.grid2,.summary-grid{grid-template-columns:1fr}.toolbar button,.toolbar label.btn{flex:1}.folder-actions{margin-left:0}.body{margin-left:12px;padding-left:9px}.action-panel{padding:10px}}
-  @media print{.action-panel,.editor,.folder-actions,#legend{display:none!important}header{position:static}.body{border:none}main{display:block;max-width:none;padding:0 12px}.tree-wrap{border:none;box-shadow:none}details{break-inside:avoid}}
+  .dirty-state{font-size:12px;color:var(--warn);font-weight:700}
+  .saved-state{font-size:12px;color:var(--good)}
+  .toast-region{position:fixed;right:18px;bottom:18px;z-index:40;display:grid;gap:8px;max-width:min(420px,calc(100vw - 36px));pointer-events:none}
+  .toast{padding:10px 12px;border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:8px;background:var(--card);box-shadow:0 8px 24px rgba(31,35,40,.18);color:var(--text)}
+  .toast.success{border-left-color:var(--good)}
+  .toast.warn{border-left-color:var(--warn)}
+  dialog{border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--text);padding:0;max-width:min(520px,calc(100vw - 28px));width:100%;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+  dialog::backdrop{background:rgba(15,23,42,.55)}
+  .modal-head{padding:16px 18px;border-bottom:1px solid var(--line);background:var(--card2)}
+  .modal-head h2{margin:0 0 4px;font-size:16px}
+  .modal-body{padding:16px 18px;color:var(--muted)}
+  .modal-actions{display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;padding:12px 18px;border-top:1px solid var(--line)}
+  @media (max-width:1050px){main{grid-template-columns:1fr}.editor{position:static;max-height:none;overflow:visible}.assignment{grid-template-columns:1fr}.folder-actions{width:100%;margin-left:38px}.summary-grid,.selected-facts{grid-template-columns:1fr 1fr 1fr}.action-grid{grid-template-columns:1fr}}
+  @media (max-width:640px){header{padding:14px}main{padding:12px}.grid2,.summary-grid,.selected-facts,.right-row{grid-template-columns:1fr}.toolbar button,.toolbar label.btn{flex:1}.action-runner{grid-template-columns:1fr}.folder-actions{margin-left:0}.body{margin-left:12px;padding-left:9px}.action-panel{padding:10px}}
+  @media print{.action-panel,.editor,.folder-actions,.file-actions,#legend{display:none!important}header{position:static}.body{border:none}main{display:block;max-width:none;padding:0 12px}.tree-wrap{border:none;box-shadow:none}details{break-inside:avoid}}
 </style>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 </head>
 <body>
 <header>
@@ -187,44 +185,44 @@
           </div>
         </div>
         <div class="action-block">
-          <h3>Actions</h3>
+          <h3>Exporter</h3>
           <div class="toolbar">
-            <div class="menu-wrap">
-              <button id="actionsBtn" type="button" aria-haspopup="true" aria-expanded="false">Actions &#9662;</button>
-              <div class="menu" id="actionsMenu" role="menu">
-                <div class="mlabel">Exporter (tout ou selection)</div>
-                <button class="mi" id="pdf" type="button">&#128196; PDF</button>
-                <button class="mi" id="word" type="button">&#128221; Word</button>
-                <button class="mi" id="excel" type="button">&#128202; Excel</button>
-                <button class="mi" id="archJson" type="button">&#128451; JSON architecture</button>
-                <hr>
-                <div class="mlabel">Par groupe</div>
-                <button class="mi" id="excelGroups" type="button">&#128101; Excel groupes par dossier</button>
-                <hr>
-                <div class="mlabel">Droits</div>
-                <button class="mi" id="addGroupModalBtn" type="button">&#10133; Ajouter un groupe (modal)</button>
-                <button class="mi" id="saveConfigMenu" type="button">&#128190; Enregistrer la config</button>
-              </div>
-            </div>
+            <button id="pdf" type="button">PDF</button>
+            <button id="pdfRights" type="button">PDF groupes</button>
+            <button id="word" type="button">Word</button>
+            <button id="excel" type="button">Excel</button>
+            <button id="archJson" type="button">JSON architecture</button>
+          </div>
+          <div class="action-runner">
+            <select id="actionMenu" aria-label="Action rapide">
+              <option value="pdfRights">PDF groupes + utilisateurs</option>
+              <option value="pdf">PDF architecture</option>
+              <option value="word">Word architecture</option>
+              <option value="excel">Excel droits</option>
+              <option value="archJson">JSON architecture global</option>
+              <option value="saveChanges">Enregistrer les changements</option>
+              <option value="exportLatest">Enregistrer config latest</option>
+              <option value="exportDated">Exporter config datee</option>
+              <option value="copyJson">Copier config JSON</option>
+              <option value="expand">Derouler arbre</option>
+              <option value="collapse">Replier arbre</option>
+            </select>
+            <button id="runAction" type="button">Executer</button>
           </div>
         </div>
       </div>
       <div class="drop" id="drop">Glissez-deposez ici une architecture ou une config de droits JSON.</div>
+      <div class="load-progress hidden" id="loadProgress" role="status" aria-live="polite">
+        <div class="progress-head">
+          <span id="progressLabel">Chargement</span>
+          <strong id="progressPercent">0%</strong>
+        </div>
+        <div class="progress-track"><div class="progress-bar" id="progressBar"></div></div>
+        <div class="progress-detail" id="progressDetail">En attente du fichier.</div>
+      </div>
     </div>
     <div class="tree-wrap hidden" id="treeWrap">
-      <div class="selbar">
-        <div class="viewtabs">
-          <button id="tabTree" class="active" type="button">Arborescence</button>
-          <button id="tabGroups" type="button">Par groupe</button>
-        </div>
-        <span class="spacer"></span>
-        <span class="count" id="selCount">0 coche(s)</span>
-        <button id="selAll" type="button">Tout cocher</button>
-        <button id="selNone" type="button">Tout decocher</button>
-        <button id="bulkAssign" class="primary" type="button">Droit a la selection...</button>
-      </div>
       <div id="tree"></div>
-      <div id="groupView" class="hidden"></div>
       <div class="legend" id="legend"></div>
     </div>
   </section>
@@ -236,34 +234,35 @@
     </div>
 
     <section class="editor-section">
-      <!-- <p class="section-title">Connexion</p>
+      <p class="section-title">Configuration production</p>
       <div class="grid2">
         <div class="field">
-          <label for="tenantId">TenantId</label>
-          <input id="tenantId" type="text" value="lagencexci.onmicrosoft.com" autocomplete="off">
+          <label for="tenantId">Tenant Entra ID</label>
+          <input id="tenantId" type="text" autocomplete="off" placeholder="tenant.onmicrosoft.com">
         </div>
         <div class="field">
-          <label for="clientId">ClientId</label>
-          <input id="clientId" type="text" value="4fd0a256-1ab4-4984-b9b3-9860da2cfaf3" autocomplete="off">
+          <label for="clientId">Application client ID</label>
+          <input id="clientId" type="text" autocomplete="off" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx">
         </div>
         <div class="field">
-          <label for="certThumbprint">CertificateThumbprint</label>
-          <input id="certThumbprint" type="text" value="453C3E6F2F38609897D23FDB7AEE2237E5C18F98" autocomplete="off">
+          <label for="certThumbprint">Thumbprint certificat</label>
+          <input id="certThumbprint" type="text" autocomplete="off" placeholder="453C...">
         </div>
         <div class="field">
-          <label for="certPath">CertificatePath</label>
-          <input id="certPath" type="text" value="..\cle.cer" autocomplete="off">
-          <small>Utiliser <b>..\cle.cer</b> si le JSON est place dans resultats.</small>
+          <label for="certPath">Chemin certificat</label>
+          <input id="certPath" type="text" autocomplete="off" placeholder="..\cle.cer">
+        </div>
+      </div>
+      <div class="grid1" style="margin-top:8px">
+        <div class="field">
+          <label for="certPassword">Mot de passe certificat</label>
+          <input id="certPassword" type="password" autocomplete="off" placeholder="laisser vide si .cer">
         </div>
         <div class="field">
-          <label for="certPassword">CertificatePassword</label>
-          <input id="certPassword" type="password" autocomplete="off">
+          <label for="siteUrl">URL du site SharePoint</label>
+          <input id="siteUrl" type="url" autocomplete="off" placeholder="https://tenant.sharepoint.com/sites/site">
         </div>
-        <div class="field">
-          <label for="siteUrl">SiteUrl</label>
-          <input id="siteUrl" type="url" value="https://lagencexci.sharepoint.com/sites/LAGENCEX" autocomplete="off">
-        </div>
-      </div> -->
+      </div>
     </section>
 
     <section class="editor-section">
@@ -274,6 +273,13 @@
       </div>
       <div class="chips" id="groupChips"></div>
       <datalist id="knownGroups"></datalist>
+    </section>
+
+  <section class="editor-section">
+      <p class="section-title">Recherche dans les droits</p>
+      <input id="rightsSearch" type="search" placeholder="Rechercher un groupe, utilisateur ou membre">
+      <div id="rightsSearchSummary" class="selected-meta"></div>
+      <div id="rightsSearchResults" class="rights-search-results"></div>
     </section>
 
     <section class="editor-section">
@@ -291,44 +297,38 @@
         <div class="metric"><b id="metricAssignments">0</b><span>droits</span></div>
       </div>
       <div class="export-actions">
-        <button id="exportLatest" class="primary" type="button">Enregistrer latest</button>
-        <button id="exportDated" type="button">Copie datee</button>
-        <button id="copyJson" type="button">Copier JSON</button>
+        <button id="saveChanges" class="primary" type="button" disabled>Enregistrer les changements</button>
+        <span id="draftState" class="saved-state" aria-live="polite">Tout est enregistre.</span>
       </div>
-      <div class="save-flash" id="editStamp"></div>
       <div class="warn-text" id="exportWarning"></div>
       <pre class="json-preview" id="jsonPreview">{}</pre>
     </section>
   </aside>
 </main>
-
-<div class="modal-back" id="modalBack">
-  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-    <div class="modal-head">
-      <h2 id="modalTitle">Ajouter un droit a un groupe</h2>
-      <button class="icon ghost" id="modalClose" type="button">&#10005;</button>
-    </div>
-    <div class="modal-body">
-      <div class="field">
-        <label for="modalGroup">Groupe (Entra ID / SharePoint)</label>
-        <input id="modalGroup" type="text" list="knownGroups" placeholder="Nom exact du groupe">
-      </div>
-      <div class="field">
-        <label for="modalRole">Niveau d'acces</label>
-        <select id="modalRole"></select>
-      </div>
-      <div class="field">
-        <label>Appliquer a</label>
-        <label class="radio-row"><input type="radio" name="modalTarget" value="selected" checked> Dossiers coches (<span id="modalSelCount">0</span>)</label>
-        <label class="radio-row"><input type="radio" name="modalTarget" value="current"> Dossier ouvert dans l'editeur</label>
-      </div>
-    </div>
-    <div class="modal-foot">
-      <button id="modalCancel" type="button">Annuler</button>
-      <button id="modalApply" class="primary" type="button">Appliquer</button>
-    </div>
+<div id="toastRegion" class="toast-region" aria-live="polite" aria-atomic="true"></div>
+<dialog id="saveBeforeExportModal" aria-labelledby="saveBeforeExportTitle">
+  <div class="modal-head">
+    <h2 id="saveBeforeExportTitle">Modifications non enregistrees</h2>
+    <div>Des droits ou des elements de structure ont ete modifies dans l’architecture actuelle.</div>
   </div>
-</div>
+  <div class="modal-body">Enregistrez les changements pour mettre a jour tout le JSON global, ou exportez une copie avec les changements sans modifier l’etat en cours.</div>
+  <div class="modal-actions">
+    <button id="cancelSaveExport" value="cancel" type="button">Annuler</button>
+    <button id="exportWithoutSave" value="without" type="button">Exporter sans enregistrer</button>
+    <button id="confirmSaveExport" class="primary" value="save" type="button">Enregistrer puis exporter</button>
+  </div>
+</dialog>
+<dialog id="structureModal" aria-labelledby="structureModalTitle">
+  <div class="modal-head">
+    <h2 id="structureModalTitle">Modifier la structure</h2>
+    <div id="structureModalMessage"></div>
+  </div>
+  <div class="modal-body" id="structureModalBody"></div>
+  <div class="modal-actions">
+    <button id="structureCancel" value="cancel" type="button">Annuler</button>
+    <button id="structureConfirm" class="primary" value="confirm" type="button">Confirmer</button>
+  </div>
+</dialog>
 
 <script>
 let DATA = null;
@@ -340,51 +340,505 @@ let SELECTED_ID = null;
 let KNOWN_GROUPS = [];
 let PENDING_CONFIG = null;
 let LAST_LOADED_NAME = "";
-// Authentification geree EN INTERNE (la section Connexion du DOM est volontairement masquee).
-// Valeurs par defaut = L'AGENCE X ; mises a jour si on charge un config.json.
-let AUTH_INFO = {
-  TenantId: "lagencexci.onmicrosoft.com",
-  ClientId: "4fd0a256-1ab4-4984-b9b3-9860da2cfaf3",
-  CertificateThumbprint: "453C3E6F2F38609897D23FDB7AEE2237E5C18F98",
-  CertificatePath: "..\\cle.cer",
-  CertificatePassword: ""
-};
-let SITE_URL = "https://lagencexci.sharepoint.com/sites/LAGENCEX";
-let SELECTED_FOLDERS = new Set();   // ids de dossiers coches
-let SELECTED_FILES = new Set();     // cles de fichiers coches
-let CURRENT_VIEW = "tree";          // "tree" | "groups"
-let LAST_EDIT_TS = null;            // horodatage derniere modif de droits
+let RENDER_TOKEN = 0;
+let ACTIVE_WORKER = null;
+let DIRTY = false;
+let CURRENT_SOURCE_KEY = "";
+let PENDING_DRAFT = null;
+let IS_RESTORING = false;
+let DRAFT_SAVE_TIMER = null;
+let DIRTY_TOAST_TIMER = null;
+let STRUCTURE_EDITS = [];
+let STRUCTURE_REPLAYING = false;
+const DRAFT_STORAGE_KEY = "spo-visualizer-draft-v2";
 
 const SEP = "\u001f";
 const ROLE_OPTIONS = ["Contrôle total", "Modification", "Collaboration", "Lecture"];
 const $ = s => document.querySelector(s);
+const byId = id => document.getElementById(id);
 const el = (t,c,x)=>{const e=document.createElement(t); if(c)e.className=c; if(x!=null)e.textContent=x; return e;};
 const tc = t => t==="SecurityGroup"?"sg" : (t==="SharePointGroup"?"spg" : "usr");
 const esc = s => String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
 const safe = s => (s||"site").replace(/[^\w\-]+/g,"_");
 const norm = s => String(s||"").trim();
+const sleep = ms => new Promise(resolve=>setTimeout(resolve, ms));
+function valueOf(id){
+  const node = byId(id);
+  return node ? node.value : "";
+}
+function setValue(id, value){
+  const node = byId(id);
+  if(node) node.value = value == null ? "" : value;
+}
+function textOf(id, value){
+  const node = byId(id);
+  if(node) node.textContent = value == null ? "" : value;
+}
+function on(id, eventName, handler){
+  const node = byId(id);
+  if(node) node.addEventListener(eventName, handler);
+}
+function showToast(message, tone){
+  const region = byId("toastRegion");
+  if(!region) return;
+  const toast = el("div", "toast" + (tone ? " "+tone : ""), message);
+  region.appendChild(toast);
+  setTimeout(()=>toast.remove(), 4200);
+}
+function setEditorFields(auth, siteUrl){
+  auth = auth || {};
+  setValue("tenantId", auth.TenantId || "");
+  setValue("clientId", auth.ClientId || "");
+  setValue("certThumbprint", auth.CertificateThumbprint || "");
+  setValue("certPath", auth.CertificatePath || "");
+  setValue("certPassword", auth.CertificatePassword || "");
+  setValue("siteUrl", siteUrl || "");
+}
+function updateDirtyState(){
+  const docLabel = DATA ? (LAST_LOADED_NAME ? `Charge : ${LAST_LOADED_NAME}` : "Architecture chargee") : "Aucun fichier charge";
+  textOf("docState", DIRTY ? `${docLabel} · modifications non enregistrees` : docLabel);
+  textOf("draftState", DIRTY ? "Brouillon local enregistre automatiquement." : "Tout est enregistre.");
+  const saveButton = byId("saveChanges");
+  if(saveButton) saveButton.disabled = !DATA || !DIRTY;
+}
+function markDirty(reason){
+  if(IS_RESTORING) return;
+  const firstChange = !DIRTY;
+  DIRTY = true;
+  persistDraft();
+  updateDirtyState();
+  if(firstChange){
+    showToast(reason || "Modification detectee. Brouillon local enregistre automatiquement.", "warn");
+  }else{
+    clearTimeout(DIRTY_TOAST_TIMER);
+    DIRTY_TOAST_TIMER = setTimeout(()=>showToast("Modifications en cours. Le brouillon local est a jour.", "warn"), 650);
+  }
+}
+function clearDraftStorage(){
+  clearTimeout(DRAFT_SAVE_TIMER);
+  try{ localStorage.removeItem(DRAFT_STORAGE_KEY); }catch(e){}
+}
+function draftSnapshot(){
+  const auth = collectAuth();
+  auth.CertificatePassword = "";
+  return {
+    version: 2,
+    sourceKey: CURRENT_SOURCE_KEY,
+    dirty: DIRTY,
+    permissionEdits: [...PERMISSION_EDITS.entries()],
+    structureEdits: STRUCTURE_EDITS,
+    extraPermissions: EXTRA_PERMISSIONS,
+    knownGroups: KNOWN_GROUPS,
+    auth,
+    siteUrl: valueOf("siteUrl"),
+    savedAt: new Date().toISOString()
+  };
+}
+function persistDraftNow(){
+  if(!DATA || !CURRENT_SOURCE_KEY) return;
+  try{ localStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(draftSnapshot())); }catch(e){
+    showToast("Le brouillon local n’a pas pu etre enregistre : stockage navigateur indisponible.", "warn");
+  }
+}
+function persistDraft(){
+  clearTimeout(DRAFT_SAVE_TIMER);
+  DRAFT_SAVE_TIMER = setTimeout(()=>persistDraftNow(), 120);
+}
+function readDraft(){
+  try{
+    const raw = localStorage.getItem(DRAFT_STORAGE_KEY);
+    if(!raw) return null;
+    const value = JSON.parse(raw);
+    return value && value.version === 2 ? value : null;
+  }catch(e){ return null; }
+}
+function sourceKeyFor(parsed, sourceName, textLength){
+  return [sourceName || "", textLength || 0, parsed && parsed.Site && parsed.Site.Url || "", parsed && parsed.Site && parsed.Site.CaptureLe || ""].join("|");
+}
+function prepareArchitectureSession(parsed, sourceName, textLength){
+  const nextKey = sourceKeyFor(parsed, sourceName, textLength);
+  const draft = readDraft();
+  const sameSource = !!(draft && draft.sourceKey === nextKey);
+  CURRENT_SOURCE_KEY = nextKey;
+  PENDING_DRAFT = sameSource ? draft : null;
+  if(!sameSource){
+    clearDraftStorage();
+    DIRTY = false;
+    PERMISSION_EDITS.clear();
+    EXTRA_PERMISSIONS = [];
+    STRUCTURE_EDITS = [];
+    KNOWN_GROUPS = [];
+    setEditorFields({}, parsed && parsed.Site && parsed.Site.Url || "");
+    setValue("rightsSearch", "");
+    renderRightsSearchResults([]);
+    updateDirtyState();
+  }
+}
+function restoreDraft(draft){
+  if(!draft) return;
+  IS_RESTORING = true;
+  PERMISSION_EDITS = new Map(Array.isArray(draft.permissionEdits) ? draft.permissionEdits : []);
+  EXTRA_PERMISSIONS = Array.isArray(draft.extraPermissions) ? draft.extraPermissions : [];
+  STRUCTURE_EDITS = Array.isArray(draft.structureEdits) ? draft.structureEdits.slice() : [];
+  KNOWN_GROUPS = Array.isArray(draft.knownGroups) ? draft.knownGroups.slice() : [];
+  setEditorFields(draft.auth, draft.siteUrl || (DATA.Site && DATA.Site.Url));
+  DIRTY = !!draft.dirty;
+  IS_RESTORING = false;
+  renderGroups();
+  renderEditor();
+  updateFolderMarkers();
+  updateSummary();
+  updateDirtyState();
+  if(DIRTY) showToast("Brouillon local restaure pour cette architecture.", "success");
+}
+
+function normalizeRoles(p){
+  const values = [];
+  if(Array.isArray(p && p.Roles)) values.push(...p.Roles);
+  else if(p && p.Roles != null) values.push(p.Roles);
+  if(p && p.Role != null) values.push(p.Role);
+  return values.map(x=>String(x||"").trim()).filter(Boolean);
+}
+function normalizeMemberDetails(p){
+  const raw = p && (p.Members || p.Membres || p.Users || p.Utilisateurs);
+  if(!raw) return [];
+  const list = Array.isArray(raw) ? raw : [raw];
+  return list.map(m=>{
+    if(m == null) return null;
+    if(typeof m === "string"){
+      const display = m.trim();
+      return display ? {display, type:""} : null;
+    }
+    const name = norm(m.Name || m.DisplayName || m.Title || m.LoginName || m.UserPrincipalName || m.Email);
+    const email = norm(m.Email || m.UserPrincipalName);
+    const login = norm(m.LoginName);
+    const display = name && email && name !== email ? `${name} <${email}>` : (name || email || login);
+    if(!display) return null;
+    return {
+      display,
+      type: norm(m.Type || m.MemberType || m.PrincipalType),
+      name,
+      email,
+      login
+    };
+  }).filter(Boolean);
+}
+function normalizeMembers(p){
+  return normalizeMemberDetails(p).map(member=>member.display);
+}
+function isUserPrincipal(type){
+  return /user|utilisateur|personne/i.test(norm(type));
+}
+function reportMembersForPermission(permission){
+  const details = Array.isArray(permission && permission.MemberDetails) ? permission.MemberDetails : normalizeMemberDetails(permission);
+  if(details.length) return details;
+  if(isUserPrincipal(permission && permission.Type) && permission.Principal){
+    return [{display:permission.Principal, type:permission.Type}];
+  }
+  return [{display:"Aucun membre detaille dans le JSON", type:""}];
+}
+function permissionInlineHtml(permission){
+  const members = reportMembersForPermission(permission).map(member=>esc(member.display)).join(", ");
+  return "<b>"+esc(permission.Principal)+"</b> ("+esc(permission.Type)+") : "+esc(permission.Roles.join(", ") || "-")+
+    "<br><span class=\"member-summary\"><b>Personnes / membres :</b> "+members+"</span>";
+}
+function normalizePermissions(list){
+  if(!Array.isArray(list)) return [];
+  return list.map(p=>{
+    const memberDetails = normalizeMemberDetails(p || {});
+    return {
+      Principal: p && (p.Principal || p.Name || p.DisplayName) || "",
+      Type: p && p.Type || "",
+      Roles: normalizeRoles(p || {}),
+      Members: memberDetails.map(member=>member.display),
+      MemberDetails: memberDetails
+    };
+  }).filter(p=>p.Principal || p.Type || p.Roles.length || p.Members.length);
+}
+function setLoadProgress(percent, label, detail){
+  const box = $("#loadProgress");
+  if(!box) return;
+  const pct = Math.max(0, Math.min(100, Math.round(percent||0)));
+  box.classList.remove("hidden");
+  $("#progressBar").style.width = pct + "%";
+  $("#progressPercent").textContent = pct + "%";
+  if(label) $("#progressLabel").textContent = label;
+  if(detail) $("#progressDetail").textContent = detail;
+}
+function hideLoadProgressSoon(){
+  setTimeout(()=>$("#loadProgress") && $("#loadProgress").classList.add("hidden"), 1400);
+}
+function fileSizeLabel(size){
+  if(!size && size!==0) return "";
+  const units = ["o","Ko","Mo","Go"];
+  let value = size, unit = 0;
+  while(value >= 1024 && unit < units.length-1){ value /= 1024; unit++; }
+  return `${value.toFixed(unit ? 1 : 0)} ${units[unit]}`;
+}
+function parseJsonInWorker(text, sourceName){
+  if(!window.Worker || !window.Blob || !window.URL) return Promise.reject(new Error("Worker indisponible"));
+  if(ACTIVE_WORKER) ACTIVE_WORKER.terminate();
+  const workerSource = `
+    self.onmessage = function(event){
+      try {
+        var parsed = JSON.parse(event.data.text);
+        var kind = parsed && parsed.Bibliotheques ? "architecture" : ((parsed && (parsed.Auth || parsed.Permissions)) ? "config" : "unknown");
+        self.postMessage({ok:true, parsed:parsed, kind:kind, sourceName:event.data.sourceName});
+      } catch (error) {
+        self.postMessage({ok:false, message:error && error.message ? error.message : String(error)});
+      }
+    };
+  `;
+  const url = URL.createObjectURL(new Blob([workerSource], {type:"application/javascript"}));
+  return new Promise((resolve, reject)=>{
+    const worker = new Worker(url);
+    ACTIVE_WORKER = worker;
+    worker.onmessage = event=>{
+      worker.terminate();
+      URL.revokeObjectURL(url);
+      ACTIVE_WORKER = null;
+      if(event.data && event.data.ok) resolve(event.data);
+      else reject(new Error((event.data && event.data.message) || "JSON invalide"));
+    };
+    worker.onerror = error=>{
+      worker.terminate();
+      URL.revokeObjectURL(url);
+      ACTIVE_WORKER = null;
+      reject(error);
+    };
+    worker.postMessage({text, sourceName});
+  });
+}
+async function parseJsonResponsive(text, sourceName){
+  setLoadProgress(63, "Analyse du JSON", "Parsing du fichier hors de l'interface...");
+  try{
+    return await parseJsonInWorker(text, sourceName);
+  }catch(workerError){
+    await sleep(30);
+    const parsed = JSON.parse(text);
+    const kind = parsed && parsed.Bibliotheques ? "architecture" : ((parsed && (parsed.Auth || parsed.Permissions)) ? "config" : "unknown");
+    return {ok:true, parsed, kind, sourceName};
+  }
+}
+
+function modifiedStamp(){ return new Date().toISOString(); }
+function structureIndex(target){
+  const folders = new Map();
+  const libraries = new Map();
+  (target && target.Bibliotheques || []).forEach(lib=>{
+    const library = lib.Name || lib.Title || "Documents";
+    libraries.set(library.toLowerCase(), {name:library, node:lib});
+    const visit = (node, parent, parentPath, collection, index, parentId)=>{
+      const name = node.Name || "(dossier sans nom)";
+      const path = parentPath ? parentPath + "/" + name : name;
+      const id = folderId(library, path);
+      folders.set(id, {id, library, path, name, node, parent, collection, index, parentId:parentId || ""});
+      (node.Dossiers || []).forEach((child, childIndex)=>visit(child, node, path, node.Dossiers, childIndex, id));
+    };
+    (lib.Dossiers || []).forEach((folder, index)=>visit(folder, lib, "", lib.Dossiers, index, ""));
+  });
+  return {folders, libraries};
+}
+function findFolderContext(target, id){ return structureIndex(target).folders.get(id) || null; }
+function findLibraryContext(target, name){ return structureIndex(target).libraries.get(norm(name).toLowerCase()) || null; }
+function folderContainerContext(target, libraryName, parentPath){
+  const library = findLibraryContext(target, libraryName);
+  if(!library) return null;
+  if(!parentPath) return {node:library.node, collection:library.node.Dossiers || (library.node.Dossiers=[]), library:library.name, parentId:""};
+  const parent = findFolderContext(target, folderId(library.name, parentPath));
+  if(!parent) return null;
+  return {node:parent.node, collection:parent.node.Dossiers || (parent.node.Dossiers=[]), library:library.name, parentId:parent.id};
+}
+function findFileContext(target, libraryName, parentPath, fileName){
+  const container = folderContainerContext(target, libraryName, parentPath || "");
+  if(!container) return null;
+  const collection = container.node.Fichiers || (container.node.Fichiers=[]);
+  const index = collection.findIndex(file=>norm(file && file.Name).toLowerCase()===norm(fileName).toLowerCase());
+  if(index < 0) return null;
+  return {library:container.library, parentPath:parentPath || "", parent:container.node, collection, index, file:collection[index]};
+}
+function siblingNameExists(collection, name, exceptNode){
+  const wanted = norm(name).toLowerCase();
+  return (collection || []).some(node=>node!==exceptNode && norm(node && node.Name).toLowerCase()===wanted);
+}
+function remapPermissionEditKeys(sourceId, targetId){
+  const next = new Map();
+  PERMISSION_EDITS.forEach((entry, id)=>{
+    if(id===sourceId || id.startsWith(sourceId+"/")) next.set(targetId + id.slice(sourceId.length), entry);
+    else next.set(id, entry);
+  });
+  PERMISSION_EDITS = next;
+  if(SELECTED_ID && (SELECTED_ID===sourceId || SELECTED_ID.startsWith(sourceId+"/"))) SELECTED_ID = targetId + SELECTED_ID.slice(sourceId.length);
+}
+function removePermissionEditTree(sourceId){
+  [...PERMISSION_EDITS.keys()].forEach(id=>{ if(id===sourceId || id.startsWith(sourceId+"/")) PERMISSION_EDITS.delete(id); });
+  if(SELECTED_ID && (SELECTED_ID===sourceId || SELECTED_ID.startsWith(sourceId+"/"))) SELECTED_ID = null;
+}
+function recordStructureEdit(operation, reason){
+  if(STRUCTURE_REPLAYING) return;
+  STRUCTURE_EDITS.push(operation);
+  markDirty(reason);
+}
+function makeFolderNode(name){
+  const stamp = modifiedStamp();
+  return {Name:name, Type:"Dossier", Dossiers:[], Fichiers:[], HeritageRompu:false, Permissions:[], ModifiePar:"Utilisateur", Modifie:stamp, CreePar:"Utilisateur", Cree:stamp};
+}
+function createFolderInData(target, operation){
+  const container = folderContainerContext(target, operation.library, operation.parentPath || "");
+  if(!container || siblingNameExists(container.collection, operation.name)) return null;
+  const node = operation.node && typeof operation.node === "object" ? operation.node : makeFolderNode(operation.name);
+  node.Name = operation.name;
+  if(!Array.isArray(node.Dossiers)) node.Dossiers=[];
+  if(!Array.isArray(node.Fichiers)) node.Fichiers=[];
+  container.collection.push(node);
+  return folderId(container.library, (operation.parentPath ? operation.parentPath+"/" : "") + operation.name);
+}
+function renameFolderInData(target, operation){
+  const meta = findFolderContext(target, operation.sourceId);
+  if(!meta || !norm(operation.newName) || siblingNameExists(meta.collection, operation.newName, meta.node)) return null;
+  const parentPath = meta.path.split("/").slice(0,-1).join("/");
+  meta.node.Name = operation.newName;
+  meta.node.Modifie = modifiedStamp();
+  meta.node.ModifiePar = "Utilisateur";
+  return folderId(meta.library, parentPath ? parentPath+"/"+operation.newName : operation.newName);
+}
+function moveFolderInData(target, operation){
+  const source = findFolderContext(target, operation.sourceId);
+  if(!source) return null;
+  const targetId = operation.targetId || "";
+  if(targetId && (targetId===source.id || targetId.startsWith(source.id+"/"))) return null;
+  const container = folderContainerContext(target, operation.targetLibrary, operation.targetPath || "");
+  if(!container || container.collection===source.collection || siblingNameExists(container.collection, source.name, source.node)) return null;
+  source.collection.splice(source.index, 1);
+  container.collection.push(source.node);
+  source.node.Modifie = modifiedStamp();
+  source.node.ModifiePar = "Utilisateur";
+  return folderId(container.library, (operation.targetPath ? operation.targetPath+"/" : "") + source.name);
+}
+function deleteFolderInData(target, operation){
+  const source = findFolderContext(target, operation.sourceId);
+  if(!source) return false;
+  source.collection.splice(source.index, 1);
+  return true;
+}
+function renameFileInData(target, operation){
+  const context = findFileContext(target, operation.library, operation.parentPath, operation.fileName);
+  if(!context || !norm(operation.newName) || siblingNameExists(context.collection, operation.newName, context.file)) return false;
+  context.file.Name = operation.newName;
+  context.file.Modifie = modifiedStamp();
+  context.file.ModifiePar = "Utilisateur";
+  return true;
+}
+function moveFileInData(target, operation){
+  const source = findFileContext(target, operation.library, operation.parentPath, operation.fileName);
+  const container = folderContainerContext(target, operation.targetLibrary, operation.targetPath || "");
+  if(!source || !container || source.parent===container.node || siblingNameExists(container.node.Fichiers || [], source.file.Name)) return false;
+  if(!Array.isArray(container.node.Fichiers)) container.node.Fichiers=[];
+  source.collection.splice(source.index, 1);
+  container.node.Fichiers.push(source.file);
+  source.file.Modifie = modifiedStamp();
+  source.file.ModifiePar = "Utilisateur";
+  return true;
+}
+function deleteFileInData(target, operation){
+  const source = findFileContext(target, operation.library, operation.parentPath, operation.fileName);
+  if(!source) return false;
+  source.collection.splice(source.index, 1);
+  return true;
+}
+function applyStructuralEdits(target, operations){
+  if(!Array.isArray(operations) || !operations.length) return;
+  STRUCTURE_REPLAYING = true;
+  operations.forEach(operation=>{
+    if(!operation || !operation.op) return;
+    if(operation.op==="createFolder") createFolderInData(target, operation);
+    else if(operation.op==="renameFolder") renameFolderInData(target, operation);
+    else if(operation.op==="moveFolder") moveFolderInData(target, operation);
+    else if(operation.op==="deleteFolder") deleteFolderInData(target, operation);
+    else if(operation.op==="renameFile") renameFileInData(target, operation);
+    else if(operation.op==="moveFile") moveFileInData(target, operation);
+    else if(operation.op==="deleteFile") deleteFileInData(target, operation);
+  });
+  STRUCTURE_REPLAYING = false;
+}
+function countFolderContents(node){
+  let folders=0, files=0;
+  (node && node.Dossiers || []).forEach(child=>{ folders++; const count=countFolderContents(child); folders+=count.folders; files+=count.files; });
+  files += (node && node.Fichiers || []).length;
+  return {folders,files};
+}
+function structureModal(options){
+  const modal=byId("structureModal");
+  if(!modal || typeof modal.showModal!=="function") return Promise.resolve(null);
+  const body=byId("structureModalBody");
+  const error=el("div","structure-error");
+  body.innerHTML="";
+  textOf("structureModalTitle",options.title||"Modifier la structure");
+  textOf("structureModalMessage",options.message||"");
+  const validate=options.build ? options.build(body) : null;
+  body.appendChild(error);
+  return new Promise(resolve=>{
+    let settled=false;
+    const finish=value=>{ if(settled)return; settled=true; modal.close(); resolve(value); };
+    modal.onclose=()=>{ if(!settled){settled=true;resolve(null);} };
+    byId("structureCancel").onclick=()=>finish(null);
+    byId("structureConfirm").onclick=()=>{
+      const result=validate ? validate() : {value:true};
+      if(result && result.error){error.textContent=result.error;return;}
+      finish(result && Object.prototype.hasOwnProperty.call(result,"value") ? result.value : result);
+    };
+    modal.showModal();
+  });
+}
+function askStructureName(title,message,initial){
+  let input=null;
+  return structureModal({title,message,build:body=>{
+    const label=el("label","field"); label.appendChild(el("span","","Nom"));
+    input=document.createElement("input"); input.type="text"; input.value=initial||""; input.placeholder="Nom du dossier ou du fichier";
+    label.appendChild(input); body.appendChild(label); input.focus();
+    return ()=>{ const value=norm(input.value); if(!value)return {error:"Le nom est obligatoire."}; if(/[\\/]/.test(value))return {error:"Le nom ne doit pas contenir de slash."}; return {value}; };
+  }});
+}
+function destinationChoices(sourceId){
+  const choices=[];
+  const index=structureIndex(DATA);
+  index.libraries.forEach(lib=>choices.push({targetId:"",targetLibrary:lib.name,targetPath:"",label:"Bibliotheque : "+lib.name}));
+  FOLDERS.forEach(meta=>{ if(sourceId && (meta.id===sourceId || meta.id.startsWith(sourceId+"/")))return; choices.push({targetId:meta.id,targetLibrary:meta.library,targetPath:meta.path,label:meta.library+" / "+meta.path}); });
+  return choices;
+}
+function askDestination(title,message,sourceId){
+  let select=null;
+  return structureModal({title,message,build:body=>{
+    const label=el("label","field"); label.appendChild(el("span","","Destination")); select=document.createElement("select");
+    destinationChoices(sourceId).forEach(choice=>{ const option=document.createElement("option"); option.value=JSON.stringify(choice); option.textContent=choice.label; select.appendChild(option); });
+    label.appendChild(select); body.appendChild(label);
+    return ()=>select.value ? {value:JSON.parse(select.value)} : {error:"Aucune destination disponible."};
+  }});
+}
+function confirmStructure(title,message,confirmLabel){
+  return structureModal({title,message,build:()=>{byId("structureConfirm").textContent=confirmLabel||"Confirmer"; return ()=>({value:true});}}).then(value=>{byId("structureConfirm").textContent="Confirmer";return value;});
+}
 
 function perms(f){
   const w = el("div","perms");
   if(f.HeritageRompu === false){ w.appendChild(el("span","badge inherit","heritage conserve")); return w; }
-  const list = f.Permissions||[];
+  const list = normalizePermissions(f.Permissions||[]);
   if(!list.length){ w.appendChild(el("span","badge none","unique - aucun groupe explicite")); return w; }
   list.forEach(p=>{
     const b=el("span","badge "+tc(p.Type));
-    b.textContent="🔐 "+(p.Principal||"principal")+" · "+((p.Roles||[]).join(", ")||"-");
+    b.textContent="🔐 "+(p.Principal||"principal")+" · "+(p.Roles.join(", ")||"-");
     w.appendChild(b);
   });
   return w;
 }
 
-function fileRow(fi, key){
+function structureAction(symbol,title,handler){
+  const button=el("button","icon",symbol); button.type="button"; button.title=title; button.setAttribute("aria-label",title);
+  button.addEventListener("click",event=>{event.preventDefault();event.stopPropagation();handler(event);});
+  return button;
+}
+function fileRow(fi,libName,parentPath){
   const r = el("div","file");
-  if(key){
-    const cb=document.createElement("input"); cb.type="checkbox"; cb.className="selbox"; cb.dataset.key=key; cb.checked=SELECTED_FILES.has(key);
-    cb.title="Cocher ce fichier pour l'export";
-    cb.addEventListener("change",()=>{ if(cb.checked) SELECTED_FILES.add(key); else SELECTED_FILES.delete(key); updateSelBar(); });
-    r.appendChild(cb);
-  }
   r.appendChild(el("span","ico","📄"));
   r.appendChild(el("span","name", fi.Name||"(fichier sans nom)"));
   const meta = [];
@@ -392,28 +846,70 @@ function fileRow(fi, key){
   if(meta.length) r.appendChild(el("span","count"," · "+meta.join(" · ")));
   if(fi.Cree || fi.CreePar) r.title = "Cree"+(fi.Cree?" le "+fi.Cree:"")+(fi.CreePar?" par "+fi.CreePar:"");
   r.dataset.name = (fi.Name||"").toLowerCase();
+  const actions=el("span","file-actions");
+  actions.appendChild(structureAction("✎","Renommer le fichier",()=>openRenameFile(libName,parentPath,fi)));
+  actions.appendChild(structureAction("↔","Deplacer le fichier",()=>openMoveFile(libName,parentPath,fi)));
+  actions.appendChild(structureAction("×","Supprimer le fichier",()=>openDeleteFile(libName,parentPath,fi)));
+  r.appendChild(actions);
   return r;
 }
 
 function folderId(libName, path){ return libName + SEP + path; }
-function collectFolder(f, libName, parentPath, depth){
-  const name = f.Name || "(dossier sans nom)";
-  const path = parentPath ? parentPath + "/" + name : name;
-  const id = folderId(libName, path);
-  const meta = {id, library:libName, path, name, depth, node:f};
-  FOLDERS.push(meta);
-  FOLDER_BY_ID.set(id, meta);
-  (f.Dossiers||[]).forEach(child=>collectFolder(child, libName, path, depth+1));
-}
-function collectFolders(data){
+async function collectFolders(data, token){
   FOLDERS = [];
   FOLDER_BY_ID = new Map();
+  const stack = [];
   (data.Bibliotheques||[]).forEach(l=>{
     const libName = l.Name || l.Title || "Documents";
-    (l.Dossiers||[]).forEach(f=>collectFolder(f, libName, "", 0));
+    const folders = l.Dossiers || [];
+    for(let i=folders.length-1;i>=0;i--) stack.push({folder:folders[i], libName, parentPath:"", parentId:"", depth:0});
   });
+  let processed = 0;
+  while(stack.length){
+    if(token !== RENDER_TOKEN) return;
+    const item = stack.pop();
+    const f = item.folder;
+    const name = f.Name || "(dossier sans nom)";
+    const path = item.parentPath ? item.parentPath + "/" + name : name;
+    const id = folderId(item.libName, path);
+    const meta = {id, library:item.libName, path, name, depth:item.depth, parentId:item.parentId, node:f};
+    FOLDERS.push(meta);
+    FOLDER_BY_ID.set(id, meta);
+    const children = f.Dossiers || [];
+    for(let i=children.length-1;i>=0;i--) stack.push({folder:children[i], libName:item.libName, parentPath:path, parentId:id, depth:item.depth+1});
+    processed++;
+    if(processed % 500 === 0){
+      setLoadProgress(70, "Indexation", `${processed} dossier(s) indexes sans bloquer l'interface...`);
+      await sleep(0);
+    }
+  }
+  setLoadProgress(78, "Indexation terminee", `${FOLDERS.length} dossier(s) prets pour l'edition.`);
 }
 
+function editStateText(id){
+  const entry = PERMISSION_EDITS.get(id);
+  const count = entry ? validAssignments(entry).length : 0;
+  return count>0 ? `${count} droit(s)${entry.ResetPermissions ? " + reset" : ""}` : "non configure";
+}
+function makeCaret(label, detailsEl){
+  const caret = el("span","caret","▶");
+  caret.setAttribute("role","button");
+  caret.setAttribute("tabindex","0");
+  caret.setAttribute("aria-label",label);
+  const sync = ()=>caret.setAttribute("aria-expanded", detailsEl.open ? "true" : "false");
+  const toggle = ()=>{ detailsEl.open = !detailsEl.open; sync(); };
+  caret.addEventListener("click", ev=>{ ev.preventDefault(); ev.stopPropagation(); toggle(); });
+  caret.addEventListener("keydown", ev=>{
+    if(ev.key==="Enter" || ev.key===" "){
+      ev.preventDefault();
+      ev.stopPropagation();
+      toggle();
+    }
+  });
+  detailsEl.addEventListener("toggle", sync);
+  sync();
+  return caret;
+}
 function folder(f, libName, parentPath){
   const name = f.Name || "(dossier sans nom)";
   const path = parentPath ? parentPath + "/" + name : name;
@@ -421,52 +917,67 @@ function folder(f, libName, parentPath){
   const d = el("details","folder");
   d.dataset.id = id;
   d.dataset.name = (name+" "+path+" "+libName).toLowerCase();
-  if(SELECTED_FOLDERS.has(id)) d.classList.add("picked");
   const s = el("summary");
-  const cb = document.createElement("input");
-  cb.type="checkbox"; cb.className="selbox"; cb.checked=SELECTED_FOLDERS.has(id);
-  cb.title="Cocher ce dossier (export / affectation groupee)";
-  cb.addEventListener("click", ev=>ev.stopPropagation());
-  cb.addEventListener("change", ()=>{ if(cb.checked) SELECTED_FOLDERS.add(id); else SELECTED_FOLDERS.delete(id); d.classList.toggle("picked", cb.checked); updateSelBar(); });
-  s.appendChild(cb);
-  s.appendChild(el("span","caret","▶"));
+  s.addEventListener("click", ev=>{
+    ev.preventDefault();
+    if(ev.target.closest(".caret,button")) return;
+    selectFolder(id);
+  });
+  s.addEventListener("keydown", ev=>{
+    if(ev.target===s && (ev.key==="Enter" || ev.key===" ")){
+      ev.preventDefault();
+      selectFolder(id);
+    }
+  });
+  s.appendChild(makeCaret("Derouler ou replier le dossier "+name, d));
   s.appendChild(el("span","ico","📁"));
   const main = el("span","folder-main");
   const line = el("span","folder-line");
   line.appendChild(el("span","name", name));
   line.appendChild(el("span","count", `- ${(f.Dossiers||[]).length} dossier(s), ${(f.Fichiers||[]).length} fichier(s)`+(f.ModifiePar?` · modifie par ${f.ModifiePar}`:"")));
-  const state = el("span","badge edit-state","non configure");
+  const state = el("span","badge edit-state",editStateText(id));
   line.appendChild(state);
   main.appendChild(line);
   main.appendChild(el("span","folder-path", path));
   s.appendChild(main);
   const actions = el("span","folder-actions");
+  actions.appendChild(structureAction("+","Nouveau dossier dans "+name,()=>openCreateFolder(libName,id,path)));
+  actions.appendChild(structureAction("✎","Renommer "+name,()=>openRenameFolder(id)));
+  actions.appendChild(structureAction("↔","Deplacer "+name,()=>openMoveFolder(id)));
+  actions.appendChild(structureAction("×","Supprimer "+name,()=>openDeleteFolder(id)));
   const editBtn = el("button","icon","Droits");
   editBtn.type = "button";
   editBtn.title = "Modifier les droits de ce dossier";
-  editBtn.addEventListener("click", ev=>{ ev.preventDefault(); ev.stopPropagation(); selectFolder(id); d.open = true; });
+  editBtn.addEventListener("click", ev=>{ ev.preventDefault(); ev.stopPropagation(); selectFolder(id); });
   actions.appendChild(editBtn);
   s.appendChild(actions);
-  s.addEventListener("click", ev=>{
-    if(ev.target.closest("button")) return;           // laisser agir les boutons d'action
-    ev.preventDefault();                               // le clic sur la ligne n'ouvre PAS le dossier
-    if(ev.target.closest(".caret")) d.open = !d.open;  // seule la fleche deroule/replie
-    selectFolder(id);
-  });
   d.appendChild(s);
+  d.addEventListener("toggle",()=>{ if(d.open) ensureFolderBody(d, f, libName, path); });
+  return d;
+}
+
+function ensureFolderBody(d, f, libName, path){
+  if(d.dataset.loaded === "1") return;
   const b = el("div","body");
   b.appendChild(perms(f));
   (f.Dossiers||[]).forEach(x=> b.appendChild(folder(x, libName, path)));
-  (f.Fichiers||[]).forEach(fi=> b.appendChild(fileRow(fi, id+"::"+(fi.Name||""))));
+  (f.Fichiers||[]).forEach(fi=> b.appendChild(fileRow(fi,libName,path)));
   d.appendChild(b);
-  return d;
+  d.dataset.loaded = "1";
 }
 
 function library(l){
   const libName = l.Name || l.Title || "Documents";
-  const d = el("details","lib"); d.open=true;
+  const d = el("details","lib");
+  d.dataset.library = libName;
   const s=el("summary");
-  s.appendChild(el("span","caret","▶"));
+  s.addEventListener("click", ev=>ev.preventDefault());
+  s.addEventListener("keydown", ev=>{
+    if(ev.target===s && (ev.key==="Enter" || ev.key===" ")){
+      ev.preventDefault();
+    }
+  });
+  s.appendChild(makeCaret("Derouler ou replier la bibliotheque "+libName, d));
   s.appendChild(el("span","ico","📚"));
   const main = el("span","folder-main");
   const line = el("span","folder-line");
@@ -476,55 +987,236 @@ function library(l){
   line.appendChild(el("span","count", cnt));
   main.appendChild(line);
   s.appendChild(main);
+  const actions=el("span","folder-actions");
+  actions.appendChild(structureAction("+","Nouveau dossier dans "+libName,()=>openCreateFolder(libName,"","")));
+  s.appendChild(actions);
   d.appendChild(s);
-  const b = el("div","body");
-  (l.Dossiers||[]).forEach(f=> b.appendChild(folder(f, libName, "")));
-  (l.Fichiers||[]).forEach(fi=> b.appendChild(fileRow(fi, libName+"::(racine)::"+(fi.Name||""))));
-  d.appendChild(b);
+  d.addEventListener("toggle",()=>{ if(d.open) ensureLibraryBody(d, l, libName); });
   return d;
 }
 
-function render(data){
-  READY = false;
+function ensureLibraryBody(d, l, libName){
+  if(d.dataset.loaded === "1") return;
+  const b = el("div","body");
+  (l.Dossiers||[]).forEach(f=> b.appendChild(folder(f, libName, "")));
+  (l.Fichiers||[]).forEach(fi=> b.appendChild(fileRow(fi,libName,"")));
+  d.appendChild(b);
+  d.dataset.loaded = "1";
+}
+
+async function rebuildAndRender(revealId){
+  if(!DATA) return;
+  const token=++RENDER_TOKEN;
+  const keepId=arguments.length ? revealId : SELECTED_ID;
+  const tree=$("#tree");
+  tree.innerHTML='<div class="empty-note">Mise a jour de l\'arborescence...</div>';
+  setLoadProgress(35,"Mise a jour de l\'arborescence","Reindexation des dossiers et conservation des droits...");
+  await collectFolders(DATA,token);
+  if(token!==RENDER_TOKEN)return;
+  tree.innerHTML="";
+  const libs=DATA.Bibliotheques||[];
+  for(let i=0;i<libs.length;i++){
+    tree.appendChild(library(libs[i]));
+    if(i%8===0) await sleep(0);
+  }
+  seedGroupsFromArchitecture(DATA);
+  renderGroups();
+  renderEditor();
+  updateSummary();
+  updateFolderMarkers();
+  const query=valueOf("rightsSearch");
+  if(query) searchUserInRights(query);
+  setLoadProgress(100,"Arborescence mise a jour",`${FOLDERS.length} dossier(s) disponibles.`);
+  hideLoadProgressSoon();
+  if(keepId && FOLDER_BY_ID.has(keepId)) await revealFolderInTree(keepId);
+}
+async function revealFolderInTree(id){
+  const meta=FOLDER_BY_ID.get(id);
+  if(!meta)return;
+  const libNode=[...document.querySelectorAll("details.lib")].find(node=>node.dataset.library===meta.library);
+  if(!libNode)return;
+  libNode.open=true;
+  const libraryData=libraryForName(meta.library);
+  if(libraryData)ensureLibraryBody(libNode,libraryData,meta.library);
+  const chain=[];
+  let current=meta;
+  while(current){ chain.unshift(current.id); current=current.parentId ? FOLDER_BY_ID.get(current.parentId) : null; }
+  for(const folderKey of chain){
+    const node=[...document.querySelectorAll("details.folder")].find(item=>item.dataset.id===folderKey);
+    const item=FOLDER_BY_ID.get(folderKey);
+    if(node && item){ node.open=true; ensureFolderBody(node,item.node,item.library,item.path); }
+    await sleep(0);
+  }
+  selectFolder(id);
+}
+async function revealPathInTree(libraryName,parentPath){
+  if(parentPath){ await revealFolderInTree(folderId(libraryName,parentPath)); return; }
+  const libNode=[...document.querySelectorAll("details.lib")].find(node=>node.dataset.library===libraryName);
+  const data=libraryForName(libraryName);
+  if(libNode && data){ libNode.open=true; ensureLibraryBody(libNode,data,libraryName); }
+}
+async function createFolder(libraryName,parentId,parentPath,name){
+  if(!DATA)return;
+  const operation={op:"createFolder",library:libraryName,parentId:parentId||"",parentPath:parentPath||"",name:norm(name)};
+  const newId=createFolderInData(DATA,operation);
+  if(!newId){showToast("Impossible d\'ajouter ce dossier : nom deja utilise ou parent introuvable.","warn");return;}
+  const context=findFolderContext(DATA,newId);
+  if(context)operation.node=JSON.parse(JSON.stringify(context.node));
+  recordStructureEdit(operation,`Dossier "${operation.name}" ajoute.`);
+  SELECTED_ID=newId;
+  await rebuildAndRender(newId);
+}
+async function renameFolder(sourceId,newName){
+  const source=findFolderContext(DATA,sourceId);
+  if(!source)return;
+  const operation={op:"renameFolder",sourceId,newName:norm(newName)};
+  const newId=renameFolderInData(DATA,operation);
+  if(!newId){showToast("Renommage impossible : nom vide ou deja utilise.","warn");return;}
+  remapPermissionEditKeys(sourceId,newId);
+  recordStructureEdit(operation,`Dossier renomme en "${operation.newName}".`);
+  await rebuildAndRender(newId);
+}
+async function moveFolder(sourceId,destination){
+  const source=findFolderContext(DATA,sourceId);
+  if(!source || !destination)return;
+  const operation={op:"moveFolder",sourceId,targetId:destination.targetId||"",targetLibrary:destination.targetLibrary,targetPath:destination.targetPath||""};
+  const newId=moveFolderInData(DATA,operation);
+  if(!newId){showToast("Deplacement impossible : destination invalide, identique ou deja occupee.","warn");return;}
+  remapPermissionEditKeys(sourceId,newId);
+  recordStructureEdit(operation,`Dossier "${source.name}" deplace.`);
+  await rebuildAndRender(newId);
+}
+async function deleteFolder(sourceId){
+  const source=findFolderContext(DATA,sourceId);
+  if(!source)return;
+  const count=countFolderContents(source.node);
+  const confirmed=await confirmStructure("Supprimer le dossier",`Supprimer "${source.name}" et son contenu (${count.folders} dossier(s), ${count.files} fichier(s)) ?`,"Supprimer");
+  if(!confirmed)return;
+  if(!deleteFolderInData(DATA,{sourceId})){showToast("Le dossier n\'existe plus.","warn");return;}
+  removePermissionEditTree(sourceId);
+  recordStructureEdit({op:"deleteFolder",sourceId},`Dossier "${source.name}" supprime.`);
+  await rebuildAndRender();
+}
+async function renameFile(libraryName,parentPath,fileNode,newName){
+  const operation={op:"renameFile",library:libraryName,parentPath:parentPath||"",fileName:fileNode.Name,newName:norm(newName)};
+  if(!renameFileInData(DATA,operation)){showToast("Renommage impossible : nom vide ou deja utilise.","warn");return;}
+  recordStructureEdit(operation,`Fichier renomme en "${operation.newName}".`);
+  await rebuildAndRender(SELECTED_ID);
+  await revealPathInTree(libraryName,parentPath);
+}
+async function moveFile(libraryName,parentPath,fileNode,destination){
+  if(!destination)return;
+  const operation={op:"moveFile",library:libraryName,parentPath:parentPath||"",fileName:fileNode.Name,targetId:destination.targetId||"",targetLibrary:destination.targetLibrary,targetPath:destination.targetPath||""};
+  if(!moveFileInData(DATA,operation)){showToast("Deplacement impossible : destination identique ou fichier deja present.","warn");return;}
+  recordStructureEdit({op:operation.op,library:operation.library,parentPath:operation.parentPath,fileName:operation.fileName,targetId:operation.targetId,targetLibrary:operation.targetLibrary,targetPath:operation.targetPath},`Fichier "${fileNode.Name}" deplace.`);
+  await rebuildAndRender(SELECTED_ID);
+  await revealPathInTree(destination.targetLibrary,destination.targetPath);
+}
+async function deleteFile(libraryName,parentPath,fileNode){
+  const confirmed=await confirmStructure("Supprimer le fichier",`Supprimer definitivement le fichier "${fileNode.Name}" ?`,"Supprimer");
+  if(!confirmed)return;
+  const operation={op:"deleteFile",library:libraryName,parentPath:parentPath||"",fileName:fileNode.Name};
+  if(!deleteFileInData(DATA,operation)){showToast("Le fichier n\'existe plus.","warn");return;}
+  recordStructureEdit(operation,`Fichier "${fileNode.Name}" supprime.`);
+  await rebuildAndRender(SELECTED_ID);
+  await revealPathInTree(libraryName,parentPath);
+}
+async function openCreateFolder(libraryName,parentId,parentPath){
+  const name=await askStructureName("Nouveau dossier",`Ajouter un dossier dans ${parentPath ? libraryName+" / "+parentPath : "la bibliotheque "+libraryName}.`);
+  if(name)await createFolder(libraryName,parentId,parentPath,name);
+}
+async function openRenameFolder(id){
+  const source=findFolderContext(DATA,id); if(!source)return;
+  const name=await askStructureName("Renommer le dossier",`Nouveau nom pour ${source.name}.`,source.name);
+  if(name)await renameFolder(id,name);
+}
+async function openMoveFolder(id){
+  const source=findFolderContext(DATA,id); if(!source)return;
+  const destination=await askDestination("Deplacer le dossier",`Choisissez le nouveau parent de ${source.name}.`,id);
+  if(destination)await moveFolder(id,destination);
+}
+async function openDeleteFolder(id){ await deleteFolder(id); }
+async function openRenameFile(libraryName,parentPath,fileNode){
+  const name=await askStructureName("Renommer le fichier",`Nouveau nom pour ${fileNode.Name}.`,fileNode.Name);
+  if(name)await renameFile(libraryName,parentPath,fileNode,name);
+}
+async function openMoveFile(libraryName,parentPath,fileNode){
+  const destination=await askDestination("Deplacer le fichier",`Choisissez le dossier de destination de ${fileNode.Name}.`,"");
+  if(destination)await moveFile(libraryName,parentPath,fileNode,destination);
+}
+async function openDeleteFile(libraryName,parentPath,fileNode){ await deleteFile(libraryName,parentPath,fileNode); }
+
+async function render(data){
+  const token = ++RENDER_TOKEN;
   DATA = data;
-  collectFolders(data);
   SELECTED_ID = null;
   PERMISSION_EDITS.clear();
   EXTRA_PERMISSIONS = [];
-  SELECTED_FOLDERS.clear();
-  SELECTED_FILES.clear();
+  const draftStructure = PENDING_DRAFT && Array.isArray(PENDING_DRAFT.structureEdits) ? PENDING_DRAFT.structureEdits.slice() : [];
+  STRUCTURE_EDITS = draftStructure;
+  if(draftStructure.length) applyStructuralEdits(DATA, draftStructure);
   $("#treeWrap").classList.remove("hidden");
   $("#docState").textContent = LAST_LOADED_NAME ? `Charge : ${LAST_LOADED_NAME}` : "Architecture chargee";
   $("#site").textContent = "📊 " + (data.Site&&data.Site.Titre || "Architecture SharePoint");
   $("#url").textContent = ((data.Site&&data.Site.Url)||"") + ((data.Site&&data.Site.CaptureLe)? "  •  capture le "+data.Site.CaptureLe : "");
-  if(data.Site && data.Site.Url) SITE_URL = data.Site.Url;
-  const tree = $("#tree"); tree.innerHTML="";
-  (data.Bibliotheques||[]).forEach(l=> tree.appendChild(library(l)));
+  if(data.Site && data.Site.Url) setValue("siteUrl", data.Site.Url);
+  const tree = $("#tree"); tree.innerHTML='<div class="empty-note">Preparation de l\'arborescence...</div>';
+  setLoadProgress(68, "Indexation", "Preparation des dossiers pour l'edition...");
+  await collectFolders(data, token);
+  if(token !== RENDER_TOKEN) return;
+  tree.innerHTML="";
+  const libs = data.Bibliotheques||[];
+  for(let i=0;i<libs.length;i++){
+    tree.appendChild(library(libs[i]));
+    if(i % 8 === 0){
+      setLoadProgress(82 + Math.min(14, Math.round((i / Math.max(1, libs.length)) * 14)), "Rendu progressif", `${i+1}/${libs.length} bibliotheque(s) ajoutee(s). Les branches s'ouvrent a la demande.`);
+      await sleep(0);
+    }
+  }
   $("#legend").textContent = "Legende : 📚 bibliotheque · 📁 dossier · 📄 fichier · 🔐 droits actuels lus dans SharePoint.";
-  updateSelBar();
-  setView("tree");
   seedGroupsFromArchitecture(data);
+  searchUserInRights(valueOf("rightsSearch"));
   if(PENDING_CONFIG){
     const cfg = PENDING_CONFIG;
     PENDING_CONFIG = null;
     importPermissionConfig(cfg, true);
+  }else if(PENDING_DRAFT){
+    const draft = PENDING_DRAFT;
+    PENDING_DRAFT = null;
+    restoreDraft(draft);
   }else{
     renderGroups();
     renderEditor();
     updateSummary();
     updateFolderMarkers();
+    DIRTY = false;
+    updateDirtyState();
   }
-  READY = true;
+  setLoadProgress(100, "Pret", `${FOLDERS.length} dossier(s) charges. Ouvrez les bibliotheques pour afficher les branches.`);
+  hideLoadProgressSoon();
 }
 
-function loadText(t, sourceName){
+async function loadText(t, sourceName){
   try{
     LAST_LOADED_NAME = sourceName || "";
-    const parsed = JSON.parse(t);
-    if(parsed.Bibliotheques){ render(parsed); return; }
-    if(parsed.Auth || parsed.Permissions){ importPermissionConfig(parsed); return; }
+    const result = await parseJsonResponsive(t, sourceName);
+    const parsed = result.parsed;
+    if(parsed.Bibliotheques){
+      prepareArchitectureSession(parsed, sourceName, t.length);
+      await render(parsed);
+      return;
+    }
+    if(parsed.Auth || parsed.Permissions){
+      importPermissionConfig(parsed);
+      setLoadProgress(100, "Configuration chargee", sourceName || "Configuration de droits chargee");
+      hideLoadProgressSoon();
+      return;
+    }
     alert("JSON reconnu, mais ce n'est ni une architecture ni une configuration de droits.");
-  }catch(e){ alert("JSON invalide : "+e.message); }
+  }catch(e){
+    setLoadProgress(100, "Erreur de chargement", e && e.message ? e.message : "Import impossible");
+    alert("Import impossible : "+(e && e.message ? e.message : "erreur inconnue"));
+  }
 }
 
 function addKnownGroup(group){
@@ -536,12 +1228,16 @@ function addKnownGroup(group){
   }
 }
 function seedGroupsFromArchitecture(data){
-  const before = new Set(KNOWN_GROUPS.map(g=>g.toLowerCase()));
-  function visitFolder(f){
-    (f.Permissions||[]).forEach(p=>{ if(p.Principal && !before.has(String(p.Principal).toLowerCase())) addKnownGroup(p.Principal); });
-    (f.Dossiers||[]).forEach(visitFolder);
-  }
-  (data.Bibliotheques||[]).forEach(l=>(l.Dossiers||[]).forEach(visitFolder));
+  const addFromNode = node=>{
+    normalizePermissions(node && node.Permissions || []).forEach(p=>{
+      if(p.Principal) addKnownGroup(p.Principal);
+    });
+  };
+  addFromNode(data.Site);
+  (data.Bibliotheques||[]).forEach(addFromNode);
+  FOLDERS.forEach(meta=>{
+    addFromNode(meta.node);
+  });
 }
 function renderGroups(){
   const chips = $("#groupChips"); chips.innerHTML="";
@@ -564,6 +1260,48 @@ function selectFolder(id){
   const node = [...document.querySelectorAll("details.folder")].find(d=>d.dataset.id===id);
   if(node) node.classList.add("selected");
   renderEditor();
+  const panel = byId("selectedPanel");
+  if(panel){
+    panel.setAttribute("aria-live", "polite");
+    if(window.matchMedia("(max-width: 1050px)").matches){
+      panel.scrollIntoView({behavior:"smooth", block:"start"});
+    }
+  }
+}
+
+function libraryForName(name){
+  const wanted = norm(name).toLowerCase();
+  return (DATA && DATA.Bibliotheques || []).find(l=>norm(l.Name || l.Title || "Documents").toLowerCase()===wanted) || null;
+}
+function effectivePermissionsForMeta(meta){
+  if(!meta || !meta.node) return {list:[], inherited:false, source:""};
+  const direct = normalizePermissions(meta.node.Permissions || []);
+  if(meta.node.HeritageRompu !== false){
+    return {list:direct, inherited:false, source:"Droits explicites du dossier"};
+  }
+  if(direct.length){
+    return {list:direct, inherited:true, source:"Droits herites captures sur le dossier"};
+  }
+  let parentId = meta.parentId;
+  while(parentId){
+    const parent = FOLDER_BY_ID.get(parentId);
+    if(!parent) break;
+    const parentList = normalizePermissions(parent.node && parent.node.Permissions || []);
+    if(parentList.length){
+      return {list:parentList, inherited:true, source:`Droits herites de ${parent.path}`};
+    }
+    parentId = parent.parentId;
+  }
+  const library = libraryForName(meta.library);
+  const libraryList = normalizePermissions(library && library.Permissions || []);
+  if(libraryList.length){
+    return {list:libraryList, inherited:true, source:`Droits herites de la bibliotheque ${meta.library}`};
+  }
+  const siteList = normalizePermissions(DATA.Site && DATA.Site.Permissions || []);
+  if(siteList.length){
+    return {list:siteList, inherited:true, source:"Droits herites du site"};
+  }
+  return {list:[], inherited:true, source:"Heritage active, mais aucun droit detaille n’est capture"};
 }
 
 function entryFor(id){
@@ -595,18 +1333,58 @@ function renderEditor(){
   }
   const meta = FOLDER_BY_ID.get(SELECTED_ID);
   const entry = PERMISSION_EDITS.get(SELECTED_ID) || {Assignments:[]};
+  const effective = effectivePermissionsForMeta(meta);
+  const currentList = effective.list;
+  const heritageText = meta.node.HeritageRompu===false ? "heritage conserve" : (meta.node.HeritageRompu===true ? "heritage rompu" : "non capture");
   panel.appendChild(el("div","selected-title",meta.name));
   panel.appendChild(el("div","selected-meta",`${meta.library} / ${meta.path}`));
-  const current = el("div","current-perms");
-  current.appendChild(el("span","badge inherit","droits actuels"));
-  const currentList = meta.node.Permissions||[];
-  if(meta.node.HeritageRompu===false) current.appendChild(el("span","badge inherit","heritage conserve"));
-  else if(!currentList.length) current.appendChild(el("span","badge none","aucun groupe explicite"));
-  else currentList.forEach(p=>{
-    const b=el("span","badge "+tc(p.Type));
-    b.textContent=(p.Principal||"principal")+" · "+((p.Roles||[]).join(", ")||"-");
-    current.appendChild(b);
+  const facts = el("div","selected-facts");
+  [["Bibliotheque", meta.library], ["Chemin", meta.path], ["Etat", heritageText]].forEach(([label,value])=>{
+    const fact = el("div","fact");
+    fact.appendChild(el("span","",label));
+    fact.appendChild(el("b","",value || "-"));
+    facts.appendChild(fact);
   });
+  panel.appendChild(facts);
+  const current = el("div","current-perms");
+  const heading = el("div","rights-heading");
+  heading.appendChild(el("strong","","Droits actuels du dossier"));
+  heading.appendChild(el("span","rights-source",effective.source));
+  current.appendChild(heading);
+  const rightsList = el("div","rights-list");
+  if(!currentList.length){
+    rightsList.appendChild(el("div","assignment-empty",meta.node.HeritageRompu===false ? "Aucun droit herite detaille dans le JSON." : "Aucun principal explicite dans le JSON."));
+  }else{
+    currentList.forEach(p=>{
+      const row = el("div","right-row");
+      const principal = el("div","right-principal");
+      principal.appendChild(el("span","right-label","Groupe ou utilisateur"));
+      principal.appendChild(el("div","right-name",p.Principal || "Principal sans nom"));
+      const metaLine = el("div","right-meta");
+      metaLine.appendChild(el("span","badge "+tc(p.Type),p.Type || "Type non capture"));
+      (p.Roles.length ? p.Roles : ["Droit non capture"]).forEach(role=>metaLine.appendChild(el("span","badge",role)));
+      principal.appendChild(metaLine);
+      const members = el("div","right-members");
+      const visibleMembers = p.MemberDetails.length ? p.MemberDetails : (isUserPrincipal(p.Type) && p.Principal ? [{display:p.Principal, type:p.Type}] : []);
+      members.appendChild(el("span","right-label",visibleMembers.length ? `Personnes / membres (${visibleMembers.length})` : "Personnes / membres"));
+      const memberList = el("div","member-list");
+      if(visibleMembers.length){
+        visibleMembers.forEach(member=>{
+          const line = el("div","member-line");
+          line.appendChild(document.createTextNode(member.display));
+          if(member.type) line.appendChild(el("span","member-type",` · ${member.type}`));
+          memberList.appendChild(line);
+        });
+      }else{
+        memberList.appendChild(el("div","member-line","Aucun membre detaille dans le JSON."));
+      }
+      members.appendChild(memberList);
+      row.appendChild(principal);
+      row.appendChild(members);
+      rightsList.appendChild(row);
+    });
+  }
+  current.appendChild(rightsList);
   panel.appendChild(current);
 
   const actions = el("div","quick-actions");
@@ -615,11 +1393,23 @@ function renderEditor(){
   addBtn.addEventListener("click",()=>addAssignment(SELECTED_ID));
   const clearBtn = el("button","ghost","Vider les lignes");
   clearBtn.type = "button";
-  clearBtn.addEventListener("click",()=>{ entryFor(SELECTED_ID).Assignments=[]; renderEditor(); updateFolderMarkers(); updateSummary(); });
+  clearBtn.addEventListener("click",()=>{ entryFor(SELECTED_ID).Assignments=[]; markDirty("Autorisations videes pour le dossier selectionne."); renderEditor(); updateFolderMarkers(); updateSummary(); });
+  const copyCurrentBtn = el("button","ghost","Reprendre droits actuels");
+  copyCurrentBtn.type = "button";
+  copyCurrentBtn.disabled = !currentList.length;
+  copyCurrentBtn.addEventListener("click",()=>{
+    const entry = entryFor(SELECTED_ID);
+    entry.Assignments = currentList.map(p=>({GroupName:p.Principal, Role:p.Roles[0] || "Lecture"}));
+    markDirty("Droits actuels repris dans la configuration.");
+    renderEditor();
+    updateFolderMarkers();
+    updateSummary();
+  });
   const inheritBtn = el("button","danger","Ne rien changer");
   inheritBtn.type = "button";
-  inheritBtn.addEventListener("click",()=>{ PERMISSION_EDITS.delete(SELECTED_ID); renderEditor(); updateFolderMarkers(); updateSummary(); });
+  inheritBtn.addEventListener("click",()=>{ PERMISSION_EDITS.delete(SELECTED_ID); markDirty("Le dossier revient a ses droits non modifies."); renderEditor(); updateFolderMarkers(); updateSummary(); });
   actions.appendChild(addBtn);
+  actions.appendChild(copyCurrentBtn);
   actions.appendChild(clearBtn);
   actions.appendChild(inheritBtn);
   panel.appendChild(actions);
@@ -630,6 +1420,7 @@ function renderEditor(){
   reset.checked = !!entry.ResetPermissions;
   reset.addEventListener("change",()=>{
     entryFor(SELECTED_ID).ResetPermissions = reset.checked;
+    markDirty(reset.checked ? "Le remplacement des droits actuels est active." : "Le remplacement des droits actuels est desactive.");
     updateFolderMarkers();
     updateSummary();
     updatePreview();
@@ -656,6 +1447,7 @@ function addAssignment(id){
   const entry = entryFor(id);
   const suggested = suggestedGroupFor(FOLDER_BY_ID.get(id));
   entry.Assignments.push({GroupName:suggested, Role:"Lecture"});
+  markDirty("Nouvelle autorisation ajoutee.");
   renderEditor();
   updateFolderMarkers();
   updateSummary();
@@ -672,6 +1464,7 @@ function assignmentRow(id, assignment, index){
   group.title = "Nom exact du groupe Entra ID ou SharePoint";
   group.addEventListener("input",()=>{
     assignment.GroupName=group.value;
+    markDirty("Groupe d’autorisation modifie.");
     row.classList.toggle("invalid", !norm(group.value));
     updateSummary();
     updateFolderMarkers();
@@ -690,6 +1483,7 @@ function assignmentRow(id, assignment, index){
   role.addEventListener("change",()=>{
     if(role.value==="__deny"){ delete assignment.Role; assignment.Access="Deny"; }
     else { assignment.Role=role.value; delete assignment.Access; }
+    markDirty("Niveau d’autorisation modifie.");
     updateSummary(); updateFolderMarkers(); updatePreview();
   });
   const remove = el("button","danger icon","Retirer");
@@ -698,6 +1492,7 @@ function assignmentRow(id, assignment, index){
     const entry = entryFor(id);
     entry.Assignments.splice(index,1);
     if(!entry.Assignments.length) PERMISSION_EDITS.set(id, entry);
+    markDirty("Autorisation retiree.");
     renderEditor();
     updateFolderMarkers();
     updateSummary();
@@ -726,11 +1521,11 @@ function focusLastAssignment(){
 
 function collectAuth(){
   return {
-    TenantId: norm(AUTH_INFO.TenantId),
-    ClientId: norm(AUTH_INFO.ClientId),
-    CertificateThumbprint: norm(AUTH_INFO.CertificateThumbprint),
-    CertificatePath: norm(AUTH_INFO.CertificatePath),
-    CertificatePassword: AUTH_INFO.CertificatePassword || ""
+    TenantId: norm(valueOf("tenantId")),
+    ClientId: norm(valueOf("clientId")),
+    CertificateThumbprint: norm(valueOf("certThumbprint")),
+    CertificatePath: norm(valueOf("certPath")),
+    CertificatePassword: valueOf("certPassword") || ""
   };
 }
 function assignmentForExport(a){
@@ -753,9 +1548,77 @@ function buildConfig(){
   EXTRA_PERMISSIONS.forEach(p=>permissions.push(p));
   return {
     Auth: collectAuth(),
-    SiteUrl: norm(SITE_URL),
+    SiteUrl: norm(valueOf("siteUrl")),
     Permissions: permissions
   };
+}
+function cloneArchitecture(){
+  return typeof structuredClone === "function" ? structuredClone(DATA) : JSON.parse(JSON.stringify(DATA));
+}
+function architecturePermissionFor(meta, assignment){
+  const current = Array.isArray(meta && meta.node && meta.node.Permissions) ? meta.node.Permissions : [];
+  const principal = norm(assignment.GroupName);
+  const existing = current.find(p=>norm(p && (p.Principal || p.Name || p.DisplayName)).toLowerCase()===principal.toLowerCase());
+  const result = {
+    Principal: principal,
+    Type: existing && existing.Type ? existing.Type : "SecurityGroup",
+    Roles: assignment.Access === "Deny" ? [] : [norm(assignment.Role) || "Lecture"]
+  };
+  if(assignment.Access === "Deny") result.Access = "Deny";
+  if(existing && existing.Members) result.Members = existing.Members;
+  return result;
+}
+function applyPermissionEditsToArchitecture(target){
+  let changed = 0;
+  const modified = [];
+  const visit = (folder, libraryName, parentPath)=>{
+    const name = folder.Name || "(dossier sans nom)";
+    const path = parentPath ? parentPath + "/" + name : name;
+    const id = folderId(libraryName, path);
+    if(PERMISSION_EDITS.has(id)){
+      const entry = PERMISSION_EDITS.get(id) || {Assignments:[]};
+      const meta = FOLDER_BY_ID.get(id);
+      folder.HeritageRompu = true;
+      folder.Permissions = validAssignments(entry).map(a=>architecturePermissionFor(meta, a));
+      changed++;
+      modified.push({Library:libraryName, FolderPath:path, Assignments:folder.Permissions});
+    }
+    (folder.Dossiers||[]).forEach(child=>visit(child, libraryName, path));
+  };
+  (target.Bibliotheques||[]).forEach(lib=>{
+    const libraryName = lib.Name || lib.Title || "Documents";
+    (lib.Dossiers||[]).forEach(folder=>visit(folder, libraryName, ""));
+  });
+  if(changed){
+    target.PermissionEditor = Object.assign({}, target.PermissionEditor || {}, {
+      LastSavedAt: new Date().toISOString(),
+      ModifiedFolders: modified
+    });
+  }
+  return {target, changed, modified};
+}
+function buildArchitectureExport(){
+  if(!DATA) return null;
+  return applyPermissionEditsToArchitecture(cloneArchitecture()).target;
+}
+async function saveGlobalChanges(){
+  if(!needData()) return false;
+  if(!DIRTY){
+    showToast("Aucun changement en attente.", "success");
+    return true;
+  }
+  clearTimeout(DIRTY_TOAST_TIMER);
+  setLoadProgress(18, "Enregistrement global", "Mise a jour de toutes les autorisations dans le JSON...");
+  await sleep(0);
+  const updated = buildArchitectureExport();
+  clearDraftStorage();
+  PENDING_DRAFT = null;
+  STRUCTURE_EDITS = [];
+  DIRTY = false;
+  await render(updated);
+  updateDirtyState();
+  showToast("Changements enregistres dans toute l’architecture.", "success");
+  return true;
 }
 function validateConfig(config){
   const warnings = [];
@@ -774,19 +1637,18 @@ function validateConfig(config){
   return warnings;
 }
 function updateSummary(){
-  $("#metricFolders").textContent = FOLDERS.length;
+  textOf("metricFolders", FOLDERS.length);
   const configured = configuredEntries();
-  $("#metricConfigured").textContent = configured.length + (EXTRA_PERMISSIONS.length ? `+${EXTRA_PERMISSIONS.length}` : "");
+  textOf("metricConfigured", configured.length + (EXTRA_PERMISSIONS.length ? `+${EXTRA_PERMISSIONS.length}` : ""));
   const count = configured.reduce((n,[,entry])=>n+validAssignments(entry).length,0) + EXTRA_PERMISSIONS.reduce((n,p)=>n+(p.Assignments||[]).length,0);
-  $("#metricAssignments").textContent = count;
+  textOf("metricAssignments", count);
   updatePreview();
-  markEdited();
 }
 function updatePreview(){
   const config = buildConfig();
   const warnings = validateConfig(config);
-  $("#exportWarning").textContent = warnings.length ? warnings.slice(0,3).join(" · ") : "";
-  $("#jsonPreview").textContent = JSON.stringify(config,null,2);
+  textOf("exportWarning", warnings.length ? warnings.slice(0,3).join(" · ") : "");
+  textOf("jsonPreview", JSON.stringify(config,null,2));
 }
 function updateFolderMarkers(){
   document.querySelectorAll("details.folder").forEach(d=>{
@@ -800,18 +1662,16 @@ function updateFolderMarkers(){
 }
 
 function importPermissionConfig(config, silent){
-  if(!silent) $("#docState").textContent = LAST_LOADED_NAME ? `Config chargee : ${LAST_LOADED_NAME}` : "Configuration de droits chargee";
+  if(!silent) textOf("docState", LAST_LOADED_NAME ? `Config chargee : ${LAST_LOADED_NAME}` : "Configuration de droits chargee");
   if(config.Auth){
-    AUTH_INFO = {
-      TenantId: config.Auth.TenantId || AUTH_INFO.TenantId,
-      ClientId: config.Auth.ClientId || AUTH_INFO.ClientId,
-      CertificateThumbprint: config.Auth.CertificateThumbprint || AUTH_INFO.CertificateThumbprint,
-      CertificatePath: config.Auth.CertificatePath || AUTH_INFO.CertificatePath,
-      CertificatePassword: config.Auth.CertificatePassword || ""
-    };
+    setValue("tenantId", config.Auth.TenantId || "");
+    setValue("clientId", config.Auth.ClientId || "");
+    setValue("certThumbprint", config.Auth.CertificateThumbprint || "");
+    setValue("certPath", config.Auth.CertificatePath || valueOf("certPath") || "");
+    setValue("certPassword", config.Auth.CertificatePassword || "");
   }
   if(!DATA) PENDING_CONFIG = config;
-  if(config.SiteUrl) SITE_URL = config.SiteUrl;
+  if(config.SiteUrl) setValue("siteUrl", config.SiteUrl);
   EXTRA_PERMISSIONS = [];
   (config.Permissions||[]).forEach(p=>{
     (p.Assignments||[]).forEach(a=>addKnownGroup(a.GroupName));
@@ -831,6 +1691,7 @@ function importPermissionConfig(config, silent){
   renderEditor();
   updateFolderMarkers();
   updateSummary();
+  if(DATA) markDirty("Configuration de droits importee dans l’architecture.");
   if(!silent) alert(DATA ? "Configuration de droits chargee." : "Configuration chargee. Ouvrez aussi l'architecture pour l'editer visuellement.");
 }
 
@@ -863,12 +1724,19 @@ async function saveOrDownload(blob, name){
 function needData(){ if(!DATA){ alert("Ouvrez d'abord un fichier architecture_*.json."); return false;} return true; }
 async function exportPermissions(name, preferSave){
   if(!needData()) return;
+  setLoadProgress(20, "Export configuration", "Preparation du fichier de droits...");
   const config = buildConfig();
   const warnings = validateConfig(config);
-  if(warnings.length && !confirm("Verifier avant production :\n- "+warnings.join("\n- ")+"\n\nTelecharger quand meme ?")) return;
+  if(warnings.length && !confirm("Verifier avant production :\n- "+warnings.join("\n- ")+"\n\nTelecharger quand meme ?")){
+    setLoadProgress(100, "Export annule", "Aucun fichier n'a ete genere.");
+    hideLoadProgressSoon();
+    return;
+  }
   const blob = new Blob([JSON.stringify(config,null,2)],{type:"application/json;charset=utf-8"});
   if(preferSave) await saveOrDownload(blob, name);
   else download(blob, name);
+  setLoadProgress(100, "Configuration exportee", name);
+  hideLoadProgressSoon();
 }
 function stamp(){
   const d = new Date();
@@ -884,8 +1752,95 @@ async function copyJson(){
     alert("Copie impossible dans ce navigateur. Utilisez l'aperçu JSON.");
   }
 }
+function askSaveBeforeExport(){
+  if(!DIRTY) return Promise.resolve("export");
+  const modal = byId("saveBeforeExportModal");
+  if(!modal || typeof modal.showModal !== "function"){
+    return Promise.resolve(confirm("Des changements ne sont pas enregistres. OK pour les enregistrer avant export ?") ? "save" : "cancel");
+  }
+  return new Promise(resolve=>{
+    modal.onclose = ()=>resolve(modal.returnValue || "cancel");
+    const cancel = byId("cancelSaveExport");
+    const without = byId("exportWithoutSave");
+    const save = byId("confirmSaveExport");
+    if(cancel) cancel.onclick = ()=>modal.close("cancel");
+    if(without) without.onclick = ()=>modal.close("without");
+    if(save) save.onclick = ()=>modal.close("save");
+    modal.showModal();
+  });
+}
+async function runSelectedAction(){
+  const action = valueOf("actionMenu");
+  const actions = {
+    pdfRights: exportRightsPDF,
+    pdf: exportPDF,
+    word: exportWord,
+    excel: exportExcel,
+    archJson: exportArchitectureJson,
+    saveChanges: saveGlobalChanges,
+    exportLatest: ()=>exportPermissions("config-permissions-latest.json", true),
+    exportDated: ()=>exportPermissions("config-permissions-"+stamp()+".json"),
+    copyJson,
+    expand: expandAllProgressively,
+    collapse: ()=>document.querySelectorAll("#tree details").forEach(d=>d.open=false)
+  };
+  const fn = actions[action];
+  if(fn) await fn();
+}
 
 /* ---------- RECHERCHE ---------- */
+function renderRightsSearchResults(results){
+  const box=byId("rightsSearchResults");
+  const summary=byId("rightsSearchSummary");
+  if(!box || !summary)return;
+  box.innerHTML="";
+  if(!results.length){ summary.textContent="Aucun resultat dans les droits actuels."; box.appendChild(el("div","search-empty","Aucun groupe, utilisateur ou membre correspondant.")); return; }
+  summary.textContent=`${results.length} resultat(s) - cliquez pour afficher le dossier.`;
+  results.slice(0,200).forEach(result=>{
+    const button=el("button","rights-result"); button.type="button";
+    const title=result.member ? `${result.principal} - ${result.member}` : result.principal;
+    button.appendChild(el("strong","",title || "Principal sans nom"));
+    button.appendChild(el("span","",`${result.kind} · ${result.library ? result.library+" / " : ""}${result.path || "site"} · ${result.roles || "Droit non capture"}`));
+    button.addEventListener("click",()=>{ if(result.id) revealFolderInTree(result.id); });
+    box.appendChild(button);
+  });
+  if(results.length>200)box.appendChild(el("div","search-empty",`${results.length-200} resultat(s) supplementaire(s) non affiches.`));
+}
+function searchUserInRights(query){
+  const term=norm(query).toLowerCase();
+  if(!term){
+    const box=byId("rightsSearchResults"); if(box)box.innerHTML="";
+    textOf("rightsSearchSummary","");
+    return;
+  }
+  const results=[]; const seen=new Set();
+  const addNode=(kind,library,path,node,id,permissions)=>{
+    normalizePermissions(permissions || []).forEach(permission=>{
+      const principal=permission.Principal || "";
+      const matchesPrincipal=principal.toLowerCase().includes(term);
+      const members=permission.MemberDetails || [];
+      const matchingMembers=members.filter(member=>member.display.toLowerCase().includes(term));
+      if(matchesPrincipal || matchingMembers.length){
+        const visible=matchingMembers.length ? matchingMembers : [null];
+        visible.forEach(member=>{
+          const key=[id||kind,principal,member && member.display || ""].join("|");
+          if(seen.has(key))return; seen.add(key);
+          results.push({kind,library,path,id,principal,member:member && member.display || "",roles:permission.Roles.join(", ")});
+        });
+      }
+    });
+  };
+  addNode("Site","",DATA && DATA.Site && (DATA.Site.Titre || "Site"),DATA && DATA.Site,"",DATA && DATA.Site && DATA.Site.Permissions);
+  (DATA && DATA.Bibliotheques || []).forEach(lib=>{
+    const name=lib.Name || lib.Title || "Documents";
+    addNode("Bibliotheque",name,name,lib,"",lib.Permissions);
+  });
+  FOLDERS.forEach(meta=>{
+    const effective=effectivePermissionsForMeta(meta);
+    addNode("Dossier",meta.library,meta.path,meta.node,meta.id,effective.list);
+  });
+  renderRightsSearchResults(results);
+}
 function doFilter(q){
   q = (q||"").toLowerCase();
   const T = $("#tree");
@@ -903,64 +1858,208 @@ function doFilter(q){
   });
 }
 
-/* ---------- EXPORTS ARCHITECTURE (respectent la selection si elle existe) ---------- */
-function foldersForExport(){ return SELECTED_FOLDERS.size ? FOLDERS.filter(m=>SELECTED_FOLDERS.has(m.id)) : FOLDERS; }
-function permTextHtml(f){ return (f.HeritageRompu===false)?"<i>heritage conserve</i>":(!(f.Permissions||[]).length?"<i>unique - aucun groupe explicite</i>":(f.Permissions||[]).map(p=>"<b>"+esc(p.Principal)+"</b> ("+esc(p.Type)+") : "+esc((p.Roles||[]).join(", "))).join(" &nbsp;|&nbsp; ")); }
+async function expandAllProgressively(){
+  if(!DATA) return;
+  if(FOLDERS.length > 5000 && !confirm(`Cette architecture contient ${FOLDERS.length} dossiers. Tout derouler peut prendre du temps. Continuer ?`)) return;
+  let opened = 0;
+  setLoadProgress(0, "Deroulement progressif", "Ouverture des branches par lots...");
+  while(true){
+    const closed = [...document.querySelectorAll("#tree details:not([open])")];
+    if(!closed.length) break;
+    for(let i=0;i<closed.length;i++){
+      closed[i].open = true;
+      opened++;
+      if(opened % 80 === 0){
+        const pct = Math.min(99, Math.round((opened / Math.max(1, FOLDERS.length)) * 100));
+        setLoadProgress(pct, "Deroulement progressif", `${opened} branche(s) ouverte(s).`);
+        await sleep(0);
+      }
+    }
+    await sleep(0);
+  }
+  setLoadProgress(100, "Deroulement termine", `${opened} branche(s) ouverte(s).`);
+  hideLoadProgressSoon();
+}
+
+/* ---------- EXPORTS ARCHITECTURE ---------- */
+function architectureReportHtml(){
+  const title = "Architecture SharePoint";
+  const siteTitle = DATA.Site && DATA.Site.Titre || "";
+  const siteUrl = DATA.Site && DATA.Site.Url || "";
+  const captured = DATA.Site && DATA.Site.CaptureLe || "";
+  let body = "";
+  const sitePerms = normalizePermissions(DATA.Site && DATA.Site.Permissions || []);
+  if(sitePerms.length){
+    const siteRights = sitePerms.map(permissionInlineHtml).join("<hr>");
+    body += "<h2>Site</h2><p class=\"rights\">"+siteRights+"</p>";
+  }
+  (DATA.Bibliotheques||[]).forEach(l=>{
+    const libName = l.Name || l.Title || "Documents";
+    const libPerms = normalizePermissions(l.Permissions||[]);
+    const libRights = libPerms.length
+      ? libPerms.map(permissionInlineHtml).join("<hr>")
+      : "<i>droits bibliotheque non captures ou aucun droit explicite</i>";
+    body += "<h2>📚 "+esc(libName)+"</h2><p class=\"rights\">"+libRights+"</p>";
+    (l.Dossiers||[]).forEach(f=> body+=reportHtml(f,0));
+  });
+  return `<!doctype html><html lang="fr"><head><meta charset="utf-8"><title>${esc(title)}</title>
+  <style>
+    body{font-family:Calibri,Arial,sans-serif;color:#172033;margin:24px;font-size:12px}
+    h1{font-size:22px;margin:0 0 6px} h2{font-size:16px;margin:18px 0 8px;border-bottom:1px solid #c8d0dc;padding-bottom:4px}
+    .meta{color:#5b667a;margin-bottom:16px;line-height:1.45}.rights{margin:4px 0 10px;color:#333}.member-summary{color:#5b667a;font-size:11px}
+    p{break-inside:avoid;word-break:break-word}
+    @media print{body{margin:12mm}}
+  </style></head><body>
+    <h1>${esc(title)}${siteTitle ? " - "+esc(siteTitle) : ""}</h1>
+    <div class="meta">${esc(siteUrl)}${captured ? "<br>Capture le "+esc(captured) : ""}</div>
+    ${body || "<p>Aucune bibliotheque dans le JSON.</p>"}
+  </body></html>`;
+}
 function exportPDF(){
   if(!needData())return;
-  const J = window.jspdf && window.jspdf.jsPDF;
-  if(!J){
-    alert("Bibliotheque PDF non chargee (hors ligne ?). Utilisation de l'impression du navigateur.");
-    exportPDFPrint();
+  setLoadProgress(20, "Generation PDF architecture", "Construction du rapport depuis le JSON...");
+  const siteTitle = DATA.Site && DATA.Site.Titre || "architecture";
+  const html = architectureReportHtml();
+  setLoadProgress(90, "Ouverture du rapport", "Preparation de la fenetre d'impression...");
+  printReportHtml(html, "architecture-"+safe(siteTitle)+"-"+stamp()+".html");
+  setLoadProgress(100, "Rapport ouvert", "Utilisez la fenetre d'impression pour enregistrer en PDF.");
+  hideLoadProgressSoon();
+}
+function permissionRowsFor(kind, libraryName, path, node, rows, parentEffective){
+  const permsList = normalizePermissions(node && node.Permissions || []);
+  const hasHeritage = node && Object.prototype.hasOwnProperty.call(node, "HeritageRompu");
+  const inherits = hasHeritage && node.HeritageRompu===false;
+  const parentList = Array.isArray(parentEffective) ? parentEffective : [];
+  const effectiveList = inherits ? (parentList.length ? parentList : permsList) : permsList;
+  const heritageLabel = hasHeritage ? (inherits ? "conserve (herite du parent)" : "rompu") : "non capture";
+  if(effectiveList.length){
+    effectiveList.forEach(p=>{
+      reportMembersForPermission(p).forEach(member=>rows.push({
+          kind,
+          library: libraryName,
+          path: path || libraryName,
+          heritage: heritageLabel,
+          principal: p.Principal || "",
+          type: p.Type || "",
+          member: member.display,
+          memberType: member.type || "",
+          roles: p.Roles.join(", ")
+        }));
+    });
+  }else{
+    rows.push({
+      kind,
+      library: libraryName,
+      path: path || libraryName,
+      heritage: heritageLabel,
+      principal: inherits ? "Heritage du parent non capture" : "Aucun principal explicite dans le JSON",
+      type: "",
+      member: "",
+      memberType: "",
+      roles: inherits ? "Droits herites non disponibles dans ce JSON" : ""
+    });
+  }
+  return effectiveList;
+}
+async function collectPermissionReportRows(){
+  const rows = [];
+  const totalObjects = Math.max(1, 1 + (DATA.Bibliotheques||[]).length + FOLDERS.length);
+  let processed = 0;
+  const tick = async (label)=>{
+    processed++;
+    if(processed % 300 === 0){
+      const pct = Math.min(78, 12 + Math.round((processed / totalObjects) * 66));
+      setLoadProgress(pct, "Preparation du rapport", `${processed}/${totalObjects} objet(s) analyse(s) - ${label}`);
+      await sleep(0);
+    }
+  };
+  setLoadProgress(8, "Preparation du rapport", "Analyse des groupes, utilisateurs et droits...");
+  const siteTitle = DATA.Site && DATA.Site.Titre || "Site SharePoint";
+  const sitePath = DATA.Site && DATA.Site.Url || siteTitle;
+  const siteEffective = permissionRowsFor("Site", siteTitle, sitePath, DATA.Site || {}, rows, []);
+  await tick("site");
+  const libraryStacks = [];
+  (DATA.Bibliotheques||[]).forEach(lib=>{
+    const libName = lib.Name || lib.Title || "Documents";
+    const libEffective = permissionRowsFor("Bibliotheque", libName, libName, lib, rows, siteEffective);
+    const stack = [];
+    (lib.Dossiers||[]).slice().reverse().forEach(folder=>stack.push({node:folder, path:folder.Name||"(dossier sans nom)", parentEffective:libEffective}));
+    libraryStacks.push({libName, stack});
+  });
+  for(const itemLib of libraryStacks){
+    const libName = itemLib.libName;
+    await tick(`bibliotheque ${libName}`);
+    const stack = itemLib.stack;
+    while(stack.length){
+      const item = stack.pop();
+      const effective = permissionRowsFor("Dossier", libName, item.path, item.node, rows, item.parentEffective);
+      (item.node.Dossiers||[]).slice().reverse().forEach(child=>{
+        const childName = child.Name || "(dossier sans nom)";
+        stack.push({node:child, path:item.path + "/" + childName, parentEffective:effective});
+      });
+      await tick(item.path);
+    }
+  }
+  setLoadProgress(80, "Rapport prepare", `${rows.length} ligne(s) de droits pretes.`);
+  return rows;
+}
+function printReportHtml(html, fallbackName, options){
+  const rowCount = options && options.rowCount || 0;
+  if(rowCount > 15000){
+    download(new Blob([html],{type:"text/html;charset=utf-8"}), fallbackName);
+    setLoadProgress(100, "Rapport volumineux telecharge", `${rowCount} ligne(s). Ouvrez le HTML telecharge pour imprimer en PDF sans bloquer le visualiseur.`);
+    hideLoadProgressSoon();
+    alert("Rapport tres volumineux : le HTML imprimable a ete telecharge pour eviter de bloquer le visualiseur.");
     return;
   }
-  const doc = new J({orientation:"landscape", unit:"pt", format:"a4"});
-  const scope = SELECTED_FOLDERS.size ? " (selection)" : "";
-  doc.setFontSize(14); doc.setTextColor(20);
-  doc.text("Architecture SharePoint"+scope, 40, 40);
-  doc.setFontSize(9); doc.setTextColor(120);
-  doc.text([ (DATA.Site&&DATA.Site.Titre||""), (DATA.Site&&DATA.Site.Url||""), "Capture : "+(DATA.Site&&DATA.Site.CaptureLe||"") ].filter(Boolean).join("   |   "), 40, 56);
-  const body=[];
-  foldersForExport().forEach(m=>{
-    const f=m.node;
-    if(f.HeritageRompu===false) body.push([m.library, m.path, "(heritage conserve)", "", "", f.ModifiePar||""]);
-    else if(!(f.Permissions||[]).length) body.push([m.library, m.path, "(aucun groupe explicite)", "", "", f.ModifiePar||""]);
-    else (f.Permissions||[]).forEach(p=> body.push([m.library, m.path, p.Principal||"", p.Type||"", (p.Roles||[]).join(", "), f.ModifiePar||""]));
-  });
-  doc.autoTable({
-    startY:70,
-    head:[["Bibliotheque","Dossier (chemin)","Groupe / Principal","Type","Niveau","Modifie par"]],
-    body: body.length ? body : [["(aucune donnee)","","","","",""]],
-    styles:{fontSize:8, cellPadding:3, overflow:"linebreak", valign:"top"},
-    headStyles:{fillColor:[9,105,218], textColor:255},
-    alternateRowStyles:{fillColor:[246,248,250]},
-    columnStyles:{1:{cellWidth:150}, 2:{cellWidth:130}, 4:{cellWidth:90}},
-    margin:{left:40, right:40},
-    didDrawPage:(hd)=>{ doc.setFontSize(8); doc.setTextColor(150); doc.text("Page "+doc.internal.getNumberOfPages(), hd.settings.margin.left, doc.internal.pageSize.getHeight()-16); }
-  });
-  doc.save("architecture-"+safe(DATA.Site&&DATA.Site.Titre)+(SELECTED_FOLDERS.size?"-selection":"")+".pdf");
+  const win = window.open("", "_blank");
+  if(!win){
+    download(new Blob([html],{type:"text/html;charset=utf-8"}), fallbackName);
+    alert("Ouverture bloque par le navigateur. Le rapport HTML a ete telecharge.");
+    return;
+  }
+  win.document.open();
+  win.document.write(html);
+  win.document.close();
+  setTimeout(()=>{ try{ win.focus(); win.print(); }catch(e){} }, 500);
 }
-function exportPDFPrint(){
+async function exportRightsPDF(){
   if(!needData())return;
-  const sel = SELECTED_FOLDERS.size>0 && CURRENT_VIEW==="tree";
-  const T=$("#tree");
-  if(sel){
-    T.querySelectorAll("details.folder").forEach(d=>d.classList.add("hidden"));
-    [...T.querySelectorAll("details.folder")].forEach(d=>{
-      if(!SELECTED_FOLDERS.has(d.dataset.id)) return;
-      d.classList.remove("hidden"); d.open=true;
-      d.querySelectorAll("details.folder").forEach(x=>x.classList.remove("hidden"));
-      let p=d.parentElement; while(p&&p!==T){ if(p.tagName==="DETAILS"){p.classList.remove("hidden"); p.open=true;} p=p.parentElement; }
-    });
-  } else { document.querySelectorAll("#tree details").forEach(d=>d.open=true); }
-  window.print();
-  if(sel) setTimeout(()=>T.querySelectorAll(".hidden").forEach(x=>x.classList.remove("hidden")),400);
+  const rows = await collectPermissionReportRows();
+  const title = "Rapport groupes, utilisateurs et droits";
+  const siteTitle = DATA.Site && DATA.Site.Titre || "Architecture SharePoint";
+  const siteUrl = DATA.Site && DATA.Site.Url || "";
+  const captured = DATA.Site && DATA.Site.CaptureLe || "";
+  setLoadProgress(86, "Generation du document", `${rows.length} ligne(s) a mettre en page...`);
+  await sleep(0);
+  const bodyRows = rows.map(r=>`<tr><td>${esc(r.kind)}</td><td>${esc(r.library)}</td><td>${esc(r.path)}</td><td>${esc(r.heritage)}</td><td>${esc(r.principal)}</td><td>${esc(r.type)}</td><td>${esc(r.member)}</td><td>${esc(r.memberType)}</td><td>${esc(r.roles)}</td></tr>`).join("");
+  const html = `<!doctype html><html lang="fr"><head><meta charset="utf-8"><title>${esc(title)}</title>
+  <style>
+    @page{size:A4 landscape;margin:12mm}
+    body{font-family:Arial,Calibri,sans-serif;color:#172033;margin:24px;font-size:10px}
+    h1{font-size:22px;margin:0 0 6px} .meta{color:#5b667a;margin-bottom:16px;line-height:1.45}
+    table{width:100%;border-collapse:collapse;table-layout:fixed} th,td{border:1px solid #c8d0dc;padding:5px;vertical-align:top;word-break:break-word}
+    th{background:#edf2f7;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.03em}
+    tr:nth-child(even) td{background:#f8fafc}
+    @media print{body{margin:12mm} thead{display:table-header-group} tr{break-inside:avoid}}
+  </style></head><body>
+    <h1>${esc(title)}</h1>
+    <div class="meta"><b>${esc(siteTitle)}</b><br>${esc(siteUrl)}${captured ? "<br>Capture le "+esc(captured) : ""}<br>${rows.length} ligne(s) de droits/principaux</div>
+    <table><thead><tr><th>Objet</th><th>Bibliotheque</th><th>Chemin</th><th>Heritage</th><th>Groupe / utilisateur</th><th>Type principal</th><th>Personne / membre</th><th>Type membre</th><th>Droits</th></tr></thead><tbody>${bodyRows}</tbody></table>
+  </body></html>`;
+  setLoadProgress(96, "Ouverture du rapport", "Preparation de la fenetre d'impression...");
+  printReportHtml(html, "rapport-groupes-droits-"+safe(siteTitle)+"-"+stamp()+".html", {rowCount:rows.length});
+  if(rows.length <= 15000){
+    setLoadProgress(100, "Rapport ouvert", "Utilisez la fenetre d'impression pour enregistrer en PDF.");
+    hideLoadProgressSoon();
+  }
 }
 function reportHtml(f, depth){
   const pad = depth*20;
+  const list = normalizePermissions(f.Permissions||[]);
   const pt = (f.HeritageRompu===false)?"<i>heritage conserve</i>"
-    : (!(f.Permissions||[]).length?"<i>unique - aucun groupe explicite</i>"
-    : (f.Permissions||[]).map(p=>"<b>"+esc(p.Principal)+"</b> ("+esc(p.Type)+") : "+esc((p.Roles||[]).join(", "))).join(" &nbsp;|&nbsp; "));
+    : (!list.length?"<i>unique - aucun groupe explicite</i>"
+    : list.map(permissionInlineHtml).join("<hr>"));
   let h="<p style=\"margin:6px 0 2px "+pad+"px\">📁 <b>"+esc(f.Name)+"</b>"+(f.ModifiePar?" <span style=\"color:#777\">- modifie par "+esc(f.ModifiePar)+"</span>":"")+"<br><span style=\"margin-left:18px;color:#333\">"+pt+"</span></p>";
   (f.Fichiers||[]).forEach(fi=> h+="<p style=\"margin:1px 0 1px "+(pad+18)+"px;color:#555\">📄 "+esc(fi.Name)+(fi.Modifie?" <span style=\"color:#999\">("+esc(fi.Modifie)+")</span>":"")+"</p>");
   (f.Dossiers||[]).forEach(s=> h+=reportHtml(s, depth+1));
@@ -968,201 +2067,93 @@ function reportHtml(f, depth){
 }
 function exportWord(){
   if(!needData())return;
+  setLoadProgress(20, "Export Word", "Construction du document...");
   let h="<html xmlns:o=\"urn:schemas-microsoft-com:office:office\" xmlns:w=\"urn:schemas-microsoft-com:office:word\"><head><meta charset=\"utf-8\">"
     +"<style>body{font-family:Calibri,Arial;font-size:11pt} h1{font-size:18pt} h2{font-size:14pt;color:#0969da;border-bottom:1px solid #ccc}</style></head><body>";
-  h+="<h1>Architecture SharePoint"+(SELECTED_FOLDERS.size?" (selection)":"")+" - "+esc(DATA.Site&&DATA.Site.Titre||"")+"</h1>";
+  h+="<h1>Architecture SharePoint - "+esc(DATA.Site&&DATA.Site.Titre||"")+"</h1>";
   h+="<p>"+esc(DATA.Site&&DATA.Site.Url||"")+"<br>Capture le "+esc(DATA.Site&&DATA.Site.CaptureLe||"")+"</p>";
-  foldersForExport().forEach(m=>{ const f=m.node; const pad=m.depth*18;
-    h+="<p style=\"margin:6px 0 2px "+pad+"px\">📁 <b>"+esc(m.library+" / "+m.path)+"</b>"+(f.ModifiePar?" <span style=\"color:#777\">- modifie par "+esc(f.ModifiePar)+"</span>":"")+"<br><span style=\"margin-left:18px;color:#333\">"+permTextHtml(f)+"</span></p>";
-    (f.Fichiers||[]).forEach(fi=> h+="<p style=\"margin:1px 0 1px "+(pad+18)+"px;color:#555\">📄 "+esc(fi.Name)+"</p>"); });
+  (DATA.Bibliotheques||[]).forEach(l=>{ h+="<h2>📚 "+esc(l.Name)+"</h2>"; (l.Dossiers||[]).forEach(f=> h+=reportHtml(f,0)); });
   h+="</body></html>";
   download(new Blob(["\ufeff"+h],{type:"application/msword"}), "architecture-"+safe(DATA.Site&&DATA.Site.Titre)+".doc");
+  setLoadProgress(100, "Word telecharge", "Document genere.");
+  hideLoadProgressSoon();
 }
 function walk(node, lib, parent, rows){
   (node.Dossiers||[]).forEach(f=>{
     const path = parent? parent+"/"+f.Name : f.Name;
-    if(f.HeritageRompu===false){ rows.push([lib, path, "non (herite)","","","", f.ModifiePar||""]); }
-    else if(!(f.Permissions||[]).length){ rows.push([lib, path, "oui","(aucun groupe explicite)","","", f.ModifiePar||""]); }
-    else (f.Permissions||[]).forEach(p=> rows.push([lib, path, "oui", p.Principal, p.Type, (p.Roles||[]).join(", "), f.ModifiePar||""]));
+    const list = normalizePermissions(f.Permissions||[]);
+    if(f.HeritageRompu===false){ rows.push([lib, path, "non (herite)","","","","", f.ModifiePar||""]); }
+    else if(!list.length){ rows.push([lib, path, "oui","(aucun groupe explicite)","","","", f.ModifiePar||""]); }
+    else list.forEach(p=> rows.push([lib, path, "oui", p.Principal, p.Type, p.Members.join(", "), p.Roles.join(", "), f.ModifiePar||""]));
     walk(f, lib, path, rows);
   });
 }
 function exportExcel(){
   if(!needData())return;
-  const rows=[["Bibliotheque","Dossier (chemin)","Heritage rompu","Groupe / Principal","Type","Roles","Modifie par"]];
-  foldersForExport().forEach(m=>{ const f=m.node;
-    if(f.HeritageRompu===false) rows.push([m.library,m.path,"non (herite)","","","",f.ModifiePar||""]);
-    else if(!(f.Permissions||[]).length) rows.push([m.library,m.path,"oui","(aucun groupe explicite)","","",f.ModifiePar||""]);
-    else (f.Permissions||[]).forEach(p=> rows.push([m.library,m.path,"oui",p.Principal,p.Type,(p.Roles||[]).join(", "),f.ModifiePar||""]));
-  });
+  setLoadProgress(20, "Export Excel", "Preparation des lignes CSV...");
+  const rows=[["Bibliotheque","Dossier (chemin)","Heritage rompu","Groupe / Principal","Type","Membres / utilisateurs","Roles","Modifie par"]];
+  (DATA.Bibliotheques||[]).forEach(l=> walk(l, l.Name, "", rows));
   const csv = rows.map(r=> r.map(c=>"\""+String(c==null?"":c).replace(/"/g,"\"\"")+"\"").join(";")).join("\r\n");
   download(new Blob(["\ufeff"+csv],{type:"text/csv;charset=utf-8"}), "architecture-"+safe(DATA.Site&&DATA.Site.Titre)+".csv");
+  setLoadProgress(100, "Excel telecharge", `${rows.length-1} ligne(s) exportee(s).`);
+  hideLoadProgressSoon();
 }
-function exportArchitectureJson(){
+async function exportArchitectureJson(){
   if(!needData())return;
-  download(new Blob([JSON.stringify(DATA,null,2)],{type:"application/json;charset=utf-8"}), "architecture-"+safe(DATA.Site&&DATA.Site.Titre)+"-"+stamp()+".json");
+  const decision = await askSaveBeforeExport();
+  if(decision === "cancel") return;
+  if(decision === "save") await saveGlobalChanges();
+  setLoadProgress(20, "Export JSON global", "Serialisation de l’architecture complete...");
+  await sleep(0);
+  const exportData = buildArchitectureExport();
+  const serialized = JSON.stringify(exportData,null,2);
+  setLoadProgress(78, "Export JSON global", `${fileSizeLabel(serialized.length)} de JSON prepare...`);
+  await sleep(0);
+  download(new Blob([serialized],{type:"application/json;charset=utf-8"}), "architecture-"+safe(DATA.Site&&DATA.Site.Titre)+"-"+stamp()+".json");
+  setLoadProgress(100, "JSON global telecharge", decision === "without" ? "Les changements sont inclus dans la copie exportee." : "Architecture complete exportee.");
+  hideLoadProgressSoon();
 }
 
 /* ---------- UI ---------- */
-function readFile(file){ const r=new FileReader(); r.onload=()=>loadText(r.result, file && file.name); r.readAsText(file); }
-$("#file").addEventListener("change", e=>{ const f=e.target.files[0]; if(f) readFile(f); e.target.value=""; });
-$("#configFile").addEventListener("change", e=>{ const f=e.target.files[0]; if(f) readFile(f); e.target.value=""; });
-$("#expand").addEventListener("click", ()=> document.querySelectorAll("details").forEach(d=>d.open=true));
-$("#collapse").addEventListener("click", ()=> document.querySelectorAll("#tree details").forEach(d=>d.open=false));
-$("#pdf").addEventListener("click", exportPDF);
-$("#word").addEventListener("click", exportWord);
-$("#excel").addEventListener("click", exportExcel);
-$("#archJson").addEventListener("click", exportArchitectureJson);
-$("#filter").addEventListener("input", e=> doFilter(e.target.value));
-$("#addGroup").addEventListener("click", ()=>{ addKnownGroup($("#newGroup").value); $("#newGroup").value=""; renderGroups(); });
-$("#newGroup").addEventListener("keydown", e=>{ if(e.key==="Enter"){ e.preventDefault(); $("#addGroup").click(); } });
-/* Champs de connexion geres en interne (AUTH_INFO / SITE_URL) : plus de dependance au DOM. */
-$("#exportLatest").addEventListener("click", ()=>exportPermissions("config-permissions-latest.json", true));
-$("#exportDated").addEventListener("click", ()=>exportPermissions("config-permissions-"+stamp()+".json"));
-$("#copyJson").addEventListener("click", copyJson);
+function readFile(file){
+  if(!file) return;
+  if(ACTIVE_WORKER){ ACTIVE_WORKER.terminate(); ACTIVE_WORKER = null; }
+  const r = new FileReader();
+  setLoadProgress(0, "Lecture du fichier", `${file.name} (${fileSizeLabel(file.size)})`);
+  r.onprogress = event=>{
+    if(event.lengthComputable){
+      const pct = 5 + ((event.loaded / Math.max(1, event.total)) * 55);
+      setLoadProgress(pct, "Lecture du fichier", `${file.name} - ${fileSizeLabel(event.loaded)} / ${fileSizeLabel(event.total)}`);
+    }
+  };
+  r.onerror = ()=>alert("Lecture impossible : "+(r.error && r.error.message ? r.error.message : "erreur fichier"));
+  r.onload = async ()=>{
+    setLoadProgress(60, "Lecture terminee", "Analyse du JSON...");
+    await loadText(r.result, file.name);
+  };
+  r.readAsText(file);
+}
+on("file", "change", e=>{ const f=e.target.files[0]; if(f) readFile(f); e.target.value=""; });
+on("configFile", "change", e=>{ const f=e.target.files[0]; if(f) readFile(f); e.target.value=""; });
+on("expand", "click", expandAllProgressively);
+on("collapse", "click", ()=> document.querySelectorAll("#tree details").forEach(d=>d.open=false));
+on("pdf", "click", exportPDF);
+on("pdfRights", "click", exportRightsPDF);
+on("word", "click", exportWord);
+on("excel", "click", exportExcel);
+on("archJson", "click", exportArchitectureJson);
+on("filter", "input", e=> doFilter(e.target.value));
+on("rightsSearch", "input", e=> searchUserInRights(e.target.value));
+on("addGroup", "click", ()=>{ const before=KNOWN_GROUPS.length; addKnownGroup(valueOf("newGroup")); setValue("newGroup", ""); renderGroups(); if(KNOWN_GROUPS.length!==before) markDirty("Groupe ajoute a la liste de travail."); });
+on("newGroup", "keydown", e=>{ if(e.key==="Enter"){ e.preventDefault(); const btn=byId("addGroup"); if(btn) btn.click(); } });
+["tenantId","clientId","certThumbprint","certPath","certPassword","siteUrl"].forEach(id=>on(id, "input", ()=>{ updatePreview(); if(DATA) markDirty("Configuration de production modifiee."); }));
+on("saveChanges", "click", saveGlobalChanges);
+on("copyJson", "click", copyJson);
+on("runAction", "click", runSelectedAction);
 const drop=$("#drop");
-["dragover","dragenter"].forEach(ev=>document.addEventListener(ev,e=>{e.preventDefault();drop.classList.add("hl");}));
-["dragleave","drop"].forEach(ev=>document.addEventListener(ev,e=>{e.preventDefault();drop.classList.remove("hl");}));
+["dragover","dragenter"].forEach(ev=>document.addEventListener(ev,e=>{e.preventDefault(); if(drop) drop.classList.add("hl");}));
+["dragleave","drop"].forEach(ev=>document.addEventListener(ev,e=>{e.preventDefault(); if(drop) drop.classList.remove("hl");}));
 document.addEventListener("drop", e=>{ const f=e.dataTransfer.files[0]; if(f) readFile(f); });
-
-/* ---------- SELECTION / VUES / MENU / MODAL / HORODATAGE ---------- */
-let READY = false;
-function updateSelBar(){
-  const n = SELECTED_FOLDERS.size + SELECTED_FILES.size;
-  const sc=$("#selCount"); if(sc) sc.textContent = n + " coche(s)";
-  const md=$("#modalSelCount"); if(md) md.textContent = SELECTED_FOLDERS.size;
-}
-const _selAll=$("#selAll"); if(_selAll) _selAll.addEventListener("click", ()=>{
-  FOLDERS.forEach(m=>SELECTED_FOLDERS.add(m.id));
-  document.querySelectorAll("#tree .selbox").forEach(cb=>{ cb.checked=true; if(cb.dataset.key) SELECTED_FILES.add(cb.dataset.key); });
-  document.querySelectorAll("#tree details.folder").forEach(d=>d.classList.add("picked"));
-  updateSelBar();
-});
-const _selNone=$("#selNone"); if(_selNone) _selNone.addEventListener("click", ()=>{
-  SELECTED_FOLDERS.clear(); SELECTED_FILES.clear();
-  document.querySelectorAll("#tree .selbox").forEach(cb=>cb.checked=false);
-  document.querySelectorAll("#tree details.folder.picked").forEach(d=>d.classList.remove("picked"));
-  updateSelBar();
-});
-
-function setView(v){
-  CURRENT_VIEW = v;
-  const t=$("#tabTree"), g=$("#tabGroups");
-  if(t) t.classList.toggle("active", v==="tree");
-  if(g) g.classList.toggle("active", v==="groups");
-  $("#tree").classList.toggle("hidden", v!=="tree");
-  $("#groupView").classList.toggle("hidden", v!=="groups");
-  if(v==="groups") renderGroupView();
-}
-const _tabTree=$("#tabTree"); if(_tabTree) _tabTree.addEventListener("click", ()=>setView("tree"));
-const _tabGroups=$("#tabGroups"); if(_tabGroups) _tabGroups.addEventListener("click", ()=>setView("groups"));
-
-function groupIndex(){
-  const map=new Map();
-  FOLDERS.forEach(m=>{
-    const node=m.node;
-    if(node.HeritageRompu===false) return;
-    (node.Permissions||[]).forEach(p=>{
-      const k=p.Principal||"(inconnu)";
-      if(!map.has(k)) map.set(k,{type:p.Type,locs:[]});
-      map.get(k).locs.push({library:m.library, path:m.path, roles:(p.Roles||[]).join(", ")});
-    });
-  });
-  return map;
-}
-function renderGroupView(){
-  const gv=$("#groupView"); gv.innerHTML="";
-  if(!DATA){ gv.appendChild(el("div","empty-note","Chargez une architecture.")); return; }
-  const map=groupIndex();
-  if(!map.size){ gv.appendChild(el("div","empty-note","Aucun droit explicite dans l'architecture (dossiers en heritage).")); return; }
-  [...map.keys()].sort((a,b)=>a.localeCompare(b,"fr")).forEach(gname=>{
-    const info=map.get(gname);
-    const card=el("div","group-card");
-    const h=el("h3","");
-    h.appendChild(el("span","","🔐"));
-    h.appendChild(el("span","name",gname));
-    h.appendChild(el("span","g-count", info.locs.length+" dossier(s)"));
-    card.appendChild(h);
-    info.locs.forEach(loc=>{
-      const row=el("div","group-loc");
-      row.appendChild(el("span","ico","📁"));
-      row.appendChild(el("span","g-path", loc.library+" / "+loc.path));
-      row.appendChild(el("span","lvl", loc.roles||"-"));
-      card.appendChild(row);
-    });
-    gv.appendChild(card);
-  });
-}
-function exportExcelGroups(){
-  if(!needData())return;
-  const rows=[["Groupe / Principal","Type","Bibliotheque","Dossier","Niveau"]];
-  const map=groupIndex();
-  [...map.keys()].sort((a,b)=>a.localeCompare(b,"fr")).forEach(g=>{
-    const info=map.get(g);
-    info.locs.forEach(loc=> rows.push([g, info.type||"", loc.library, loc.path, loc.roles]));
-  });
-  const csv=rows.map(r=>r.map(c=>"\""+String(c==null?"":c).replace(/"/g,"\"\"")+"\"").join(";")).join("\r\n");
-  download(new Blob(["﻿"+csv],{type:"text/csv;charset=utf-8"}), "groupes-par-dossier-"+safe(DATA.Site&&DATA.Site.Titre)+".csv");
-}
-const _excelGroups=$("#excelGroups"); if(_excelGroups) _excelGroups.addEventListener("click", exportExcelGroups);
-
-/* Menu Actions */
-const _actBtn=$("#actionsBtn"), _actMenu=$("#actionsMenu");
-if(_actBtn && _actMenu){
-  _actBtn.addEventListener("click", e=>{ e.stopPropagation(); const o=_actMenu.classList.toggle("open"); _actBtn.setAttribute("aria-expanded", o?"true":"false"); });
-  document.addEventListener("click", e=>{ if(!e.target.closest(".menu-wrap")) _actMenu.classList.remove("open"); });
-  _actMenu.querySelectorAll(".mi").forEach(b=> b.addEventListener("click", ()=> _actMenu.classList.remove("open")));
-}
-
-/* Modal : ajouter un droit a un groupe */
-function openGroupModal(){
-  if(!needData())return;
-  const rsel=$("#modalRole"); rsel.innerHTML="";
-  ROLE_OPTIONS.forEach(r=>{ const o=document.createElement("option"); o.value=r; o.textContent=r; rsel.appendChild(o); });
-  const dopt=document.createElement("option"); dopt.value="__deny"; dopt.textContent="Deny / masquer"; rsel.appendChild(dopt);
-  $("#modalGroup").value = KNOWN_GROUPS[0]||"";
-  $("#modalSelCount").textContent = SELECTED_FOLDERS.size;
-  const rSel=document.querySelector('input[name="modalTarget"][value="selected"]');
-  const rCur=document.querySelector('input[name="modalTarget"][value="current"]');
-  if(SELECTED_FOLDERS.size){ if(rSel) rSel.checked=true; } else { if(rCur) rCur.checked=true; }
-  $("#modalBack").classList.add("open");
-  setTimeout(()=>$("#modalGroup").focus(),0);
-}
-function closeGroupModal(){ $("#modalBack").classList.remove("open"); }
-function applyGroupModal(){
-  const g=norm($("#modalGroup").value);
-  if(!g){ alert("Indiquez un nom de groupe."); return; }
-  const roleVal=$("#modalRole").value;
-  const checked=document.querySelector('input[name="modalTarget"]:checked');
-  const target=checked?checked.value:"selected";
-  let ids = target==="current" ? (SELECTED_ID?[SELECTED_ID]:[]) : [...SELECTED_FOLDERS];
-  if(!ids.length){ alert("Aucun dossier cible : cochez des dossiers, ou ouvrez-en un dans l'editeur."); return; }
-  addKnownGroup(g);
-  ids.forEach(id=>{
-    if(!FOLDER_BY_ID.has(id)) return;
-    const entry=entryFor(id);
-    entry.Assignments.push(roleVal==="__deny" ? {GroupName:g, Access:"Deny"} : {GroupName:g, Role:roleVal});
-  });
-  renderGroups(); renderEditor(); updateFolderMarkers(); updateSummary();
-  closeGroupModal();
-}
-const _addModal=$("#addGroupModalBtn"); if(_addModal) _addModal.addEventListener("click", openGroupModal);
-const _bulk=$("#bulkAssign"); if(_bulk) _bulk.addEventListener("click", openGroupModal);
-const _mClose=$("#modalClose"); if(_mClose) _mClose.addEventListener("click", closeGroupModal);
-const _mCancel=$("#modalCancel"); if(_mCancel) _mCancel.addEventListener("click", closeGroupModal);
-const _mApply=$("#modalApply"); if(_mApply) _mApply.addEventListener("click", applyGroupModal);
-const _mBack=$("#modalBack"); if(_mBack) _mBack.addEventListener("click", e=>{ if(e.target===_mBack) closeGroupModal(); });
-document.addEventListener("keydown", e=>{ if(e.key==="Escape") closeGroupModal(); });
-
-/* Enregistrer la config (menu) + horodatage */
-function flashSaved(){ const s=$("#editStamp"); if(s) s.textContent = "✅ Config enregistree a "+new Date().toLocaleTimeString("fr-FR"); }
-const _saveMenu=$("#saveConfigMenu"); if(_saveMenu) _saveMenu.addEventListener("click", async ()=>{ await exportPermissions("config-permissions-latest.json", true); flashSaved(); });
-function markEdited(){
-  if(!READY || !DATA) return;
-  const s=$("#editStamp"); if(!s) return;
-  LAST_EDIT_TS=new Date();
-  s.textContent = "✍ Derniere modif : "+LAST_EDIT_TS.toLocaleTimeString("fr-FR")+" (pensez a Enregistrer la config)";
-}
 
 const DEMO={Site:{Titre:"L'AGENCE X (exemple)",Url:"https://lagencexci.sharepoint.com/sites/LAGENCEX",CaptureLe:"2026-07-10 14:30"},
  Bibliotheques:[{Name:"Documents",Type:"Bibliotheque",Dossiers:[
@@ -1174,8 +2165,9 @@ const DEMO={Site:{Titre:"L'AGENCE X (exemple)",Url:"https://lagencexci.sharepoin
   {Name:"Commercial",ModifiePar:"Application SharePoint",HeritageRompu:true,Permissions:[{Principal:"G_AGENCE_X_COMMERCIAL",Type:"SecurityGroup",Roles:["Collaboration"]}],Dossiers:[],Fichiers:[{Name:"Pipeline.xlsx",Cree:"2026-07-05",CreePar:"Marie K.",Modifie:"2026-07-06",ModifiePar:"Marie K."}]},
   {Name:"Confidentiel",ModifiePar:"Application SharePoint",HeritageRompu:true,Permissions:[],Dossiers:[],Fichiers:[]}
  ],Fichiers:[{Name:"Accueil.docx",Modifie:"2026-07-07"}]}]};
-$("#demo").addEventListener("click", ()=> render(DEMO));
+on("demo", "click", ()=>{ LAST_LOADED_NAME = "demo-architecture.json"; prepareArchitectureSession(DEMO, LAST_LOADED_NAME, JSON.stringify(DEMO).length); render(DEMO); });
 updateSummary();
+updateDirtyState();
 </script>
 </body>
 </html>

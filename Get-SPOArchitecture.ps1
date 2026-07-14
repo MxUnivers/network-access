@@ -171,6 +171,54 @@ catch {
 #------------------------------------------------------
 # HELPER : permissions d'un element (dossier)
 #------------------------------------------------------
+$script:PrincipalMembersCache = @{}
+
+function Convert-PrincipalMember {
+    param($Member)
+    [ordered]@{
+        Name              = if ($Member.Title) { "$($Member.Title)" } elseif ($Member.DisplayName) { "$($Member.DisplayName)" } else { "" }
+        Email             = if ($Member.Email) { "$($Member.Email)" } elseif ($Member.UserPrincipalName) { "$($Member.UserPrincipalName)" } else { "" }
+        LoginName         = if ($Member.LoginName) { "$($Member.LoginName)" } else { "" }
+        UserPrincipalName = if ($Member.UserPrincipalName) { "$($Member.UserPrincipalName)" } else { "" }
+        Type              = if ($Member.PrincipalType) { "$($Member.PrincipalType)" } elseif ($Member.'@odata.type') { "$($Member.'@odata.type')" } else { "" }
+    }
+}
+
+function Get-PrincipalMembers {
+    param(
+        [string]$PrincipalTitle,
+        [string]$PrincipalType
+    )
+    if ([string]::IsNullOrWhiteSpace($PrincipalTitle)) { return @() }
+
+    $cacheKey = "$PrincipalType|$PrincipalTitle"
+    if ($script:PrincipalMembersCache.ContainsKey($cacheKey)) {
+        return $script:PrincipalMembersCache[$cacheKey]
+    }
+
+    $members = @()
+    try {
+        if ($PrincipalType -like "*SharePointGroup*" -and (Get-Command Get-PnPGroupMember -ErrorAction SilentlyContinue)) {
+            $members = @(Get-PnPGroupMember -Identity $PrincipalTitle -ErrorAction Stop | ForEach-Object { Convert-PrincipalMember $_ })
+        }
+        elseif ($PrincipalType -like "*SecurityGroup*" -and
+            (Get-Command Get-PnPAzureADGroup -ErrorAction SilentlyContinue) -and
+            (Get-Command Get-PnPAzureADGroupMember -ErrorAction SilentlyContinue)) {
+            $group = Get-PnPAzureADGroup -Identity $PrincipalTitle -ErrorAction Stop
+            if ($group) {
+                $groupId = if ($group.Id) { $group.Id } else { $PrincipalTitle }
+                $members = @(Get-PnPAzureADGroupMember -Identity $groupId -ErrorAction Stop | ForEach-Object { Convert-PrincipalMember $_ })
+            }
+        }
+    }
+    catch {
+        $members = @()
+    }
+
+    $script:PrincipalMembersCache[$cacheKey] = $members
+    return $members
+}
+
 function Get-ItemPermissions {
     param($Item)
     $ctx = Get-PnPContext
@@ -183,14 +231,27 @@ function Get-ItemPermissions {
             $ctx.Load($ra.RoleDefinitionBindings)
             $ctx.ExecuteQuery()
             $roles = @($ra.RoleDefinitionBindings | ForEach-Object { $_.Name })
+            $principalType = "$($ra.Member.PrincipalType)"
+            $principalTitle = "$($ra.Member.Title)"
             $perms += [ordered]@{
-                Principal = $ra.Member.Title
-                Type      = "$($ra.Member.PrincipalType)"
+                Principal = $principalTitle
+                Type      = $principalType
                 Roles     = $roles
+                Members   = @(Get-PrincipalMembers -PrincipalTitle $principalTitle -PrincipalType $principalType)
             }
         }
     }
     return [ordered]@{ HeritageRompu = [bool]$unique; Permissions = $perms }
+}
+
+$SitePermissionsInfo = [ordered]@{ HeritageRompu = $null; Permissions = @() }
+if (-not $SansPermissions) {
+    try {
+        $SitePermissionsInfo = Get-ItemPermissions -Item $web
+    }
+    catch {
+        Warn "Permissions du site non recuperees : $($_.Exception.Message)"
+    }
 }
 
 #------------------------------------------------------
@@ -220,6 +281,18 @@ foreach ($lib in $libs) {
     # NomInterne = nom d'URL interne (ne change JAMAIS, ex "Documents partages").
     $libInterne = $rootUrl.TrimEnd('/').Split('/')[-1]
     $rootNode = [ordered]@{ Name = $lib.Title; NomInterne = $libInterne; Type = "Bibliotheque"; ServerRelativeUrl = $rootUrl; Dossiers = @(); Fichiers = @() }
+    if (-not $SansPermissions) {
+        try {
+            $p = Get-ItemPermissions -Item $lib
+            $rootNode.HeritageRompu = $p.HeritageRompu
+            $rootNode.Permissions   = $p.Permissions
+        }
+        catch {
+            Warn "  Permissions de la bibliotheque '$($lib.Title)' non recuperees : $($_.Exception.Message)"
+            $rootNode.HeritageRompu = $null
+            $rootNode.Permissions   = @()
+        }
+    }
     $nodes[$rootUrl] = $rootNode
 
     # 1) Dossiers (traites du moins profond au plus profond pour que le parent existe)
@@ -301,6 +374,8 @@ $Architecture = [ordered]@{
         Titre       = $web.Title
         Url         = $web.Url
         CaptureLe   = (Get-Date -Format "yyyy-MM-dd HH:mm:ss")
+        HeritageRompu = $SitePermissionsInfo.HeritageRompu
+        Permissions = $SitePermissionsInfo.Permissions
     }
     Bibliotheques = $LibrariesOut
 }
