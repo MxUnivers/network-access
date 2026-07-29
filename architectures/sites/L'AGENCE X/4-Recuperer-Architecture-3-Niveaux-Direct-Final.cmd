@@ -1,7 +1,5 @@
 @echo off
 setlocal
-REM L'AGENCE X - bibliotheques + dossiers jusqu'au niveau 3.
-REM Aucun fichier ni permission n'est charge dans ce mode rapide.
 cd /d "%~dp0"
 set "PWSH="
 if exist "C:\Program Files\PowerShell\7\pwsh.exe" set "PWSH=C:\Program Files\PowerShell\7\pwsh.exe"
@@ -12,21 +10,16 @@ if not defined PWSH (
   exit /b 1
 )
 if not exist "%~dp0resultats" mkdir "%~dp0resultats"
-set "LOG=%~dp0resultats\recuperation-3-niveaux-direct-log.txt"
+set "LOG=%~dp0resultats\recuperation-3-niveaux-direct-final-log.txt"
 echo Recuperation directe des niveaux 1 a 3, sans RecursiveAll...
-echo Les fichiers et permissions ne sont pas recuperes.
-echo.
+echo Les fichiers ne sont pas recuperes. Les permissions ne sont pas chargees par defaut.
 "%PWSH%" -NoProfile -ExecutionPolicy Bypass -File "%~dp0..\..\..\Get-SPOArchitecture-3Levels-Direct-Bootstrap.ps1" -ConfigFile "%~dp0config.json" -OutputDir "%~dp0resultats" > "%LOG%" 2>&1
 set "CODE=%ERRORLEVEL%"
 echo ================= RESULTAT =================
 type "%LOG%"
 echo =============================================
-if "%CODE%"=="0" (
-  echo [OK] JSON : resultats\architecture-3-niveaux-direct-latest.json
-  echo [INFO] Chargez ce JSON dans Visualiseur-Architecture.html.
-) else (
-  echo [ERREUR] Recuperation non terminee. Voir %LOG%.
-)
+if not "%CODE%"=="0" echo [ERREUR] Recuperation directe non terminee.
+if "%CODE%"=="0" echo [OK] JSON : resultats\architecture-3-niveaux-direct-latest.json
 echo.
 pause
 exit /b %CODE%

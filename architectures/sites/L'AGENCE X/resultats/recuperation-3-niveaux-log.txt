@@ -1,0 +1,12 @@
+
+=== RECUPERATION DE L'ARCHITECTURE ===
+
+  [PROGRESSION]    0,0% | initialisation | demarrage | reste: estimation apres lecture des bibliotheques | ecoule: 0s | restant estime: calcul en cours | fin estimee: calcul en cours
+  Module PnP.PowerShell charge
+  [PROGRESSION]    5,0% | initialisation | module charge | reste: estimation apres lecture des bibliotheques | ecoule: 19s | restant estime: 6min 1s | fin estimee: 08:55:03
+  Connecte : L'AGENCE X [https://lagencexci.sharepoint.com/sites/LAGENCEX]
+  [PROGRESSION]   10,0% | initialisation | connexion SharePoint reussie | reste: estimation apres lecture des bibliotheques | ecoule: 27s | restant estime: 4min 5s | fin estimee: 08:53:15
+  [PROGRESSION]   12,0% | bibliotheque 0/17 | 17 bibliotheque(s) a lire | reste: 17 bibliotheque(s), 0 dossier(s), 0 fichier(s) | ecoule: 1min 41s | restant estime: 12min 25s | fin estimee: 09:02:50
+  Bibliotheque : 1. DAF
+  [PROGRESSION]   12,0% | bibliotheque 1/17 | lecture de '1. DAF' | reste: 16 bibliotheque(s), 0 dossier(s), 0 fichier(s) | ecoule: 1min 41s | restant estime: 12min 28s | fin estimee: 09:02:53
+  [PROGRESSION]   12,0% | bibliotheque 1/17 | chargement des dossiers de '1. DAF' | reste: 16 bibliotheque(s), 0 dossier(s), 0 fichier(s) | ecoule: 1min 42s | restant estime: 12min 29s | fin estimee: 09:02:54

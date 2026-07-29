@@ -1,0 +1,52 @@
+{
+  "name": "sharepoint-rights-manager",
+  "version": "1.0.0",
+  "description": "Gestion des droits SharePoint - Interface graphique",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build:portable": "node scripts\\build-portable.js",
+    "build": "node scripts\\build-portable.js"
+  },
+  "build": {
+    "appId": "com.networkconnect.sharepoint-rights-manager",
+    "productName": "Gestionnaire Droits SharePoint",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "renderer/**/*",
+      "ps-scripts/**/*",
+      "node_modules/**/*"
+    ],
+    "extraResources": [
+      {
+        "from": "..",
+        "to": "project",
+        "filter": ["*.ps1", "PermissionsConfig*.json"]
+      },
+      {
+        "from": "..\\architectures\\sites\\L'AGENCE X\\Visualiseur-Architecture.html",
+        "to": "visualizer.html"
+      }
+    ],
+    "win": {
+      "target": "portable",
+      "icon": "../logo.png",
+      "signAndEditExecutable": false
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "installerIcon": "../logo.png"
+    }
+  },
+  "devDependencies": {
+    "electron": "^28.0.0",
+    "electron-builder": "^24.9.0"
+  },
+  "dependencies": {}
+}

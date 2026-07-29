@@ -1,0 +1,10 @@
+
+=== RECUPERATION DIRECTE DES 3 NIVEAUX ===
+
+  [PROGRESSION]    0,0% | bibliotheque 0/0 | demarrage | 0 dossier(s) | fin estimee: calcul en cours
+[31;1mImport-Module: [0mA:\Projets\network-connect\Get-SPOArchitecture-3Levels-Direct.ps1:31[0m
+[31;1m[0m[36;1mLine |[0m
+[31;1m[0m[36;1m[36;1m  31 | [0m [36;1mImport-Module PnP.PowerShell -ErrorAction Stop[0m
+[31;1m[0m[36;1m[36;1m[0m[36;1m[0m[36;1m     | [31;1m ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[31;1m[0m[36;1m[36;1m[0m[36;1m[0m[36;1m[31;1m[31;1m[36;1m     | [31;1mThe specified module 'PnP.PowerShell' was not loaded because no valid module file was found in any module[0m
+[31;1m[0m[36;1m[36;1m[0m[36;1m[0m[36;1m[31;1m[31;1m[36;1m[31;1m[36;1m     | [31;1mdirectory.[0m
