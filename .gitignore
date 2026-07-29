@@ -50,6 +50,10 @@ node_modules/
 # Optional npm cache directory
 .npm
 
+
+GestionnaireSP.exe
+
+
 # Optional eslint cache
 .eslintcache
 
