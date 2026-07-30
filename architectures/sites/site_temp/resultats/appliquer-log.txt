@@ -1,3 +1,26 @@
-2026-07-10 13:54:49 [INFO] === Demarrage du script (PowerShell 7.6.3) ===
-2026-07-10 13:54:49 [INFO] Module charge : PnP.PowerShell
-^C
+2026-07-30 07:32:52 [INFO] === Demarrage du script (PowerShell 7.6.3) ===
+2026-07-30 07:32:53 [INFO] Module charge : PnP.PowerShell
+2026-07-30 07:32:57 [INFO] Module charge : Microsoft.Graph.Authentication
+2026-07-30 07:33:11 [INFO] Module charge : Microsoft.Graph.Groups
+2026-07-30 07:33:12 [INFO] Configuration chargee : A:\Projets\network-connect\architectures\sites\site_temp\config.json
+2026-07-30 07:33:18 [SUCCESS] Connexion Graph reussie (app f82df874-d3ce-48fd-8942-0a35f0b0325e, tenant 673ed2ae-f76b-4b11-b1cb-b626f34e8f28)
+2026-07-30 07:33:25 [SUCCESS] Connexion SharePoint reussie : Site_temp [https://infosolucesivoire.sharepoint.com/sites/Site_temp]
+2026-07-30 07:33:26 [INFO] JSON d'architecture detecte : 1 dossier(s) converti(s) en configuration applicable.
+2026-07-30 07:33:27 [INFO] --------------------------------
+2026-07-30 07:33:27 [INFO] Bibliotheque : 03. L'AGENCE X | Dossier : L'AGENCE X/01. DEIRECTEUR CREA
+2026-07-30 07:33:29 [INFO] Traitement : 03. L'AGENCE X / L'AGENCE X/01. DEIRECTEUR CREA -> Propri‚taires de Site_temp [Contr“le total]
+2026-07-30 07:33:35 [ERROR] ECHEC sur 'L'AGENCE X/01. DEIRECTEUR CREA' / 'Propri‚taires de Site_temp' : Groupe Entra ID introuvable : Propri‚taires de Site_temp
+2026-07-30 07:33:36 [INFO] Traitement : 03. L'AGENCE X / L'AGENCE X/01. DEIRECTEUR CREA -> Site_temp - Visiteurs [Lecture]
+2026-07-30 07:33:40 [ERROR] ECHEC sur 'L'AGENCE X/01. DEIRECTEUR CREA' / 'Site_temp - Visiteurs' : Groupe Entra ID introuvable : Site_temp - Visiteurs
+2026-07-30 07:33:42 [INFO] Traitement : 03. L'AGENCE X / L'AGENCE X/01. DEIRECTEUR CREA -> Site_temp - Membres [Modification]
+2026-07-30 07:33:45 [ERROR] ECHEC sur 'L'AGENCE X/01. DEIRECTEUR CREA' / 'Site_temp - Membres' : Groupe Entra ID introuvable : Site_temp - Membres
+2026-07-30 07:33:47 [INFO] Traitement : 03. L'AGENCE X / L'AGENCE X/01. DEIRECTEUR CREA -> G_FORCE [Contr“le total]
+2026-07-30 07:33:51 [INFO] Groupe Entra ID valide : G_FORCE (87f2ae25-438a-45ea-a4c5-9a52cf84ca05)
+2026-07-30 07:33:57 [SUCCESS] OK : role 'Contr“le total' attribue a 'G_FORCE' sur 'L'AGENCE X/01. DEIRECTEUR CREA'
+2026-07-30 07:34:02 [INFO] Acces effectifs sur 'L'AGENCE X/01. DEIRECTEUR CREA' (herite=False) :
+2026-07-30 07:34:04 [INFO]    - G_INVITE [SecurityGroup] : Modification
+2026-07-30 07:34:06 [INFO]    - G_FORCE [SecurityGroup] : Contr“le total
+2026-07-30 07:34:07 [INFO] ================================
+2026-07-30 07:34:08 [WARN] BILAN : 1 attribution(s) reussie(s), 3 echec(s)
+2026-07-30 07:34:09 [INFO] Journal complet : A:\Projets\network-connect\Logs\SPO_Permissions_20260730_073252.log
+2026-07-30 07:34:11 [INFO] Traitement termine

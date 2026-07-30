@@ -1,0 +1,73 @@
+{
+  "Mode": "Bibliotheque -> dossier niveau 1 -> dossier niveau 2 -> dossier niveau 3",
+  "ProfondeurMax": 3,
+  "FichiersInclus": false,
+  "PermissionsInclus": true,
+  "GroupesInclus": true,
+  "MembresGroupesInclus": false,
+  "PermissionsMode": "principaux et roles explicites; membres des groupes non charges",
+  "Site": {
+    "Titre": "L'AGENCE X",
+    "Url": "https://lagencexci.sharepoint.com/sites/LAGENCEX",
+    "CaptureLe": "2026-07-29 16:48:19",
+    "HeritageRompu": null,
+    "Permissions": []
+  },
+  "Bibliotheques": [
+    {
+      "Name": "9. ARCHIVES",
+      "NomInterne": "9 ARCHIVES",
+      "Type": "Bibliotheque",
+      "ServerRelativeUrl": "/sites/LAGENCEX/9 ARCHIVES",
+      "HeritageRompu": true,
+      "Permissions": [
+        {
+          "Principal": "Propriétaires de L_AGENCE X",
+          "Type": "SharePointGroup",
+          "Roles": [
+            "Contrôle total"
+          ],
+          "Members": []
+        },
+        {
+          "Principal": "pascal.ndri",
+          "Type": "User",
+          "Roles": [
+            "Modification"
+          ],
+          "Members": []
+        }
+      ],
+      "Dossiers": [
+        {
+          "Name": "5. Modèle Documents",
+          "Type": "Dossier",
+          "ServerRelativeUrl": "/sites/LAGENCEX/9 ARCHIVES/5. Modèle Documents",
+          "HeritageRompu": false,
+          "Permissions": [],
+          "Dossiers": [],
+          "Fichiers": []
+        },
+        {
+          "Name": "suivi budgetaire",
+          "Type": "Dossier",
+          "ServerRelativeUrl": "/sites/LAGENCEX/9 ARCHIVES/suivi budgetaire",
+          "HeritageRompu": false,
+          "Permissions": [],
+          "Dossiers": [],
+          "Fichiers": []
+        },
+        {
+          "Name": "suivi budgetaire (Najib G's conflicted copy 2026-01-14)",
+          "Type": "Dossier",
+          "ServerRelativeUrl": "/sites/LAGENCEX/9 ARCHIVES/suivi budgetaire (Najib G's conflicted copy 2026-01-14)",
+          "HeritageRompu": false,
+          "Permissions": [],
+          "Dossiers": [],
+          "Fichiers": []
+        }
+      ],
+      "Fichiers": []
+    }
+  ]
+}

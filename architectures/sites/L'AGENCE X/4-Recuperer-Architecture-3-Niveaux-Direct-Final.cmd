@@ -12,8 +12,8 @@ if not defined PWSH (
 if not exist "%~dp0resultats" mkdir "%~dp0resultats"
 set "LOG=%~dp0resultats\recuperation-3-niveaux-direct-final-log.txt"
 echo Recuperation directe des niveaux 1 a 3, sans RecursiveAll...
-echo Les fichiers ne sont pas recuperes. Les permissions ne sont pas chargees par defaut.
-"%PWSH%" -NoProfile -ExecutionPolicy Bypass -File "%~dp0..\..\..\Get-SPOArchitecture-3Levels-Direct-Bootstrap.ps1" -ConfigFile "%~dp0config.json" -OutputDir "%~dp0resultats" > "%LOG%" 2>&1
+echo Les fichiers ne sont pas recuperes. Les groupes et roles explicites sont charges.
+"%PWSH%" -NoProfile -ExecutionPolicy Bypass -File "%~dp0..\..\..\Get-SPOArchitecture-3Levels-Direct-Bootstrap.ps1" -ConfigFile "%~dp0config.json" -OutputDir "%~dp0resultats" -AvecPermissions > "%LOG%" 2>&1
 set "CODE=%ERRORLEVEL%"
 echo ================= RESULTAT =================
 type "%LOG%"
@@ -23,3 +23,4 @@ if "%CODE%"=="0" echo [OK] JSON : resultats\architecture-3-niveaux-direct-latest
 echo.
 pause
 exit /b %CODE%
+

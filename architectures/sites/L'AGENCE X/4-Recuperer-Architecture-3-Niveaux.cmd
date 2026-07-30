@@ -1,7 +1,7 @@
 @echo off
 setlocal
 REM L'AGENCE X - bibliotheques + dossiers jusqu'au niveau 3.
-REM Aucun fichier ni permission n'est charge dans ce mode rapide.
+REM Aucun fichier n'est charge; groupes et roles explicites inclus.
 cd /d "%~dp0"
 set "PWSH="
 if exist "C:\Program Files\PowerShell\7\pwsh.exe" set "PWSH=C:\Program Files\PowerShell\7\pwsh.exe"
@@ -14,9 +14,9 @@ if not defined PWSH (
 if not exist "%~dp0resultats" mkdir "%~dp0resultats"
 set "LOG=%~dp0resultats\recuperation-3-niveaux-direct-log.txt"
 echo Recuperation directe des niveaux 1 a 3, sans RecursiveAll...
-echo Les fichiers et permissions ne sont pas recuperes.
+echo Les fichiers ne sont pas recuperes; groupes et roles explicites inclus.
 echo.
-"%PWSH%" -NoProfile -ExecutionPolicy Bypass -File "%~dp0..\..\..\Get-SPOArchitecture-3Levels-Direct-Bootstrap.ps1" -ConfigFile "%~dp0config.json" -OutputDir "%~dp0resultats" > "%LOG%" 2>&1
+"%PWSH%" -NoProfile -ExecutionPolicy Bypass -File "%~dp0..\..\..\Get-SPOArchitecture-3Levels-Direct-Bootstrap.ps1" -ConfigFile "%~dp0config.json" -OutputDir "%~dp0resultats" -AvecPermissions > "%LOG%" 2>&1
 set "CODE=%ERRORLEVEL%"
 echo ================= RESULTAT =================
 type "%LOG%"
@@ -30,3 +30,4 @@ if "%CODE%"=="0" (
 echo.
 pause
 exit /b %CODE%
+

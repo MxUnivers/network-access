@@ -468,7 +468,7 @@ function prepareArchitectureSession(parsed, sourceName, textLength){
     EXTRA_PERMISSIONS = [];
     STRUCTURE_EDITS = [];
     KNOWN_GROUPS = [];
-    setEditorFields({}, parsed && parsed.Site && parsed.Site.Url || "");
+    setEditorFields(parsed && parsed.Auth || {}, parsed && (parsed.SiteUrl || (parsed.Site && parsed.Site.Url)) || "");
     setValue("rightsSearch", "");
     renderRightsSearchResults([]);
     updateDirtyState();
@@ -546,10 +546,13 @@ function normalizePermissions(list){
   if(!Array.isArray(list)) return [];
   return list.map(p=>{
     const memberDetails = normalizeMemberDetails(p || {});
+    const roles = normalizeRoles(p || {});
+    const access = norm(p && (p.Access || p.access));
     return {
       Principal: p && (p.Principal || p.Name || p.DisplayName) || "",
       Type: p && p.Type || "",
-      Roles: normalizeRoles(p || {}),
+      Roles: roles,
+      Access: access || (roles.length ? "Grant" : ""),
       Members: memberDetails.map(member=>member.display),
       MemberDetails: memberDetails
     };
@@ -1554,7 +1557,10 @@ function collectAuth(){
 function assignmentForExport(a){
   const out = {GroupName:norm(a.GroupName)};
   if(a.Access==="Deny") out.Access = "Deny";
-  else out.Role = norm(a.Role);
+  else {
+    out.Access = "Grant";
+    out.Role = norm(a.Role);
+  }
   return out;
 }
 function buildConfig(){
@@ -1585,9 +1591,9 @@ function architecturePermissionFor(meta, assignment){
   const result = {
     Principal: principal,
     Type: existing && existing.Type ? existing.Type : "SecurityGroup",
+    Access: assignment.Access === "Deny" ? "Deny" : "Grant",
     Roles: assignment.Access === "Deny" ? [] : [norm(assignment.Role) || "Lecture"]
   };
-  if(assignment.Access === "Deny") result.Access = "Deny";
   if(existing && existing.Members) result.Members = existing.Members;
   return result;
 }
@@ -1602,6 +1608,8 @@ function applyPermissionEditsToArchitecture(target){
       const entry = PERMISSION_EDITS.get(id) || {Assignments:[]};
       const meta = FOLDER_BY_ID.get(id);
       folder.HeritageRompu = true;
+      if(entry.ResetPermissions) folder.ResetPermissions = true;
+      else delete folder.ResetPermissions;
       folder.Permissions = validAssignments(entry).map(a=>architecturePermissionFor(meta, a));
       changed++;
       modified.push({Library:libraryName, FolderPath:path, Assignments:folder.Permissions});
@@ -1622,7 +1630,10 @@ function applyPermissionEditsToArchitecture(target){
 }
 function buildArchitectureExport(){
   if(!DATA) return null;
-  return applyPermissionEditsToArchitecture(cloneArchitecture()).target;
+  const exportData = applyPermissionEditsToArchitecture(cloneArchitecture()).target;
+  exportData.Auth = Object.assign({}, exportData.Auth || {}, collectAuth());
+  exportData.SiteUrl = norm(valueOf("siteUrl")) || exportData.SiteUrl || (exportData.Site && exportData.Site.Url) || "";
+  return exportData;
 }
 async function saveGlobalChanges(){
   if(!needData()) return false;
@@ -1701,7 +1712,7 @@ function importPermissionConfig(config, silent){
     const id = folderId(p.Library||"Documents", p.FolderPath||"");
     const clean = {
       ResetPermissions: !!p.ResetPermissions,
-      Assignments:(p.Assignments||[]).map(a=>a.Access==="Deny" ? {GroupName:a.GroupName||"", Access:"Deny"} : {GroupName:a.GroupName||"", Role:a.Role||"Lecture"})
+      Assignments:(p.Assignments||[]).map(a=>a.Access==="Deny" ? {GroupName:a.GroupName||"", Access:"Deny"} : {GroupName:a.GroupName||"", Access:"Grant", Role:a.Role||"Lecture"})
     };
     if(FOLDER_BY_ID.has(id)) PERMISSION_EDITS.set(id, clean);
     else if(p.Library && p.FolderPath) EXTRA_PERMISSIONS.push({

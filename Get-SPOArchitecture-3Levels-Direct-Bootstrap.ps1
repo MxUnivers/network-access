@@ -2,6 +2,8 @@ param(
     [string]$ConfigFile,
     [string]$SiteUrl,
     [string]$OutputDir,
+    [string]$LibraryName,
+    [switch]$SansSitePermissions,
     [switch]$AvecPermissions
 )
 
@@ -17,3 +19,5 @@ if(-not (Get-Module -ListAvailable -Name PnP.PowerShell)){
 $target=Join-Path $PSScriptRoot "Get-SPOArchitecture-3Levels-Direct.ps1"
 & $target @PSBoundParameters
 exit $LASTEXITCODE
+
+

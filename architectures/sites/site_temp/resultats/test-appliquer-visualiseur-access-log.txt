@@ -1,0 +1,20 @@
+2026-07-30 07:06:28 [INFO] === Demarrage du script (PowerShell 7.6.3) ===
+2026-07-30 07:06:32 [INFO] Module charge : PnP.PowerShell
+2026-07-30 07:06:41 [INFO] Module charge : Microsoft.Graph.Authentication
+2026-07-30 07:07:02 [INFO] Module charge : Microsoft.Graph.Groups
+2026-07-30 07:07:03 [INFO] Configuration chargee : A:\Projets\network-connect\architectures\sites\site_temp\resultats\test-visualiseur-architecture-access.json
+2026-07-30 07:07:10 [SUCCESS] Connexion Graph reussie (app f82df874-d3ce-48fd-8942-0a35f0b0325e, tenant 673ed2ae-f76b-4b11-b1cb-b626f34e8f28)
+2026-07-30 07:07:17 [SUCCESS] Connexion SharePoint reussie : Site_temp [https://infosolucesivoire.sharepoint.com/sites/Site_temp]
+2026-07-30 07:07:19 [INFO] JSON d'architecture detecte : 1 dossier(s) converti(s) en configuration applicable.
+2026-07-30 07:07:21 [INFO] --------------------------------
+2026-07-30 07:07:23 [INFO] Bibliotheque : 03. L'AGENCE X | Dossier : L'AGENCE X/01. DEIRECTEUR CREA
+2026-07-30 07:07:29 [INFO] Mode EXCLUSIF sur 'L'AGENCE X/01. DEIRECTEUR CREA' : dossier remis a zero (seuls les groupes listes + admins auront acces)
+2026-07-30 07:07:30 [INFO] Traitement : 03. L'AGENCE X / L'AGENCE X/01. DEIRECTEUR CREA -> G_INVITE [Modification]
+2026-07-30 07:07:37 [INFO] Groupe Entra ID valide : G_INVITE (51b9331d-4cfe-4333-a17c-7441a086e0f8)
+2026-07-30 07:07:42 [SUCCESS] OK : role 'Modification' attribue a 'G_INVITE' sur 'L'AGENCE X/01. DEIRECTEUR CREA'
+2026-07-30 07:07:45 [INFO] Acces effectifs sur 'L'AGENCE X/01. DEIRECTEUR CREA' (herite=False) :
+2026-07-30 07:07:47 [INFO]    - G_INVITE [SecurityGroup] : Modification
+2026-07-30 07:07:49 [INFO] ================================
+2026-07-30 07:07:51 [SUCCESS] BILAN : 1 attribution(s) reussie(s), 0 echec(s)
+2026-07-30 07:07:53 [INFO] Journal complet : A:\Projets\network-connect\Logs\SPO_Permissions_20260730_070627.log
+2026-07-30 07:07:54 [INFO] Traitement termine

@@ -324,7 +324,7 @@ function Set-FolderPermission {
 
     try {
         # "Deny"/"Remove"/"None" = RETIRER tout acces du groupe -> le dossier devient masque pour lui
-        $IsDeny = $Access -match '^(Deny|Remove|None|Refuser|Retirer|Masquer)$'
+        $IsDeny = $Access -match '^(Deny|Remove|None|Refuser|Retirer|Masquer|Supprimer)$'
         $Label  = if ($IsDeny) { "RETRAIT d'acces (masquage)" } else { $RoleName }
         Write-Log "Traitement : $LibraryName / $FolderPath -> $GroupName [$Label]"
 
@@ -336,6 +336,7 @@ function Set-FolderPermission {
         if (-not $Folder) { throw "Dossier introuvable : $FolderPath" }
 
         $ListItem = Get-PnPProperty -ClientObject $Folder -Property ListItemAllFields
+        $null = Get-PnPProperty -ClientObject $ListItem -Property HasUniqueRoleAssignments
 
         #==================================
         # Rupture d'heritage (on CONSERVE les permissions existantes :
@@ -421,6 +422,7 @@ function Reset-FolderToExclusive {
         $url = ((Get-PnPList $LibraryName -ErrorAction Stop).RootFolder.ServerRelativeUrl) + "/" + $FolderPath
         $folder = Get-PnPFolder -Url $url -ErrorAction Stop
         $li = Get-PnPProperty -ClientObject $folder -Property ListItemAllFields
+        $null = Get-PnPProperty -ClientObject $li -Property HasUniqueRoleAssignments
         $ctx = Get-PnPContext
         # Repartir propre : restaurer l'heritage puis rompre SANS copier
         if ($li.HasUniqueRoleAssignments) {
@@ -445,6 +447,7 @@ function Show-FolderAccess {
         $url = ((Get-PnPList $LibraryName -ErrorAction Stop).RootFolder.ServerRelativeUrl) + "/" + $FolderPath
         $folder = Get-PnPFolder -Url $url -ErrorAction Stop
         $li = Get-PnPProperty -ClientObject $folder -Property ListItemAllFields
+        $null = Get-PnPProperty -ClientObject $li -Property HasUniqueRoleAssignments
         $ctx = Get-PnPContext
         $ctx.Load($li.RoleAssignments)
         $ctx.ExecuteQuery()
@@ -462,6 +465,199 @@ function Show-FolderAccess {
     }
 }
 
+#------------------------------------------------------
+# NORMALISATION CONFIG / ARCHITECTURE
+#------------------------------------------------------
+
+function Get-JsonValue {
+    param([object]$Object, [string[]]$Names)
+    if ($null -eq $Object) { return $null }
+    foreach ($Name in $Names) {
+        $Prop = $Object.PSObject.Properties | Where-Object { $_.Name -ieq $Name } | Select-Object -First 1
+        if ($Prop -and $null -ne $Prop.Value) { return $Prop.Value }
+    }
+    return $null
+}
+
+function Test-DenyAccessValue {
+    param([string]$Access)
+    return $Access -match '^(Deny|Remove|None|Refuser|Retirer|Masquer|Supprimer)$'
+}
+
+function Test-GrantAccessValue {
+    param([string]$Access)
+    return ([string]::IsNullOrWhiteSpace($Access) -or $Access -match '^(Grant|Allow|Autoriser|Donner|Ajouter|Accorder)$')
+}
+
+function Get-FirstRoleFromPermission {
+    param([object]$Permission)
+
+    $Role = Get-JsonValue -Object $Permission -Names @('Role', 'role')
+    if (-not [string]::IsNullOrWhiteSpace([string]$Role)) { return [string]$Role }
+
+    $Roles = Get-JsonValue -Object $Permission -Names @('Roles', 'roles')
+    foreach ($Item in @($Roles)) {
+        $Value = [string]$Item
+        if (-not [string]::IsNullOrWhiteSpace($Value) -and $Value -notmatch '^(Acces limite|Accès limité|Limited Access)$') {
+            return $Value
+        }
+    }
+
+    return $null
+}
+
+function Resolve-AssignmentIntent {
+    param([object]$Assignment)
+
+    $GroupName = [string](Get-JsonValue -Object $Assignment -Names @('GroupName', 'Principal', 'Name', 'DisplayName'))
+    $RoleName  = [string](Get-JsonValue -Object $Assignment -Names @('Role', 'role'))
+    $Access    = [string](Get-JsonValue -Object $Assignment -Names @('Access', 'access'))
+
+    if ([string]::IsNullOrWhiteSpace($Access)) {
+        $Access = 'Grant'
+    }
+    elseif (Test-DenyAccessValue -Access $Access) {
+        $Access = 'Deny'
+        $RoleName = $null
+    }
+    elseif (Test-GrantAccessValue -Access $Access) {
+        $Access = 'Grant'
+    }
+    elseif ([string]::IsNullOrWhiteSpace($RoleName)) {
+        # Compatibilite avec les exports qui mettent directement le role dans access.
+        $RoleName = $Access
+        $Access = 'Grant'
+    }
+    else {
+        $Access = 'Grant'
+    }
+
+    if ([string]::IsNullOrWhiteSpace($GroupName)) { return $null }
+    if ($Access -ne 'Deny' -and [string]::IsNullOrWhiteSpace($RoleName)) { return $null }
+
+    return [pscustomobject]@{
+        GroupName = $GroupName.Trim()
+        Role      = if ($RoleName) { $RoleName.Trim() } else { $null }
+        Access    = $Access
+    }
+}
+
+function Convert-ArchitectureToPermissionEntries {
+    param([object]$Architecture)
+
+    $Entries = [System.Collections.Generic.List[object]]::new()
+    $ModifiedKeys = @{}
+    foreach ($Modified in @($Architecture.PermissionEditor.ModifiedFolders)) {
+        $Library = [string](Get-JsonValue -Object $Modified -Names @('Library', 'library'))
+        $Path    = [string](Get-JsonValue -Object $Modified -Names @('FolderPath', 'folderPath', 'Path', 'path'))
+        if (-not [string]::IsNullOrWhiteSpace($Library) -and -not [string]::IsNullOrWhiteSpace($Path)) {
+            $ModifiedKeys[($Library.Trim().ToLowerInvariant() + '|' + $Path.Trim().ToLowerInvariant())] = $true
+        }
+    }
+    $UseModifiedFilter = $ModifiedKeys.Count -gt 0
+
+    function Visit-ArchitectureFolder {
+        param([object]$Folder, [string]$LibraryName, [string]$ParentPath)
+
+        $Name = [string](Get-JsonValue -Object $Folder -Names @('Name', 'name'))
+        if ([string]::IsNullOrWhiteSpace($Name)) { return }
+
+        $FolderPath = if ([string]::IsNullOrWhiteSpace($ParentPath)) { $Name.Trim() } else { $ParentPath + '/' + $Name.Trim() }
+        $Key = $LibraryName.Trim().ToLowerInvariant() + '|' + $FolderPath.Trim().ToLowerInvariant()
+        $RawPermissions = Get-JsonValue -Object $Folder -Names @('Permissions', 'permissions')
+        $Permissions = if ($null -eq $RawPermissions) { @() } else { @($RawPermissions) }
+        $HasExplicitAccess = $false
+        foreach ($Permission in $Permissions) {
+            if (-not [string]::IsNullOrWhiteSpace([string](Get-JsonValue -Object $Permission -Names @('Access', 'access')))) {
+                $HasExplicitAccess = $true
+                break
+            }
+        }
+
+        $ShouldInclude = if ($UseModifiedFilter) { $ModifiedKeys.ContainsKey($Key) } else { $HasExplicitAccess }
+        if ($ShouldInclude) {
+            $Assignments = [System.Collections.Generic.List[object]]::new()
+            foreach ($Permission in $Permissions) {
+                $Principal = [string](Get-JsonValue -Object $Permission -Names @('Principal', 'GroupName', 'Name', 'DisplayName'))
+                $Role = Get-FirstRoleFromPermission -Permission $Permission
+                $Access = [string](Get-JsonValue -Object $Permission -Names @('Access', 'access'))
+                $Intent = Resolve-AssignmentIntent -Assignment ([pscustomobject]@{ GroupName = $Principal; Role = $Role; Access = $Access })
+                if ($Intent) { [void]$Assignments.Add($Intent) }
+            }
+
+            if ($Assignments.Count -gt 0) {
+                [void]$Entries.Add([pscustomobject]@{
+                    Library          = $LibraryName
+                    FolderPath       = $FolderPath
+                    ResetPermissions = [bool](Get-JsonValue -Object $Folder -Names @('ResetPermissions', 'resetPermissions'))
+                    Assignments      = @($Assignments)
+                })
+            }
+        }
+
+        foreach ($Child in @($Folder.Dossiers)) {
+            Visit-ArchitectureFolder -Folder $Child -LibraryName $LibraryName -ParentPath $FolderPath
+        }
+    }
+
+    foreach ($Library in @($Architecture.Bibliotheques)) {
+        $LibraryName = [string](Get-JsonValue -Object $Library -Names @('Name', 'Title', 'Library'))
+        if ([string]::IsNullOrWhiteSpace($LibraryName)) { $LibraryName = 'Documents' }
+        foreach ($Folder in @($Library.Dossiers)) {
+            Visit-ArchitectureFolder -Folder $Folder -LibraryName $LibraryName.Trim() -ParentPath ''
+        }
+    }
+
+    return @($Entries)
+}
+
+function Normalize-PermissionConfig {
+    param([object]$Config)
+
+    $RawPermissions = Get-JsonValue -Object $Config -Names @('Permissions', 'permissions')
+    $Permissions = if ($null -eq $RawPermissions) { @() } else { @($RawPermissions) }
+    if (($Permissions.Count -eq 0) -and $Config.Bibliotheques) {
+        $Permissions = Convert-ArchitectureToPermissionEntries -Architecture $Config
+        Write-Log "JSON d'architecture detecte : $($Permissions.Count) dossier(s) converti(s) en configuration applicable."
+    }
+
+    $Normalized = [System.Collections.Generic.List[object]]::new()
+    foreach ($Entry in $Permissions) {
+        $Library = [string](Get-JsonValue -Object $Entry -Names @('Library', 'library'))
+        $FolderPath = [string](Get-JsonValue -Object $Entry -Names @('FolderPath', 'folderPath', 'Path', 'path'))
+        if ([string]::IsNullOrWhiteSpace($Library) -or [string]::IsNullOrWhiteSpace($FolderPath)) { continue }
+
+        $Assignments = [System.Collections.Generic.List[object]]::new()
+        foreach ($Assignment in @($Entry.Assignments)) {
+            $Intent = Resolve-AssignmentIntent -Assignment $Assignment
+            if ($Intent) { [void]$Assignments.Add($Intent) }
+        }
+
+        if ($Assignments.Count -gt 0) {
+            [void]$Normalized.Add([pscustomobject]@{
+                Library          = $Library.Trim()
+                FolderPath       = $FolderPath.Trim()
+                ResetPermissions = [bool](Get-JsonValue -Object $Entry -Names @('ResetPermissions', 'resetPermissions'))
+                Assignments      = @($Assignments)
+            })
+        }
+    }
+
+    if ($Config.PSObject.Properties['Permissions']) {
+        $Config.Permissions = @($Normalized)
+    }
+    else {
+        $Config | Add-Member -NotePropertyName Permissions -NotePropertyValue @($Normalized)
+    }
+
+    return $Config
+}
+
+$Config = Normalize-PermissionConfig -Config $Config
+if (-not $Config.Permissions -or @($Config.Permissions).Count -eq 0) {
+    Write-Log "Aucune permission applicable trouvee dans le JSON. Exportez une configuration ou une architecture modifiee avec la cle Access." "ERROR"
+    exit 1
+}
 #------------------------------------------------------
 # TRAITEMENT
 #------------------------------------------------------
