@@ -3,72 +3,72 @@
 
   [PROGRESSION]    0,0% | initialisation | demarrage | reste: estimation apres lecture des bibliotheques | ecoule: 0s | restant estime: calcul en cours | fin estimee: calcul en cours
   Module PnP.PowerShell charge
-  [PROGRESSION]    5,0% | initialisation | module charge | reste: estimation apres lecture des bibliotheques | ecoule: 0s | restant estime: 7s | fin estimee: 08:30:33
+  [PROGRESSION]    5,0% | initialisation | module charge | reste: estimation apres lecture des bibliotheques | ecoule: 0s | restant estime: 6s | fin estimee: 14:28:56
   Connecte : Site_temp [https://infosolucesivoire.sharepoint.com/sites/Site_temp]
-  [PROGRESSION]   10,0% | initialisation | connexion SharePoint reussie | reste: estimation apres lecture des bibliotheques | ecoule: 3s | restant estime: 31s | fin estimee: 08:31:00
-  [PROGRESSION]   12,0% | bibliotheque 0/6 | 6 bibliotheque(s) a lire | reste: 6 bibliotheque(s), 0 dossier(s), 0 fichier(s) | ecoule: 11s | restant estime: 1min 19s | fin estimee: 08:31:56
+  [PROGRESSION]   10,0% | initialisation | connexion SharePoint reussie | reste: estimation apres lecture des bibliotheques | ecoule: 3s | restant estime: 26s | fin estimee: 14:29:18
+  [PROGRESSION]   12,0% | bibliotheque 0/6 | 6 bibliotheque(s) a lire | reste: 6 bibliotheque(s), 0 dossier(s), 0 fichier(s) | ecoule: 10s | restant estime: 1min 14s | fin estimee: 14:30:14
   Bibliotheque : 03. L'AGENCE X
-  [PROGRESSION]   12,0% | bibliotheque 1/6 | lecture de '03. L'AGENCE X' | reste: 5 bibliotheque(s), 0 dossier(s), 0 fichier(s) | ecoule: 11s | restant estime: 1min 19s | fin estimee: 08:31:56
-  [PROGRESSION]   12,0% | bibliotheque 1/6 | chargement des elements de '03. L'AGENCE X' | reste: 5 bibliotheque(s), 0 dossier(s), 0 fichier(s) | ecoule: 11s | restant estime: 1min 19s | fin estimee: 08:31:56
-  [PROGRESSION]   12,0% | bibliotheque 1/6 | 4 dossier(s), 0 fichier(s) trouves | reste: 5 bibliotheque(s), 4 dossier(s), 0 fichier(s) | ecoule: 12s | restant estime: 1min 25s | fin estimee: 08:32:03
-  [PROGRESSION]   15,0% | bibliotheque 1/6 | dossier 'L'AGENCE X' traite | reste: 5 bibliotheque(s), 3 dossier(s), 0 fichier(s) | ecoule: 12s | restant estime: 1min 7s | fin estimee: 08:31:45
-  [PROGRESSION]   18,0% | bibliotheque 1/6 | dossier '01. DEIRECTEUR CREA' traite | reste: 5 bibliotheque(s), 2 dossier(s), 0 fichier(s) | ecoule: 13s | restant estime: 58s | fin estimee: 08:31:37
-  [PROGRESSION]   22,0% | bibliotheque 1/6 | dossier 'Dossier des CM' traite | reste: 5 bibliotheque(s), 1 dossier(s), 0 fichier(s) | ecoule: 13s | restant estime: 46s | fin estimee: 08:31:25
-  [PROGRESSION]   25,0% | bibliotheque 1/6 | dossier 'TEAMX' traite | reste: 5 bibliotheque(s), 0 dossier(s), 0 fichier(s) | ecoule: 13s | restant estime: 40s | fin estimee: 08:31:19
+  [PROGRESSION]   12,0% | bibliotheque 1/6 | lecture de '03. L'AGENCE X' | reste: 5 bibliotheque(s), 0 dossier(s), 0 fichier(s) | ecoule: 10s | restant estime: 1min 14s | fin estimee: 14:30:14
+  [PROGRESSION]   12,0% | bibliotheque 1/6 | chargement des elements de '03. L'AGENCE X' | reste: 5 bibliotheque(s), 0 dossier(s), 0 fichier(s) | ecoule: 10s | restant estime: 1min 14s | fin estimee: 14:30:14
+  [PROGRESSION]   12,0% | bibliotheque 1/6 | 4 dossier(s), 0 fichier(s) trouves | reste: 5 bibliotheque(s), 4 dossier(s), 0 fichier(s) | ecoule: 12s | restant estime: 1min 29s | fin estimee: 14:30:31
+  [PROGRESSION]   15,0% | bibliotheque 1/6 | dossier 'L'AGENCE X' traite | reste: 5 bibliotheque(s), 3 dossier(s), 0 fichier(s) | ecoule: 13s | restant estime: 1min 13s | fin estimee: 14:30:16
+  [PROGRESSION]   18,0% | bibliotheque 1/6 | dossier '01. DEIRECTEUR CREA' traite | reste: 5 bibliotheque(s), 2 dossier(s), 0 fichier(s) | ecoule: 13s | restant estime: 1min 0s | fin estimee: 14:30:03
+  [PROGRESSION]   22,0% | bibliotheque 1/6 | dossier 'Dossier des CM' traite | reste: 5 bibliotheque(s), 1 dossier(s), 0 fichier(s) | ecoule: 13s | restant estime: 47s | fin estimee: 14:29:50
+  [PROGRESSION]   25,0% | bibliotheque 1/6 | dossier 'TEAMX' traite | reste: 5 bibliotheque(s), 0 dossier(s), 0 fichier(s) | ecoule: 14s | restant estime: 41s | fin estimee: 14:29:44
     -> 4 dossier(s), 0 fichier(s)
-  [PROGRESSION]   25,0% | bibliotheque 1/6 | bibliotheque '03. L'AGENCE X' terminee | reste: 5 bibliotheque(s), 0 dossier(s), 0 fichier(s) | ecoule: 13s | restant estime: 40s | fin estimee: 08:31:19
+  [PROGRESSION]   25,0% | bibliotheque 1/6 | bibliotheque '03. L'AGENCE X' terminee | reste: 5 bibliotheque(s), 0 dossier(s), 0 fichier(s) | ecoule: 14s | restant estime: 41s | fin estimee: 14:29:44
   Bibliotheque : Bibliothäque de styles
-  [PROGRESSION]   25,0% | bibliotheque 2/6 | lecture de 'Bibliothäque de styles' | reste: 4 bibliotheque(s), 0 dossier(s), 0 fichier(s) | ecoule: 13s | restant estime: 40s | fin estimee: 08:31:19
-  [PROGRESSION]   25,0% | bibliotheque 2/6 | chargement des elements de 'Bibliothäque de styles' | reste: 4 bibliotheque(s), 0 dossier(s), 0 fichier(s) | ecoule: 13s | restant estime: 40s | fin estimee: 08:31:19
-  [PROGRESSION]   25,0% | bibliotheque 2/6 | 0 dossier(s), 0 fichier(s) trouves | reste: 4 bibliotheque(s), 0 dossier(s), 0 fichier(s) | ecoule: 14s | restant estime: 42s | fin estimee: 08:31:22
+  [PROGRESSION]   25,0% | bibliotheque 2/6 | lecture de 'Bibliothäque de styles' | reste: 4 bibliotheque(s), 0 dossier(s), 0 fichier(s) | ecoule: 14s | restant estime: 41s | fin estimee: 14:29:44
+  [PROGRESSION]   25,0% | bibliotheque 2/6 | chargement des elements de 'Bibliothäque de styles' | reste: 4 bibliotheque(s), 0 dossier(s), 0 fichier(s) | ecoule: 14s | restant estime: 41s | fin estimee: 14:29:44
+  [PROGRESSION]   25,0% | bibliotheque 2/6 | 0 dossier(s), 0 fichier(s) trouves | reste: 4 bibliotheque(s), 0 dossier(s), 0 fichier(s) | ecoule: 15s | restant estime: 44s | fin estimee: 14:29:48
     -> 0 dossier(s), 0 fichier(s)
-  [PROGRESSION]   38,0% | bibliotheque 2/6 | bibliotheque 'Bibliothäque de styles' terminee | reste: 4 bibliotheque(s), 0 dossier(s), 0 fichier(s) | ecoule: 14s | restant estime: 23s | fin estimee: 08:31:03
+  [PROGRESSION]   38,0% | bibliotheque 2/6 | bibliotheque 'Bibliothäque de styles' terminee | reste: 4 bibliotheque(s), 0 dossier(s), 0 fichier(s) | ecoule: 15s | restant estime: 24s | fin estimee: 14:29:28
   Bibliotheque : CINEMA
-  [PROGRESSION]   38,0% | bibliotheque 3/6 | lecture de 'CINEMA' | reste: 3 bibliotheque(s), 0 dossier(s), 0 fichier(s) | ecoule: 14s | restant estime: 23s | fin estimee: 08:31:03
-  [PROGRESSION]   38,0% | bibliotheque 3/6 | chargement des elements de 'CINEMA' | reste: 3 bibliotheque(s), 0 dossier(s), 0 fichier(s) | ecoule: 14s | restant estime: 23s | fin estimee: 08:31:03
-  [PROGRESSION]   38,0% | bibliotheque 3/6 | 6 dossier(s), 2 fichier(s) trouves | reste: 3 bibliotheque(s), 6 dossier(s), 2 fichier(s) | ecoule: 15s | restant estime: 24s | fin estimee: 08:31:05
-  [PROGRESSION]   40,0% | bibliotheque 3/6 | dossier 'MAJESTIC' traite | reste: 3 bibliotheque(s), 5 dossier(s), 2 fichier(s) | ecoule: 15s | restant estime: 22s | fin estimee: 08:31:03
-  [PROGRESSION]   41,0% | bibliotheque 3/6 | dossier '01 FILMS' traite | reste: 3 bibliotheque(s), 4 dossier(s), 2 fichier(s) | ecoule: 15s | restant estime: 22s | fin estimee: 08:31:03
-  [PROGRESSION]   43,0% | bibliotheque 3/6 | dossier '1.1 LES CLIENTS' traite | reste: 3 bibliotheque(s), 3 dossier(s), 2 fichier(s) | ecoule: 15s | restant estime: 21s | fin estimee: 08:31:02
-  [PROGRESSION]   44,0% | bibliotheque 3/6 | dossier 'BILLETERIE' traite | reste: 3 bibliotheque(s), 2 dossier(s), 2 fichier(s) | ecoule: 16s | restant estime: 20s | fin estimee: 08:31:02
-  [PROGRESSION]   46,0% | bibliotheque 3/6 | dossier 'LES CINEMAS' traite | reste: 3 bibliotheque(s), 1 dossier(s), 2 fichier(s) | ecoule: 16s | restant estime: 19s | fin estimee: 08:31:01
-  [PROGRESSION]   48,0% | bibliotheque 3/6 | dossier 'LES DOSSIERS CLIENTS DE JANVIER' traite | reste: 3 bibliotheque(s), 0 dossier(s), 2 fichier(s) | ecoule: 16s | restant estime: 18s | fin estimee: 08:31:00
-  [PROGRESSION]   51,0% | bibliotheque 3/6 | 2/2 fichier(s) traites | reste: 3 bibliotheque(s), 0 dossier(s), 0 fichier(s) | ecoule: 16s | restant estime: 16s | fin estimee: 08:30:58
+  [PROGRESSION]   38,0% | bibliotheque 3/6 | lecture de 'CINEMA' | reste: 3 bibliotheque(s), 0 dossier(s), 0 fichier(s) | ecoule: 15s | restant estime: 24s | fin estimee: 14:29:28
+  [PROGRESSION]   38,0% | bibliotheque 3/6 | chargement des elements de 'CINEMA' | reste: 3 bibliotheque(s), 0 dossier(s), 0 fichier(s) | ecoule: 15s | restant estime: 24s | fin estimee: 14:29:28
+  [PROGRESSION]   38,0% | bibliotheque 3/6 | 6 dossier(s), 2 fichier(s) trouves | reste: 3 bibliotheque(s), 6 dossier(s), 2 fichier(s) | ecoule: 16s | restant estime: 25s | fin estimee: 14:29:30
+  [PROGRESSION]   40,0% | bibliotheque 3/6 | dossier 'MAJESTIC' traite | reste: 3 bibliotheque(s), 5 dossier(s), 2 fichier(s) | ecoule: 16s | restant estime: 24s | fin estimee: 14:29:30
+  [PROGRESSION]   41,0% | bibliotheque 3/6 | dossier '01 FILMS' traite | reste: 3 bibliotheque(s), 4 dossier(s), 2 fichier(s) | ecoule: 16s | restant estime: 24s | fin estimee: 14:29:30
+  [PROGRESSION]   43,0% | bibliotheque 3/6 | dossier '1.1 LES CLIENTS' traite | reste: 3 bibliotheque(s), 3 dossier(s), 2 fichier(s) | ecoule: 17s | restant estime: 22s | fin estimee: 14:29:28
+  [PROGRESSION]   44,0% | bibliotheque 3/6 | dossier 'BILLETERIE' traite | reste: 3 bibliotheque(s), 2 dossier(s), 2 fichier(s) | ecoule: 17s | restant estime: 21s | fin estimee: 14:29:27
+  [PROGRESSION]   46,0% | bibliotheque 3/6 | dossier 'LES CINEMAS' traite | reste: 3 bibliotheque(s), 1 dossier(s), 2 fichier(s) | ecoule: 17s | restant estime: 20s | fin estimee: 14:29:27
+  [PROGRESSION]   48,0% | bibliotheque 3/6 | dossier 'LES DOSSIERS CLIENTS DE JANVIER' traite | reste: 3 bibliotheque(s), 0 dossier(s), 2 fichier(s) | ecoule: 17s | restant estime: 19s | fin estimee: 14:29:26
+  [PROGRESSION]   51,0% | bibliotheque 3/6 | 2/2 fichier(s) traites | reste: 3 bibliotheque(s), 0 dossier(s), 0 fichier(s) | ecoule: 17s | restant estime: 17s | fin estimee: 14:29:24
     -> 6 dossier(s), 2 fichier(s)
-  [PROGRESSION]   51,0% | bibliotheque 3/6 | bibliotheque 'CINEMA' terminee | reste: 3 bibliotheque(s), 0 dossier(s), 0 fichier(s) | ecoule: 16s | restant estime: 16s | fin estimee: 08:30:58
+  [PROGRESSION]   51,0% | bibliotheque 3/6 | bibliotheque 'CINEMA' terminee | reste: 3 bibliotheque(s), 0 dossier(s), 0 fichier(s) | ecoule: 18s | restant estime: 17s | fin estimee: 14:29:25
   Bibliotheque : Documents
-  [PROGRESSION]   51,0% | bibliotheque 4/6 | lecture de 'Documents' | reste: 2 bibliotheque(s), 0 dossier(s), 0 fichier(s) | ecoule: 16s | restant estime: 16s | fin estimee: 08:30:58
-  [PROGRESSION]   51,0% | bibliotheque 4/6 | chargement des elements de 'Documents' | reste: 2 bibliotheque(s), 0 dossier(s), 0 fichier(s) | ecoule: 16s | restant estime: 16s | fin estimee: 08:30:58
-  [PROGRESSION]   51,0% | bibliotheque 4/6 | 4 dossier(s), 4 fichier(s) trouves | reste: 2 bibliotheque(s), 4 dossier(s), 4 fichier(s) | ecoule: 18s | restant estime: 17s | fin estimee: 08:31:01
-  [PROGRESSION]   53,0% | bibliotheque 4/6 | dossier 'Dossier A' traite | reste: 2 bibliotheque(s), 3 dossier(s), 4 fichier(s) | ecoule: 20s | restant estime: 18s | fin estimee: 08:31:04
-  [PROGRESSION]   54,0% | bibliotheque 4/6 | dossier 'Dossier B' traite | reste: 2 bibliotheque(s), 2 dossier(s), 4 fichier(s) | ecoule: 20s | restant estime: 17s | fin estimee: 08:31:03
-  [PROGRESSION]   56,0% | bibliotheque 4/6 | dossier 'Dossier C' traite | reste: 2 bibliotheque(s), 1 dossier(s), 4 fichier(s) | ecoule: 21s | restant estime: 16s | fin estimee: 08:31:03
-  [PROGRESSION]   58,0% | bibliotheque 4/6 | dossier 'Dossier D' traite | reste: 2 bibliotheque(s), 0 dossier(s), 4 fichier(s) | ecoule: 21s | restant estime: 15s | fin estimee: 08:31:02
-  [PROGRESSION]   64,0% | bibliotheque 4/6 | 4/4 fichier(s) traites | reste: 2 bibliotheque(s), 0 dossier(s), 0 fichier(s) | ecoule: 21s | restant estime: 12s | fin estimee: 08:30:59
+  [PROGRESSION]   51,0% | bibliotheque 4/6 | lecture de 'Documents' | reste: 2 bibliotheque(s), 0 dossier(s), 0 fichier(s) | ecoule: 19s | restant estime: 18s | fin estimee: 14:29:26
+  [PROGRESSION]   51,0% | bibliotheque 4/6 | chargement des elements de 'Documents' | reste: 2 bibliotheque(s), 0 dossier(s), 0 fichier(s) | ecoule: 19s | restant estime: 18s | fin estimee: 14:29:26
+  [PROGRESSION]   51,0% | bibliotheque 4/6 | 4 dossier(s), 4 fichier(s) trouves | reste: 2 bibliotheque(s), 4 dossier(s), 4 fichier(s) | ecoule: 22s | restant estime: 21s | fin estimee: 14:29:32
+  [PROGRESSION]   53,0% | bibliotheque 4/6 | dossier 'Dossier A' traite | reste: 2 bibliotheque(s), 3 dossier(s), 4 fichier(s) | ecoule: 23s | restant estime: 20s | fin estimee: 14:29:32
+  [PROGRESSION]   54,0% | bibliotheque 4/6 | dossier 'Dossier B' traite | reste: 2 bibliotheque(s), 2 dossier(s), 4 fichier(s) | ecoule: 24s | restant estime: 20s | fin estimee: 14:29:34
+  [PROGRESSION]   56,0% | bibliotheque 4/6 | dossier 'Dossier C' traite | reste: 2 bibliotheque(s), 1 dossier(s), 4 fichier(s) | ecoule: 25s | restant estime: 19s | fin estimee: 14:29:33
+  [PROGRESSION]   58,0% | bibliotheque 4/6 | dossier 'Dossier D' traite | reste: 2 bibliotheque(s), 0 dossier(s), 4 fichier(s) | ecoule: 26s | restant estime: 19s | fin estimee: 14:29:34
+  [PROGRESSION]   64,0% | bibliotheque 4/6 | 4/4 fichier(s) traites | reste: 2 bibliotheque(s), 0 dossier(s), 0 fichier(s) | ecoule: 26s | restant estime: 14s | fin estimee: 14:29:29
     -> 4 dossier(s), 4 fichier(s)
-  [PROGRESSION]   64,0% | bibliotheque 4/6 | bibliotheque 'Documents' terminee | reste: 2 bibliotheque(s), 0 dossier(s), 0 fichier(s) | ecoule: 21s | restant estime: 12s | fin estimee: 08:30:59
+  [PROGRESSION]   64,0% | bibliotheque 4/6 | bibliotheque 'Documents' terminee | reste: 2 bibliotheque(s), 0 dossier(s), 0 fichier(s) | ecoule: 27s | restant estime: 15s | fin estimee: 14:29:32
   Bibliotheque : Modäles de formulaire
-  [PROGRESSION]   64,0% | bibliotheque 5/6 | lecture de 'Modäles de formulaire' | reste: 1 bibliotheque(s), 0 dossier(s), 0 fichier(s) | ecoule: 21s | restant estime: 12s | fin estimee: 08:30:59
-  [PROGRESSION]   64,0% | bibliotheque 5/6 | chargement des elements de 'Modäles de formulaire' | reste: 1 bibliotheque(s), 0 dossier(s), 0 fichier(s) | ecoule: 21s | restant estime: 12s | fin estimee: 08:30:59
-  [PROGRESSION]   64,0% | bibliotheque 5/6 | 0 dossier(s), 0 fichier(s) trouves | reste: 1 bibliotheque(s), 0 dossier(s), 0 fichier(s) | ecoule: 22s | restant estime: 12s | fin estimee: 08:31:00
+  [PROGRESSION]   64,0% | bibliotheque 5/6 | lecture de 'Modäles de formulaire' | reste: 1 bibliotheque(s), 0 dossier(s), 0 fichier(s) | ecoule: 29s | restant estime: 16s | fin estimee: 14:29:34
+  [PROGRESSION]   64,0% | bibliotheque 5/6 | chargement des elements de 'Modäles de formulaire' | reste: 1 bibliotheque(s), 0 dossier(s), 0 fichier(s) | ecoule: 29s | restant estime: 16s | fin estimee: 14:29:34
+  [PROGRESSION]   64,0% | bibliotheque 5/6 | 0 dossier(s), 0 fichier(s) trouves | reste: 1 bibliotheque(s), 0 dossier(s), 0 fichier(s) | ecoule: 30s | restant estime: 17s | fin estimee: 14:29:36
     -> 0 dossier(s), 0 fichier(s)
-  [PROGRESSION]   77,0% | bibliotheque 5/6 | bibliotheque 'Modäles de formulaire' terminee | reste: 1 bibliotheque(s), 0 dossier(s), 0 fichier(s) | ecoule: 22s | restant estime: 7s | fin estimee: 08:30:55
+  [PROGRESSION]   77,0% | bibliotheque 5/6 | bibliotheque 'Modäles de formulaire' terminee | reste: 1 bibliotheque(s), 0 dossier(s), 0 fichier(s) | ecoule: 31s | restant estime: 9s | fin estimee: 14:29:29
   Bibliotheque : Piäces jointes
-  [PROGRESSION]   77,0% | bibliotheque 6/6 | lecture de 'Piäces jointes' | reste: 0 bibliotheque(s), 0 dossier(s), 0 fichier(s) | ecoule: 22s | restant estime: 7s | fin estimee: 08:30:55
-  [PROGRESSION]   77,0% | bibliotheque 6/6 | chargement des elements de 'Piäces jointes' | reste: 0 bibliotheque(s), 0 dossier(s), 0 fichier(s) | ecoule: 22s | restant estime: 7s | fin estimee: 08:30:55
-  [PROGRESSION]   77,0% | bibliotheque 6/6 | 4 dossier(s), 3 fichier(s) trouves | reste: 0 bibliotheque(s), 4 dossier(s), 3 fichier(s) | ecoule: 24s | restant estime: 7s | fin estimee: 08:30:57
-  [PROGRESSION]   79,0% | bibliotheque 6/6 | dossier 'SitePages' traite | reste: 0 bibliotheque(s), 3 dossier(s), 3 fichier(s) | ecoule: 24s | restant estime: 6s | fin estimee: 08:30:56
-  [PROGRESSION]   81,0% | bibliotheque 6/6 | dossier 'Bloc-notes de Site_temp' traite | reste: 0 bibliotheque(s), 2 dossier(s), 3 fichier(s) | ecoule: 25s | restant estime: 6s | fin estimee: 08:30:57
-  [PROGRESSION]   83,0% | bibliotheque 6/6 | dossier 'CollabHome' traite | reste: 0 bibliotheque(s), 1 dossier(s), 3 fichier(s) | ecoule: 25s | restant estime: 5s | fin estimee: 08:30:56
-  [PROGRESSION]   84,0% | bibliotheque 6/6 | dossier 'CollabHome(1)' traite | reste: 0 bibliotheque(s), 0 dossier(s), 3 fichier(s) | ecoule: 25s | restant estime: 5s | fin estimee: 08:30:56
-  [PROGRESSION]   90,0% | bibliotheque 6/6 | 3/3 fichier(s) traites | reste: 0 bibliotheque(s), 0 dossier(s), 0 fichier(s) | ecoule: 25s | restant estime: 3s | fin estimee: 08:30:54
+  [PROGRESSION]   77,0% | bibliotheque 6/6 | lecture de 'Piäces jointes' | reste: 0 bibliotheque(s), 0 dossier(s), 0 fichier(s) | ecoule: 31s | restant estime: 9s | fin estimee: 14:29:30
+  [PROGRESSION]   77,0% | bibliotheque 6/6 | chargement des elements de 'Piäces jointes' | reste: 0 bibliotheque(s), 0 dossier(s), 0 fichier(s) | ecoule: 31s | restant estime: 9s | fin estimee: 14:29:30
+  [PROGRESSION]   77,0% | bibliotheque 6/6 | 4 dossier(s), 3 fichier(s) trouves | reste: 0 bibliotheque(s), 4 dossier(s), 3 fichier(s) | ecoule: 33s | restant estime: 10s | fin estimee: 14:29:32
+  [PROGRESSION]   79,0% | bibliotheque 6/6 | dossier 'SitePages' traite | reste: 0 bibliotheque(s), 3 dossier(s), 3 fichier(s) | ecoule: 34s | restant estime: 9s | fin estimee: 14:29:32
+  [PROGRESSION]   81,0% | bibliotheque 6/6 | dossier 'Bloc-notes de Site_temp' traite | reste: 0 bibliotheque(s), 2 dossier(s), 3 fichier(s) | ecoule: 36s | restant estime: 8s | fin estimee: 14:29:33
+  [PROGRESSION]   83,0% | bibliotheque 6/6 | dossier 'CollabHome' traite | reste: 0 bibliotheque(s), 1 dossier(s), 3 fichier(s) | ecoule: 36s | restant estime: 7s | fin estimee: 14:29:33
+  [PROGRESSION]   84,0% | bibliotheque 6/6 | dossier 'CollabHome(1)' traite | reste: 0 bibliotheque(s), 0 dossier(s), 3 fichier(s) | ecoule: 36s | restant estime: 7s | fin estimee: 14:29:33
+  [PROGRESSION]   90,0% | bibliotheque 6/6 | 3/3 fichier(s) traites | reste: 0 bibliotheque(s), 0 dossier(s), 0 fichier(s) | ecoule: 36s | restant estime: 4s | fin estimee: 14:29:30
     -> 4 dossier(s), 3 fichier(s)
-  [PROGRESSION]   90,0% | bibliotheque 6/6 | bibliotheque 'Piäces jointes' terminee | reste: 0 bibliotheque(s), 0 dossier(s), 0 fichier(s) | ecoule: 25s | restant estime: 3s | fin estimee: 08:30:54
-  [PROGRESSION]   92,0% | bibliotheque 6/6 | preparation de l'export JSON/HTML | reste: 0 bibliotheque(s), 0 dossier(s), 0 fichier(s) | ecoule: 25s | restant estime: 2s | fin estimee: 08:30:53
-  [PROGRESSION]  100,0% | bibliotheque 6/6 | export termine | reste: 0 bibliotheque(s), 0 dossier(s), 0 fichier(s) | ecoule: 25s | restant estime: 0s | fin estimee: 08:30:51
+  [PROGRESSION]   90,0% | bibliotheque 6/6 | bibliotheque 'Piäces jointes' terminee | reste: 0 bibliotheque(s), 0 dossier(s), 0 fichier(s) | ecoule: 36s | restant estime: 4s | fin estimee: 14:29:30
+  [PROGRESSION]   92,0% | bibliotheque 6/6 | preparation de l'export JSON/HTML | reste: 0 bibliotheque(s), 0 dossier(s), 0 fichier(s) | ecoule: 36s | restant estime: 3s | fin estimee: 14:29:29
+  [PROGRESSION]  100,0% | bibliotheque 6/6 | export termine | reste: 0 bibliotheque(s), 0 dossier(s), 0 fichier(s) | ecoule: 36s | restant estime: 0s | fin estimee: 14:29:26
 
   Architecture exportee :
-   A:\Projets\network-connect\architectures\sites\site_temp\resultats\architecture_20260730_083051.json
+   A:\Projets\network-connect\architectures\sites\site_temp\resultats\architecture_20260730_142926.json
    A:\Projets\network-connect\architectures\sites\site_temp\resultats\architecture-latest.json (copie 'derniere version')
    A:\Projets\network-connect\architectures\sites\site_temp\resultats\architecture-latest.html (visualisation - double-cliquez pour ouvrir)
 

@@ -47,11 +47,22 @@ build/Release
 # Dependency directories
 node_modules/
 
+.venv/
 # Optional npm cache directory
 .npm
 
 
 GestionnaireSP.exe
+
+# Certificats prives (secrets d'authentification app-only)
+*.pfx
+
+# Desktop app (PyInstaller) build artifacts
+desktop-app/build/
+desktop-app/dist/
+desktop-app/__pycache__/
+desktop-app/*.spec.bak
+desktop-app/spo_gestionnaire_settings.json
 
 
 # Optional eslint cache
@@ -68,6 +79,7 @@ GestionnaireSP.exe
 
 # dotenv environment variables file
 .env
+
 
 # dataconnect generated files
 .dataconnect

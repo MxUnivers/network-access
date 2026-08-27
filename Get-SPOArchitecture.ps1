@@ -18,7 +18,8 @@ param(
     [string]$ConfigFile,
     [string]$SiteUrl,
     [string]$OutputDir,        # dossier de sortie (par defaut : architecture\<NomDuSite>)
-    [switch]$SansPermissions   # plus rapide : n'exporte pas les permissions par dossier
+    [switch]$SansPermissions,  # plus rapide : n'exporte pas les permissions par dossier
+    [int]$NiveauMax = 0        # 0 = illimite (tous les sous-dossiers) ; 1, 2 ou 3 = limite la profondeur capturee
 )
 
 #------------------------------------------------------
@@ -30,6 +31,11 @@ if ($PSVersionTable.PSVersion.Major -lt 7) {
     Write-Host ""
     exit 1
 }
+
+# Force l'UTF-8 en sortie (evite les accents casses quand la sortie est
+# redirigee/capturee par un autre programme, ex: l'appli de bureau Python).
+[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+$OutputEncoding = [System.Text.Encoding]::UTF8
 
 $ErrorActionPreference = "Stop"
 
@@ -95,6 +101,8 @@ function Show-ArchitectureProgress {
 }
 
 Write-Host "`n=== RECUPERATION DE L'ARCHITECTURE ===`n" -ForegroundColor White
+if ($NiveauMax -gt 0) { Info "Profondeur limitee a $NiveauMax niveau(x) de sous-dossiers." }
+else { Info "Profondeur illimitee (tous les sous-dossiers)." }
 $ProgressStartedAt = Get-Date
 Show-ArchitectureProgress -Percent 0 -Stage "demarrage" -StartedAt $ProgressStartedAt
 
@@ -295,11 +303,26 @@ foreach ($lib in $libs) {
     }
     $nodes[$rootUrl] = $rootNode
 
+    # Profondeur d'un element (dossier ou fichier) par rapport a la racine de la bibliotheque.
+    # 1 = directement sous la bibliotheque, 2 = un sous-dossier plus bas, etc.
+    function Get-RelativeDepth {
+        param([string]$ItemUrl, [string]$RootUrl)
+        $rel = $ItemUrl.Substring($RootUrl.TrimEnd('/').Length).Trim('/')
+        if ([string]::IsNullOrEmpty($rel)) { return 0 }
+        return @($rel -split '/').Count
+    }
+
     # 1) Dossiers (traites du moins profond au plus profond pour que le parent existe)
     $folderItems = @($items | Where-Object { $_.FileSystemObjectType -eq "Folder" -and $_["FileLeafRef"] -ne "Forms" } |
+        Where-Object { $NiveauMax -le 0 -or (Get-RelativeDepth -ItemUrl $_["FileRef"] -RootUrl $rootUrl) -le $NiveauMax } |
         Sort-Object { ($_["FileRef"] -split '/').Count })
 
-    $fileItems = @($items | Where-Object { $_.FileSystemObjectType -eq "File" })
+    $fileItems = @($items | Where-Object { $_.FileSystemObjectType -eq "File" } |
+        Where-Object {
+            if ($NiveauMax -le 0) { return $true }
+            $parentUrl = $_["FileRef"].Substring(0, $_["FileRef"].LastIndexOf('/'))
+            (Get-RelativeDepth -ItemUrl $parentUrl -RootUrl $rootUrl) -le $NiveauMax
+        })
     $FolderTotal = $folderItems.Count
     $FileTotal = $fileItems.Count
     $WorkTotal = [math]::Max(1, $FolderTotal + $FileTotal)

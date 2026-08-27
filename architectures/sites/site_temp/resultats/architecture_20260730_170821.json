@@ -2,7 +2,7 @@
   "Site": {
     "Titre": "Site_temp",
     "Url": "https://infosolucesivoire.sharepoint.com/sites/Site_temp",
-    "CaptureLe": "2026-07-30 14:29:26",
+    "CaptureLe": "2026-07-30 17:08:21",
     "HeritageRompu": true,
     "Permissions": [
       {
@@ -58,6 +58,13 @@
           "Modification"
         ],
         "Members": [
+          {
+            "Name": "Dorsaille ANY",
+            "Email": "dorsaille.any@infosoluces.ci",
+            "LoginName": "i:0#.f|membership|dorsaille.any@infosoluces.ci",
+            "UserPrincipalName": "dorsaille.any@infosoluces.ci",
+            "Type": "User"
+          },
           {
             "Name": "Marius KOFFI",
             "Email": "marius.koffi@infosoluces.ci",
@@ -145,6 +152,13 @@
             "Type": ""
           },
           {
+            "Name": "Dorsaille ANY",
+            "Email": "dorsaille.any@infosoluces.ci",
+            "LoginName": "",
+            "UserPrincipalName": "dorsaille.any@infosoluces.ci",
+            "Type": ""
+          },
+          {
             "Name": "Marius KOFFI",
             "Email": "marius.koffi@infosoluces.ci",
             "LoginName": "",
@@ -162,6 +176,14 @@
       },
       {
         "Principal": "Marius KOFFI",
+        "Type": "User",
+        "Roles": [
+          "Accès limité"
+        ],
+        "Members": []
+      },
+      {
+        "Principal": "Dorsaille ANY",
         "Type": "User",
         "Roles": [
           "Accès limité"
@@ -199,6 +221,13 @@
                   "Email": "aymar.bly@infosoluces.ci",
                   "LoginName": "",
                   "UserPrincipalName": "aymar.bly@infosoluces.ci",
+                  "Type": ""
+                },
+                {
+                  "Name": "Dorsaille ANY",
+                  "Email": "dorsaille.any@infosoluces.ci",
+                  "LoginName": "",
+                  "UserPrincipalName": "dorsaille.any@infosoluces.ci",
                   "Type": ""
                 },
                 {
@@ -260,52 +289,6 @@
             }
           ],
           "Fichiers": []
-        },
-        {
-          "Name": "Dossier 30",
-          "Type": "Dossier",
-          "Dossiers": [],
-          "Fichiers": [],
-          "HeritageRompu": true,
-          "Permissions": [
-            {
-              "Principal": "Propriétaires de Site_temp",
-              "Type": "SecurityGroup",
-              "Access": "Grant",
-              "Roles": [
-                "Contrôle total"
-              ]
-            },
-            {
-              "Principal": "Site_temp - Visiteurs",
-              "Type": "SecurityGroup",
-              "Access": "Grant",
-              "Roles": [
-                "Lecture"
-              ]
-            },
-            {
-              "Principal": "Site_temp - Membres",
-              "Type": "SecurityGroup",
-              "Access": "Grant",
-              "Roles": [
-                "Modification"
-              ]
-            },
-            {
-              "Principal": "G_FORCE",
-              "Type": "SecurityGroup",
-              "Access": "Grant",
-              "Roles": [
-                "Lecture"
-              ]
-            }
-          ],
-          "ModifiePar": "Utilisateur",
-          "Modifie": "2026-07-30T14:36:19.453Z",
-          "CreePar": "Utilisateur",
-          "Cree": "2026-07-30T14:36:11.294Z",
-          "ResetPermissions": true
         }
       ],
       "Fichiers": [],
@@ -365,6 +348,13 @@
           ],
           "Members": [
             {
+              "Name": "Dorsaille ANY",
+              "Email": "dorsaille.any@infosoluces.ci",
+              "LoginName": "i:0#.f|membership|dorsaille.any@infosoluces.ci",
+              "UserPrincipalName": "dorsaille.any@infosoluces.ci",
+              "Type": "User"
+            },
+            {
               "Name": "Marius KOFFI",
               "Email": "marius.koffi@infosoluces.ci",
               "LoginName": "i:0#.f|membership|marius.koffi@infosoluces.ci",
@@ -392,6 +382,13 @@
               "Email": "aymar.bly@infosoluces.ci",
               "LoginName": "",
               "UserPrincipalName": "aymar.bly@infosoluces.ci",
+              "Type": ""
+            },
+            {
+              "Name": "Dorsaille ANY",
+              "Email": "dorsaille.any@infosoluces.ci",
+              "LoginName": "",
+              "UserPrincipalName": "dorsaille.any@infosoluces.ci",
               "Type": ""
             },
             {
@@ -450,6 +447,13 @@
                   "Email": "aymar.bly@infosoluces.ci",
                   "LoginName": "",
                   "UserPrincipalName": "aymar.bly@infosoluces.ci",
+                  "Type": ""
+                },
+                {
+                  "Name": "Dorsaille ANY",
+                  "Email": "dorsaille.any@infosoluces.ci",
+                  "LoginName": "",
+                  "UserPrincipalName": "dorsaille.any@infosoluces.ci",
                   "Type": ""
                 },
                 {
@@ -591,6 +595,13 @@
                   "Type": ""
                 },
                 {
+                  "Name": "Dorsaille ANY",
+                  "Email": "dorsaille.any@infosoluces.ci",
+                  "LoginName": "",
+                  "UserPrincipalName": "dorsaille.any@infosoluces.ci",
+                  "Type": ""
+                },
+                {
                   "Name": "Marius KOFFI",
                   "Email": "marius.koffi@infosoluces.ci",
                   "LoginName": "",
@@ -643,6 +654,13 @@
                   "Type": ""
                 },
                 {
+                  "Name": "Dorsaille ANY",
+                  "Email": "dorsaille.any@infosoluces.ci",
+                  "LoginName": "",
+                  "UserPrincipalName": "dorsaille.any@infosoluces.ci",
+                  "Type": ""
+                },
+                {
                   "Name": "Marius KOFFI",
                   "Email": "marius.koffi@infosoluces.ci",
                   "LoginName": "",
@@ -676,10 +694,27 @@
           "ServerRelativeUrl": "/sites/Site_temp/Documents partages/Dossier C",
           "Cree": "07/10/2026 12:13:10",
           "CreePar": "Pascal N'DRI",
-          "Modifie": "07/30/2026 08:43:29",
+          "Modifie": "07/30/2026 16:30:39",
           "ModifiePar": "Application SharePoint",
           "HeritageRompu": true,
-          "Permissions": [],
+          "Permissions": [
+            {
+              "Principal": "G_PARTENAIRE",
+              "Type": "SecurityGroup",
+              "Roles": [
+                "Modification"
+              ],
+              "Members": [
+                {
+                  "Name": "aymarbly559",
+                  "Email": "aymarbly559@gmail.com",
+                  "LoginName": "",
+                  "UserPrincipalName": "aymarbly559_gmail.com#EXT#@infosolucesivoire.onmicrosoft.com",
+                  "Type": ""
+                }
+              ]
+            }
+          ],
           "Dossiers": [],
           "Fichiers": [
             {
@@ -713,6 +748,13 @@
                   "Email": "aymar.bly@infosoluces.ci",
                   "LoginName": "",
                   "UserPrincipalName": "aymar.bly@infosoluces.ci",
+                  "Type": ""
+                },
+                {
+                  "Name": "Dorsaille ANY",
+                  "Email": "dorsaille.any@infosoluces.ci",
+                  "LoginName": "",
+                  "UserPrincipalName": "dorsaille.any@infosoluces.ci",
                   "Type": ""
                 },
                 {
@@ -784,6 +826,13 @@
             "Modification"
           ],
           "Members": [
+            {
+              "Name": "Dorsaille ANY",
+              "Email": "dorsaille.any@infosoluces.ci",
+              "LoginName": "i:0#.f|membership|dorsaille.any@infosoluces.ci",
+              "UserPrincipalName": "dorsaille.any@infosoluces.ci",
+              "Type": "User"
+            },
             {
               "Name": "Marius KOFFI",
               "Email": "marius.koffi@infosoluces.ci",
@@ -863,6 +912,13 @@
               "Type": ""
             },
             {
+              "Name": "Dorsaille ANY",
+              "Email": "dorsaille.any@infosoluces.ci",
+              "LoginName": "",
+              "UserPrincipalName": "dorsaille.any@infosoluces.ci",
+              "Type": ""
+            },
+            {
               "Name": "Marius KOFFI",
               "Email": "marius.koffi@infosoluces.ci",
               "LoginName": "",
@@ -921,6 +977,13 @@
                   "Type": ""
                 },
                 {
+                  "Name": "Dorsaille ANY",
+                  "Email": "dorsaille.any@infosoluces.ci",
+                  "LoginName": "",
+                  "UserPrincipalName": "dorsaille.any@infosoluces.ci",
+                  "Type": ""
+                },
+                {
                   "Name": "Marius KOFFI",
                   "Email": "marius.koffi@infosoluces.ci",
                   "LoginName": "",
@@ -967,8 +1030,101 @@
               "CreePar": "Pascal N'DRI",
               "Modifie": "06/29/2026 23:13:27",
               "ModifiePar": "Pascal N'DRI",
-              "HeritageRompu": false,
-              "Permissions": [],
+              "HeritageRompu": true,
+              "Permissions": [
+                {
+                  "Principal": "Propriétaires de Site_temp",
+                  "Type": "SharePointGroup",
+                  "Roles": [
+                    "Contrôle total"
+                  ],
+                  "Members": [
+                    {
+                      "Name": "Compte système",
+                      "Email": "",
+                      "LoginName": "SHAREPOINT\\system",
+                      "UserPrincipalName": "",
+                      "Type": "User"
+                    },
+                    {
+                      "Name": "Propriétaires de Site_temp",
+                      "Email": "Site_temp@infosolucesivoire.onmicrosoft.com",
+                      "LoginName": "c:0o.c|federateddirectoryclaimprovider|d3d1ef52-3c01-478a-a0e3-aaac360f791f_o",
+                      "UserPrincipalName": "",
+                      "Type": "SecurityGroup"
+                    },
+                    {
+                      "Name": "Rebecca NANAN",
+                      "Email": "rebecca.nanan@infosoluces.ci",
+                      "LoginName": "i:0#.f|membership|rebecca.nanan@infosoluces.ci",
+                      "UserPrincipalName": "rebecca.nanan@infosoluces.ci",
+                      "Type": "User"
+                    }
+                  ]
+                },
+                {
+                  "Principal": "Site_temp - Visiteurs",
+                  "Type": "SharePointGroup",
+                  "Roles": [
+                    "Lecture"
+                  ],
+                  "Members": [
+                    {
+                      "Name": "anvounpascal",
+                      "Email": "anvounpascal@outlook.com",
+                      "LoginName": "i:0#.f|membership|anvounpascal_outlook.com#ext#@infosolucesivoire.onmicrosoft.com",
+                      "UserPrincipalName": "anvounpascal_outlook.com#ext#@infosolucesivoire.onmicrosoft.com",
+                      "Type": "User"
+                    }
+                  ]
+                },
+                {
+                  "Principal": "Site_temp - Membres",
+                  "Type": "SharePointGroup",
+                  "Roles": [
+                    "Modification"
+                  ],
+                  "Members": [
+                    {
+                      "Name": "Dorsaille ANY",
+                      "Email": "dorsaille.any@infosoluces.ci",
+                      "LoginName": "i:0#.f|membership|dorsaille.any@infosoluces.ci",
+                      "UserPrincipalName": "dorsaille.any@infosoluces.ci",
+                      "Type": "User"
+                    },
+                    {
+                      "Name": "Marius KOFFI",
+                      "Email": "marius.koffi@infosoluces.ci",
+                      "LoginName": "i:0#.f|membership|marius.koffi@infosoluces.ci",
+                      "UserPrincipalName": "marius.koffi@infosoluces.ci",
+                      "Type": "User"
+                    },
+                    {
+                      "Name": "Site_temp - Membres",
+                      "Email": "Site_temp@infosolucesivoire.onmicrosoft.com",
+                      "LoginName": "c:0o.c|federateddirectoryclaimprovider|d3d1ef52-3c01-478a-a0e3-aaac360f791f",
+                      "UserPrincipalName": "",
+                      "Type": "SecurityGroup"
+                    }
+                  ]
+                },
+                {
+                  "Principal": "Marius KOFFI",
+                  "Type": "User",
+                  "Roles": [
+                    "Lecture"
+                  ],
+                  "Members": []
+                },
+                {
+                  "Principal": "Dorsaille ANY",
+                  "Type": "User",
+                  "Roles": [
+                    "Collaboration"
+                  ],
+                  "Members": []
+                }
+              ],
               "Dossiers": [],
               "Fichiers": []
             }
@@ -981,7 +1137,7 @@
           "ServerRelativeUrl": "/sites/Site_temp/SiteAssets/Bloc-notes de Site_temp",
           "Cree": "06/29/2026 23:21:57",
           "CreePar": "Pascal N'DRI",
-          "Modifie": "07/30/2026 14:24:38",
+          "Modifie": "07/30/2026 14:33:09",
           "ModifiePar": "Application SharePoint",
           "HeritageRompu": true,
           "Permissions": [
@@ -1005,6 +1161,13 @@
                   "Email": "aymar.bly@infosoluces.ci",
                   "LoginName": "",
                   "UserPrincipalName": "aymar.bly@infosoluces.ci",
+                  "Type": ""
+                },
+                {
+                  "Name": "Dorsaille ANY",
+                  "Email": "dorsaille.any@infosoluces.ci",
+                  "LoginName": "",
+                  "UserPrincipalName": "dorsaille.any@infosoluces.ci",
                   "Type": ""
                 },
                 {
@@ -1049,18 +1212,6 @@
               "ModifiePar": "Rebecca NANAN"
             }
           ]
-        },
-        {
-          "Name": "TestOK",
-          "Type": "Dossier",
-          "Dossiers": [],
-          "Fichiers": [],
-          "HeritageRompu": false,
-          "Permissions": [],
-          "ModifiePar": "Utilisateur",
-          "Modifie": "2026-07-30T14:35:34.139Z",
-          "CreePar": "Utilisateur",
-          "Cree": "2026-07-30T14:35:34.139Z"
         }
       ],
       "Fichiers": [
@@ -1075,56 +1226,5 @@
       "HeritageRompu": false,
       "Permissions": []
     }
-  ],
-  "PermissionEditor": {
-    "LastSavedAt": "2026-07-30T14:36:36.908Z",
-    "ModifiedFolders": [
-      {
-        "Library": "03. L'AGENCE X",
-        "FolderPath": "Dossier 30",
-        "Assignments": [
-          {
-            "Principal": "Propriétaires de Site_temp",
-            "Type": "SecurityGroup",
-            "Access": "Grant",
-            "Roles": [
-              "Contrôle total"
-            ]
-          },
-          {
-            "Principal": "Site_temp - Visiteurs",
-            "Type": "SecurityGroup",
-            "Access": "Grant",
-            "Roles": [
-              "Lecture"
-            ]
-          },
-          {
-            "Principal": "Site_temp - Membres",
-            "Type": "SecurityGroup",
-            "Access": "Grant",
-            "Roles": [
-              "Modification"
-            ]
-          },
-          {
-            "Principal": "G_FORCE",
-            "Type": "SecurityGroup",
-            "Access": "Grant",
-            "Roles": [
-              "Lecture"
-            ]
-          }
-        ]
-      }
-    ]
-  },
-  "Auth": {
-    "TenantId": "infosolucesivoire.onmicrosoft.com",
-    "ClientId": "f82df874-d3ce-48fd-8942-0a35f0b0325e",
-    "CertificateThumbprint": "453C3E6F2F38609897D23FDB7AEE2237E5C18F98",
-    "CertificatePath": "",
-    "CertificatePassword": ""
-  },
-  "SiteUrl": "https://infosolucesivoire.sharepoint.com/sites/Site_temp"
+  ]
 }

@@ -44,6 +44,11 @@ if ($PSVersionTable.PSVersion.Major -lt 7) {
     exit 1
 }
 
+# Force l'UTF-8 en sortie (evite les accents casses quand la sortie est
+# redirigee/capturee par un autre programme, ex: l'appli de bureau Python).
+[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+$OutputEncoding = [System.Text.Encoding]::UTF8
+
 # Toute erreur non geree stoppe le script (evite les faux "reussi")
 $ErrorActionPreference = "Stop"
 
@@ -112,7 +117,8 @@ Write-Log "=== Demarrage du script (PowerShell $($PSVersionTable.PSVersion)) ===
 $RequiredModules = @(
     "PnP.PowerShell",
     "Microsoft.Graph.Authentication",
-    "Microsoft.Graph.Groups"
+    "Microsoft.Graph.Groups",
+    "Microsoft.Graph.Users"
 )
 
 # IMPORTANT : les modules sont installes dans AppData\Local (dossier NON protege),
@@ -138,10 +144,27 @@ function Install-RequiredModule {
         throw "Save-PSResource indisponible : PowerShell 7.4+ requis (module Microsoft.PowerShell.PSResourceGet)"
     }
 
+    $SaveParams = @{
+        Name                = $Name
+        Path                = $ModulesDir
+        TrustRepository     = $true
+        IncludeXml          = $true
+        SkipDependencyCheck = $true
+        ErrorAction         = "Stop"
+    }
+
+    # Tous les sous-modules Microsoft.Graph.* exigent EXACTEMENT la meme version que
+    # Microsoft.Graph.Authentication (deja installe) : sinon Import-Module echoue avec
+    # "required module ... is not loaded". On aligne donc la version a installer.
+    if ($Name -like "Microsoft.Graph.*" -and $Name -ne "Microsoft.Graph.Authentication") {
+        $AuthModule = Get-Module -ListAvailable -Name "Microsoft.Graph.Authentication" | Select-Object -First 1
+        if ($AuthModule) { $SaveParams.Version = $AuthModule.Version.ToString() }
+    }
+
     # Save-PSResource ecrit directement dans un dossier cible, sans passer par Documents.
     # -SkipDependencyCheck : les dependances sont deja listees dans $RequiredModules (ordre : Authentication
-    # avant Groups), on evite ainsi de reecrire un module deja importe et verrouille.
-    Save-PSResource -Name $Name -Path $ModulesDir -TrustRepository -IncludeXml -SkipDependencyCheck -ErrorAction Stop
+    # avant Groups/Users), on evite ainsi de reecrire un module deja importe et verrouille.
+    Save-PSResource @SaveParams
 }
 
 foreach ($Module in $RequiredModules) {
@@ -310,6 +333,160 @@ function Resolve-RoleName {
 }
 
 #------------------------------------------------------
+# HIERARCHIE DES ROLES (pour detecter les conflits d'heritage)
+#------------------------------------------------------
+
+# Rang de chaque niveau : plus le rang est grand, plus le droit est eleve.
+# Utilise pour comparer le droit herite du parent avec le droit demande.
+$script:RoleRank = @{
+    'Accès limité'       = 1
+    'Acces limite'       = 1
+    'Limited Access'     = 1
+    'Affichage restreint' = 2
+    'Restricted View'    = 2
+    'Affichage seul'     = 3
+    'View Only'          = 3
+    'Lecture'            = 4
+    'Read'               = 4
+    'Modification'       = 5
+    'Edit'               = 5
+    'Collaboration'      = 5
+    'Contribute'         = 5
+    'Création'           = 6
+    'Creation'           = 6
+    'Design'             = 6
+    'Contrôle total'     = 7
+    'Controle total'     = 7
+    'Full Control'       = 7
+}
+
+function Get-RoleRank {
+    param([string]$RoleName)
+    $key = ([string]$RoleName).Trim()
+    if ([string]::IsNullOrWhiteSpace($key)) { return 0 }
+    if ($script:RoleRank.ContainsKey($key)) { return [int]$script:RoleRank[$key] }
+    $hit = $script:RoleRank.Keys | Where-Object { $_ -ieq $key } | Select-Object -First 1
+    if ($hit) { return [int]$script:RoleRank[$hit] }
+    return 0
+}
+
+#------------------------------------------------------
+# ANALYSE DU PARENT (pour la detection de conflit d'heritage)
+#------------------------------------------------------
+
+function Get-ParentFolderUrl {
+    param([string]$ServerRelativeUrl)
+    $url = ([string]$ServerRelativeUrl).TrimEnd('/')
+    $idx = $url.LastIndexOf('/')
+    if ($idx -le 0) { return $null }
+    return $url.Substring(0, $idx)
+}
+
+function Get-MaxRoleLevelFromAssignments {
+    param([object]$RoleAssignments)
+    $ctx = Get-PnPContext
+    $max = 0
+    foreach ($ra in @($RoleAssignments)) {
+        try {
+            $ctx.Load($ra.RoleDefinitionBindings)
+            $ctx.ExecuteQuery()
+        }
+        catch { continue }
+        foreach ($rdb in @($ra.RoleDefinitionBindings)) {
+            $level = Get-RoleRank -RoleName $rdb.Name
+            if ($level -gt $max) { $max = $level }
+        }
+    }
+    return $max
+}
+
+<#
+.DESCRIPTION
+Remonte la chaine d'heritage du dossier et renvoie le rang du droit le plus
+eleve accorde au niveau du premier ancetre (ou de la racine du site) qui
+possede des permissions uniques. C'est ce niveau que le sous-dossier herite
+normalement. Rang 0 = inconnu / pas d'acces identifiable.
+#>
+function Get-EffectiveParentLevel {
+    param([string]$FolderServerRelativeUrl)
+
+    $url = Get-ParentFolderUrl -ServerRelativeUrl $FolderServerRelativeUrl
+    $hops = 0
+    while ($url -and $hops -lt 50) {
+        $hops++
+        try {
+            $folder = Get-PnPFolder -Url $url -ErrorAction SilentlyContinue
+            if ($folder) {
+                $item = Get-PnPProperty -ClientObject $folder -Property ListItemAllFields
+                $null = Get-PnPProperty -ClientObject $item -Property HasUniqueRoleAssignments
+                if ($item.HasUniqueRoleAssignments) {
+                    $ctx = Get-PnPContext
+                    $ctx.Load($item.RoleAssignments)
+                    try { $ctx.ExecuteQuery() } catch { }
+                    return Get-MaxRoleLevelFromAssignments -RoleAssignments $item.RoleAssignments
+                }
+            }
+        }
+        catch { }
+        $url = Get-ParentFolderUrl -ServerRelativeUrl $url
+    }
+
+    # Aucun ancetre avec permissions uniques : c'est la racine du site qui fixe le niveau
+    try {
+        $web = Get-PnPWeb -ErrorAction Stop
+        $ctx = Get-PnPContext
+        $ctx.Load($web.RoleAssignments)
+        try { $ctx.ExecuteQuery() } catch { }
+        return Get-MaxRoleLevelFromAssignments -RoleAssignments $web.RoleAssignments
+    }
+    catch { return 0 }
+}
+
+#------------------------------------------------------
+# CREATION AUTOMATIQUE DES DOSSIERS MANQUANTS
+#------------------------------------------------------
+
+<#
+.DESCRIPTION
+Verifie que le dossier existe dans SharePoint et le cree si besoin (niveau par
+niveau pour les chemins imbriques A/B/C). Necessaire pour les dossiers NOUVEAUX
+(cree dans le visualiseur HTML ou ajoute a la configuration) : sans cela, le
+script echouait avec "Dossier introuvable" et l'attribution ne partait pas.
+#>
+function Ensure-PnPFolder {
+    param(
+        [string]$LibraryName,
+        [string]$FolderServerRelativeUrl
+    )
+
+    $Folder = Get-PnPFolder -Url $FolderServerRelativeUrl -ErrorAction SilentlyContinue
+    if ($Folder) { return $Folder }
+
+    Write-Log "Dossier '$FolderServerRelativeUrl' absent de SharePoint : creation automatique..." "WARN"
+
+    $List = Get-PnPList $LibraryName -ErrorAction Stop
+    $RootUrl = $List.RootFolder.ServerRelativeUrl.TrimEnd('/')
+    $Relative = $FolderServerRelativeUrl.TrimEnd('/')
+    if (-not $Relative.StartsWith($RootUrl, [System.StringComparison]::OrdinalIgnoreCase)) {
+        throw "Chemin hors de la bibliotheque '$LibraryName' : $FolderServerRelativeUrl"
+    }
+
+    $ParentUrl = $RootUrl
+    foreach ($Segment in ($Relative.Substring($RootUrl.Length).TrimStart('/') -split '/')) {
+        if ([string]::IsNullOrWhiteSpace($Segment)) { continue }
+        $CurrentUrl = $ParentUrl.TrimEnd('/') + '/' + $Segment
+        $Existing = Get-PnPFolder -Url $CurrentUrl -ErrorAction SilentlyContinue
+        if (-not $Existing) {
+            New-PnPFolder -Name $Segment -Folder $ParentUrl -ErrorAction Stop | Out-Null
+            Write-Log "Dossier cree : $CurrentUrl" "SUCCESS"
+        }
+        $ParentUrl = $CurrentUrl
+    }
+
+    return (Get-PnPFolder -Url $FolderServerRelativeUrl -ErrorAction Stop)
+}
+
+#------------------------------------------------------
 # FONCTION ATTRIBUTION PERMISSION
 #------------------------------------------------------
 
@@ -332,38 +509,82 @@ function Set-FolderPermission {
             ((Get-PnPList $LibraryName -ErrorAction Stop).RootFolder.ServerRelativeUrl) +
             "/" + $FolderPath
 
-        $Folder = Get-PnPFolder -Url $FolderServerRelativeUrl -ErrorAction Stop
-        if (-not $Folder) { throw "Dossier introuvable : $FolderPath" }
+        $Folder = Ensure-PnPFolder -LibraryName $LibraryName -FolderServerRelativeUrl $FolderServerRelativeUrl
 
         $ListItem = Get-PnPProperty -ClientObject $Folder -Property ListItemAllFields
         $null = Get-PnPProperty -ClientObject $ListItem -Property HasUniqueRoleAssignments
 
-        #==================================
-        # Rupture d'heritage (on CONSERVE les permissions existantes :
-        # les proprietaires gardent l'acces, seul le groupe cible est concerne)
-        #==================================
-        if (-not $ListItem.HasUniqueRoleAssignments) {
-            Write-Log "Rupture d'heritage des permissions sur $FolderPath"
-            $ListItem.BreakRoleInheritance($true, $true)
-            Invoke-PnPQuery
-        }
+        # La rupture d'heritage est geree SEPAREMENT pour chaque branche :
+        # - branche Masquage (Deny) : rupture + copie pour pouvoir retirer l'acces ;
+        # - branche Attribution : 3 phases de securite (conflit -> rupture -> application).
 
         #==================================
-        # Validation du groupe Entra ID
+        # Validation du principal : groupe Entra ID D'ABORD, puis groupe SharePoint,
+        # puis utilisateur Entra ID (dernier recours - exige User.Read.All)
         #==================================
-        $AADGroup = Get-MgGroup -Filter "displayName eq '$GroupName'" -ErrorAction Stop
-        if (-not $AADGroup) { throw "Groupe Entra ID introuvable : $GroupName" }
-        Write-Log "Groupe Entra ID valide : $GroupName ($($AADGroup.Id))"
+        $AADGroup = Get-MgGroup -Filter "displayName eq '$GroupName'" -ErrorAction SilentlyContinue
+        $AADUser  = $null
+        $SPGroup  = $null
+        # Identite a transmettre a SharePoint : le nom du groupe SharePoint fonctionne
+        # tel quel, le nom du groupe Entra aussi. Un utilisateur individuel doit etre
+        # identifie par email/UPN (plus fiable qu'un simple nom affiche).
+        $SharePointIdentity = $GroupName
+
+        if ($AADGroup) {
+            Write-Log "Groupe Entra ID valide : $GroupName ($($AADGroup.Id))"
+        }
+        else {
+            # Groupe deja present dans le site SharePoint (ex : "Proprietaires de L'AGENCE X",
+            # "Membres de ...", groupes personnalises) -> aucun appel Graph necessaire.
+            try {
+                $SPGroup = Get-PnPGroup | Where-Object { $_.Title -ieq $GroupName } | Select-Object -First 1
+                if ($SPGroup) {
+                    Write-Log "Groupe SharePoint valide (aucun appel Graph) : $GroupName"
+                }
+            }
+            catch {
+                $SPGroup = $null
+            }
+
+            if (-not $SPGroup) {
+                try {
+                    $AADUser = Get-MgUser -Filter "displayName eq '$GroupName'" -ErrorAction Stop | Select-Object -First 1
+                    if (-not $AADUser) {
+                        $AADUser = Get-MgUser -Filter "mail eq '$GroupName' or userPrincipalName eq '$GroupName'" -ErrorAction Stop | Select-Object -First 1
+                    }
+                }
+                catch {
+                    if ($_.Exception.Message -match 'Authorization_RequestDenied|Insufficient privileges') {
+                        throw "Droits Graph insuffisants pour rechercher '$GroupName' comme utilisateur individuel : il manque la permission d'API 'User.Read.All' (Application, avec consentement admin) sur l'App Registration Entra ID. Voir README-INSTALLATION.md, etape 2b."
+                    }
+                    throw
+                }
+                if (-not $AADUser) { throw "Principal introuvable (ni groupe Entra, ni groupe SharePoint, ni utilisateur) : $GroupName" }
+                $SharePointIdentity = if ($AADUser.Mail) { $AADUser.Mail } else { $AADUser.UserPrincipalName }
+                Write-Log "Utilisateur Entra ID valide : $GroupName ($SharePointIdentity)"
+            }
+        }
 
         if ($IsDeny) {
             #==================================
-            # RETRAIT : le groupe ne doit PLUS avoir acces -> dossier masque
+            # RETRAIT : le principal ne doit PLUS avoir acces -> dossier masque
             #==================================
-            # On retrouve le principal SharePoint du groupe : par nom affiche OU par
-            # l'identifiant Entra (present dans le LoginName base sur les claims).
+            # Rupture d'heritage (avec copie des droits existants) : indispensable
+            # pour pouvoir retirer l'acces ici sans modifier le parent.
+            if (-not $ListItem.HasUniqueRoleAssignments) {
+                Write-Log "Masquage : rupture d'heritage sur $FolderPath (droits existants copies, le parent reste inchange)"
+                $ListItem.BreakRoleInheritance($true, $true)
+                Invoke-PnPQuery
+            }
+            # On retrouve le principal SharePoint : par nom affiche, par l'identifiant
+            # Entra du groupe (present dans le LoginName base sur les claims), ou par
+            # l'identifiant/email de l'utilisateur individuel.
             $spUser = Get-PnPUser | Where-Object {
                 ($_.Title -ieq $GroupName) -or
-                ($AADGroup.Id -and $_.LoginName -like "*$($AADGroup.Id)*")
+                ($AADGroup.Id -and $_.LoginName -like "*$($AADGroup.Id)*") -or
+                ($SPGroup.Id -and $_.LoginName -like "*$($SPGroup.Id)*") -or
+                ($AADUser -and $_.LoginName -like "*$($AADUser.Id)*") -or
+                ($AADUser -and $AADUser.Mail -and $_.Email -ieq $AADUser.Mail)
             } | Select-Object -First 1
 
             if ($spUser) {
@@ -384,7 +605,7 @@ function Set-FolderPermission {
         }
         else {
             #==================================
-            # ATTRIBUTION : resolution du role puis ajout
+            # ATTRIBUTION — 3 phases de securite
             #==================================
             $RealRole = Resolve-RoleName -Requested $RoleName
             if (-not $RealRole) {
@@ -394,14 +615,68 @@ function Set-FolderPermission {
                 Write-Log "Niveau '$RoleName' traduit en '$RealRole' (nom reel du site)"
             }
 
-            Set-PnPListItemPermission `
-                -List $LibraryName `
-                -Identity $ListItem.Id `
-                -User $GroupName `
-                -AddRole $RealRole `
-                -ErrorAction Stop
+            $RequestedLevel = Get-RoleRank -RoleName $RealRole
 
-            Write-Log "OK : role '$RealRole' attribue a '$GroupName' sur '$FolderPath'" "SUCCESS"
+            # PHASE 1 : verifier si l'element herite des permissions du parent
+            if (-not $ListItem.HasUniqueRoleAssignments) {
+                # PHASE 2 : detecter le conflit puis rompre l'heritage (rupture systematique)
+                $ParentLevel = Get-EffectiveParentLevel -FolderServerRelativeUrl $FolderServerRelativeUrl
+
+                if ($ParentLevel -gt 0 -and $ParentLevel -lt $RequestedLevel) {
+                    Write-Log "CONFLIT D'HERITAGE DETECTE : le parent accorde un niveau inferieur (rang $ParentLevel) au droit demande '$RealRole' (rang $RequestedLevel) -> rupture d'heritage OBLIGATOIRE sur $FolderPath" "WARN"
+                    Write-Log "Le droit du parent est conserve (copie des permissions) : la navigation jusqu'a $FolderPath reste possible." "INFO"
+                }
+                else {
+                    Write-Log "Permissions heritees : rupture d'heritage systematique sur $FolderPath pour attribuer '$RealRole' (permissions du parent copiees)"
+                }
+
+                # Perimetre "minimum requis" : une personne doit au minimum lire le parent
+                # (rang 4 = Lecture) pour pouvoir naviguer jusqu'au sous-dossier.
+                if ($ParentLevel -lt 4) {
+                    Write-Log "Attention : le parent est en dessous de la Lecture (rang $ParentLevel) - les utilisateurs pourraient ne pas voir ce dossier. Vérifiez l'acces au dossier parent." "WARN"
+                }
+
+                $ListItem.BreakRoleInheritance($true, $true)   # $true = COPIER les droits du parent (navigation conservee)
+                Invoke-PnPQuery
+                Write-Log "Rupture d'heritage effectuee : droits du parent copies sur $FolderPath (acces existants et navigation conserves)" "SUCCESS"
+            }
+
+            # Bloc d'application reutilise pour l'essai initial ET l'auto-correction
+            $GrantBlock = {
+                param($Library, $ItemId, $Group, $User, $Role)
+                if ($Group) {
+                    Set-PnPListItemPermission -List $Library -Identity $ItemId -Group $Group -AddRole $Role -ErrorAction Stop
+                }
+                else {
+                    Set-PnPListItemPermission -List $Library -Identity $ItemId -User $User -AddRole $Role -ErrorAction Stop
+                }
+            }
+
+            # PHASE 3 : appliquer le droit 'Write/Edit', avec auto-correction en cas d'echec
+            try {
+                & $GrantBlock -Library $LibraryName -ItemId $ListItem.Id -Group $SPGroup -User $SharePointIdentity -Role $RealRole
+                Write-Log "OK : role '$RealRole' attribue a '$GroupName' sur '$FolderPath'" "SUCCESS"
+            }
+            catch {
+                $GrantError = $_.Exception.Message
+                Write-Log "Echec de l'attribution '$RealRole' pour '$GroupName' sur '$FolderPath' : $GrantError" "WARN"
+
+                # AUTO-CORRECTION : verifier le statut d'heritage, rompre, puis RE-ESSAYER
+                try {
+                    $null = Get-PnPProperty -ClientObject $ListItem -Property HasUniqueRoleAssignments
+                    if ($ListItem.HasUniqueRoleAssignments) {
+                        throw "L'element possede deja des permissions uniques : cette erreur n'est pas liee a l'heritage ($GrantError)"
+                    }
+                    Write-Log "AUTO-CORRECTION : heritage encore actif sur $FolderPath -> rupture d'heritage puis nouvel essai d'attribution..." "WARN"
+                    $ListItem.BreakRoleInheritance($true, $true)
+                    Invoke-PnPQuery
+                    & $GrantBlock -Library $LibraryName -ItemId $ListItem.Id -Group $SPGroup -User $SharePointIdentity -Role $RealRole
+                    Write-Log "OK (apres auto-correction) : role '$RealRole' attribue a '$GroupName' sur '$FolderPath'" "SUCCESS"
+                }
+                catch {
+                    throw   # l'echec final remonte au catch exterieur (ECHEC + compteur)
+                }
+            }
         }
 
         $script:CountOk++
@@ -420,7 +695,7 @@ function Reset-FolderToExclusive {
     param([string]$LibraryName, [string]$FolderPath)
     try {
         $url = ((Get-PnPList $LibraryName -ErrorAction Stop).RootFolder.ServerRelativeUrl) + "/" + $FolderPath
-        $folder = Get-PnPFolder -Url $url -ErrorAction Stop
+        $folder = Ensure-PnPFolder -LibraryName $LibraryName -FolderServerRelativeUrl $url
         $li = Get-PnPProperty -ClientObject $folder -Property ListItemAllFields
         $null = Get-PnPProperty -ClientObject $li -Property HasUniqueRoleAssignments
         $ctx = Get-PnPContext
@@ -445,7 +720,7 @@ function Show-FolderAccess {
     param([string]$LibraryName, [string]$FolderPath)
     try {
         $url = ((Get-PnPList $LibraryName -ErrorAction Stop).RootFolder.ServerRelativeUrl) + "/" + $FolderPath
-        $folder = Get-PnPFolder -Url $url -ErrorAction Stop
+        $folder = Ensure-PnPFolder -LibraryName $LibraryName -FolderServerRelativeUrl $url
         $li = Get-PnPProperty -ClientObject $folder -Property ListItemAllFields
         $null = Get-PnPProperty -ClientObject $li -Property HasUniqueRoleAssignments
         $ctx = Get-PnPContext
@@ -585,11 +860,13 @@ function Convert-ArchitectureToPermissionEntries {
                 if ($Intent) { [void]$Assignments.Add($Intent) }
             }
 
-            if ($Assignments.Count -gt 0) {
+            $Reset = [bool](Get-JsonValue -Object $Folder -Names @('ResetPermissions', 'resetPermissions'))
+            # On conserve aussi les dossiers "reset" sans assignation (droits entierement retires)
+            if ($Assignments.Count -gt 0 -or $Reset) {
                 [void]$Entries.Add([pscustomobject]@{
                     Library          = $LibraryName
                     FolderPath       = $FolderPath
-                    ResetPermissions = [bool](Get-JsonValue -Object $Folder -Names @('ResetPermissions', 'resetPermissions'))
+                    ResetPermissions = $Reset
                     Assignments      = @($Assignments)
                 })
             }
@@ -633,11 +910,13 @@ function Normalize-PermissionConfig {
             if ($Intent) { [void]$Assignments.Add($Intent) }
         }
 
-        if ($Assignments.Count -gt 0) {
+        $Reset = [bool](Get-JsonValue -Object $Entry -Names @('ResetPermissions', 'resetPermissions'))
+        # On conserve aussi les entrees "reset" sans assignation (dossier vide/remis a zero)
+        if ($Assignments.Count -gt 0 -or $Reset) {
             [void]$Normalized.Add([pscustomobject]@{
                 Library          = $Library.Trim()
                 FolderPath       = $FolderPath.Trim()
-                ResetPermissions = [bool](Get-JsonValue -Object $Entry -Names @('ResetPermissions', 'resetPermissions'))
+                ResetPermissions = $Reset
                 Assignments      = @($Assignments)
             })
         }

@@ -2,7 +2,7 @@
   "Site": {
     "Titre": "Site_temp",
     "Url": "https://infosolucesivoire.sharepoint.com/sites/Site_temp",
-    "CaptureLe": "2026-07-30 08:36:10",
+    "CaptureLe": "2026-07-30 13:19:34",
     "HeritageRompu": true,
     "Permissions": [
       {
@@ -58,6 +58,13 @@
           "Modification"
         ],
         "Members": [
+          {
+            "Name": "Marius KOFFI",
+            "Email": "marius.koffi@infosoluces.ci",
+            "LoginName": "i:0#.f|membership|marius.koffi@infosoluces.ci",
+            "UserPrincipalName": "marius.koffi@infosoluces.ci",
+            "Type": "User"
+          },
           {
             "Name": "Site_temp - Membres",
             "Email": "Site_temp@infosolucesivoire.onmicrosoft.com",
@@ -136,8 +143,30 @@
             "LoginName": "",
             "UserPrincipalName": "",
             "Type": ""
+          },
+          {
+            "Name": "",
+            "Email": "",
+            "LoginName": "",
+            "UserPrincipalName": "",
+            "Type": ""
+          },
+          {
+            "Name": "",
+            "Email": "",
+            "LoginName": "",
+            "UserPrincipalName": "",
+            "Type": ""
           }
         ]
+      },
+      {
+        "Principal": "Marius KOFFI",
+        "Type": "User",
+        "Roles": [
+          "Accès limité"
+        ],
+        "Members": []
       }
     ]
   },
@@ -154,10 +183,41 @@
           "ServerRelativeUrl": "/sites/Site_temp/03 LAGENCE X/L'AGENCE X",
           "Cree": "07/10/2026 12:49:13",
           "CreePar": "Pascal N'DRI",
-          "Modifie": "07/10/2026 12:59:03",
-          "ModifiePar": "Pascal N'DRI",
-          "HeritageRompu": false,
-          "Permissions": [],
+          "Modifie": "07/30/2026 13:15:35",
+          "ModifiePar": "Application SharePoint",
+          "HeritageRompu": true,
+          "Permissions": [
+            {
+              "Principal": "G_FORCE",
+              "Type": "SecurityGroup",
+              "Roles": [
+                "Contrôle total"
+              ],
+              "Members": [
+                {
+                  "Name": "",
+                  "Email": "",
+                  "LoginName": "",
+                  "UserPrincipalName": "",
+                  "Type": ""
+                },
+                {
+                  "Name": "",
+                  "Email": "",
+                  "LoginName": "",
+                  "UserPrincipalName": "",
+                  "Type": ""
+                },
+                {
+                  "Name": "",
+                  "Email": "",
+                  "LoginName": "",
+                  "UserPrincipalName": "",
+                  "Type": ""
+                }
+              ]
+            }
+          ],
           "Dossiers": [
             {
               "Name": "01. DEIRECTEUR CREA",
@@ -167,41 +227,8 @@
               "CreePar": "Pascal N'DRI",
               "Modifie": "07/30/2026 07:33:55",
               "ModifiePar": "Application SharePoint",
-              "HeritageRompu": true,
-              "Permissions": [
-                {
-                  "Principal": "G_INVITE",
-                  "Type": "SecurityGroup",
-                  "Roles": [
-                    "Modification"
-                  ],
-                  "Members": [
-                    {
-                      "Name": "",
-                      "Email": "",
-                      "LoginName": "",
-                      "UserPrincipalName": "",
-                      "Type": ""
-                    }
-                  ]
-                },
-                {
-                  "Principal": "G_FORCE",
-                  "Type": "SecurityGroup",
-                  "Roles": [
-                    "Contrôle total"
-                  ],
-                  "Members": [
-                    {
-                      "Name": "",
-                      "Email": "",
-                      "LoginName": "",
-                      "UserPrincipalName": "",
-                      "Type": ""
-                    }
-                  ]
-                }
-              ],
+              "HeritageRompu": false,
+              "Permissions": [],
               "Dossiers": [],
               "Fichiers": []
             },
@@ -261,10 +288,41 @@
           "ServerRelativeUrl": "/sites/Site_temp/CINEMA/MAJESTIC",
           "Cree": "07/10/2026 12:44:45",
           "CreePar": "Pascal N'DRI",
-          "Modifie": "07/10/2026 12:55:46",
-          "ModifiePar": "Pascal N'DRI",
-          "HeritageRompu": false,
-          "Permissions": [],
+          "Modifie": "07/30/2026 09:51:32",
+          "ModifiePar": "Application SharePoint",
+          "HeritageRompu": true,
+          "Permissions": [
+            {
+              "Principal": "G_FORCE",
+              "Type": "SecurityGroup",
+              "Roles": [
+                "Modification"
+              ],
+              "Members": [
+                {
+                  "Name": "",
+                  "Email": "",
+                  "LoginName": "",
+                  "UserPrincipalName": "",
+                  "Type": ""
+                },
+                {
+                  "Name": "",
+                  "Email": "",
+                  "LoginName": "",
+                  "UserPrincipalName": "",
+                  "Type": ""
+                },
+                {
+                  "Name": "",
+                  "Email": "",
+                  "LoginName": "",
+                  "UserPrincipalName": "",
+                  "Type": ""
+                }
+              ]
+            }
+          ],
           "Dossiers": [
             {
               "Name": "01 FILMS",
@@ -368,96 +426,31 @@
           "ServerRelativeUrl": "/sites/Site_temp/Documents partages/Dossier A",
           "Cree": "07/08/2026 01:30:21",
           "CreePar": "Pascal N'DRI",
-          "Modifie": "07/29/2026 18:11:13",
+          "Modifie": "07/30/2026 08:43:11",
           "ModifiePar": "Application SharePoint",
           "HeritageRompu": true,
           "Permissions": [
             {
-              "Principal": "Propriétaires de Site_temp",
-              "Type": "SharePointGroup",
+              "Principal": "G_FORCE",
+              "Type": "SecurityGroup",
               "Roles": [
                 "Contrôle total"
               ],
               "Members": [
                 {
-                  "Name": "Compte système",
+                  "Name": "",
                   "Email": "",
-                  "LoginName": "SHAREPOINT\\system",
+                  "LoginName": "",
                   "UserPrincipalName": "",
-                  "Type": "User"
+                  "Type": ""
                 },
-                {
-                  "Name": "Propriétaires de Site_temp",
-                  "Email": "Site_temp@infosolucesivoire.onmicrosoft.com",
-                  "LoginName": "c:0o.c|federateddirectoryclaimprovider|d3d1ef52-3c01-478a-a0e3-aaac360f791f_o",
-                  "UserPrincipalName": "",
-                  "Type": "SecurityGroup"
-                },
-                {
-                  "Name": "Rebecca NANAN",
-                  "Email": "rebecca.nanan@infosoluces.ci",
-                  "LoginName": "i:0#.f|membership|rebecca.nanan@infosoluces.ci",
-                  "UserPrincipalName": "rebecca.nanan@infosoluces.ci",
-                  "Type": "User"
-                }
-              ]
-            },
-            {
-              "Principal": "Site_temp - Membres",
-              "Type": "SharePointGroup",
-              "Roles": [
-                "Modification"
-              ],
-              "Members": [
-                {
-                  "Name": "Site_temp - Membres",
-                  "Email": "Site_temp@infosolucesivoire.onmicrosoft.com",
-                  "LoginName": "c:0o.c|federateddirectoryclaimprovider|d3d1ef52-3c01-478a-a0e3-aaac360f791f",
-                  "UserPrincipalName": "",
-                  "Type": "SecurityGroup"
-                }
-              ]
-            },
-            {
-              "Principal": "G_INVITE",
-              "Type": "SecurityGroup",
-              "Roles": [
-                "Contrôle total",
-                "Lecture"
-              ],
-              "Members": [
                 {
                   "Name": "",
                   "Email": "",
                   "LoginName": "",
                   "UserPrincipalName": "",
                   "Type": ""
-                }
-              ]
-            },
-            {
-              "Principal": "G_PARTENAIRE",
-              "Type": "SecurityGroup",
-              "Roles": [
-                "Modification"
-              ],
-              "Members": [
-                {
-                  "Name": "",
-                  "Email": "",
-                  "LoginName": "",
-                  "UserPrincipalName": "",
-                  "Type": ""
-                }
-              ]
-            },
-            {
-              "Principal": "G_MEMBRE",
-              "Type": "SecurityGroup",
-              "Roles": [
-                "Modification"
-              ],
-              "Members": [
+                },
                 {
                   "Name": "",
                   "Email": "",
@@ -485,17 +478,31 @@
           "ServerRelativeUrl": "/sites/Site_temp/Documents partages/Dossier B",
           "Cree": "07/08/2026 01:32:20",
           "CreePar": "Pascal N'DRI",
-          "Modifie": "07/30/2026 08:12:43",
+          "Modifie": "07/30/2026 08:43:21",
           "ModifiePar": "Application SharePoint",
           "HeritageRompu": true,
           "Permissions": [
             {
-              "Principal": "G_INVITE",
+              "Principal": "G_FORCE",
               "Type": "SecurityGroup",
               "Roles": [
                 "Contrôle total"
               ],
               "Members": [
+                {
+                  "Name": "",
+                  "Email": "",
+                  "LoginName": "",
+                  "UserPrincipalName": "",
+                  "Type": ""
+                },
+                {
+                  "Name": "",
+                  "Email": "",
+                  "LoginName": "",
+                  "UserPrincipalName": "",
+                  "Type": ""
+                },
                 {
                   "Name": "",
                   "Email": "",
@@ -523,17 +530,31 @@
           "ServerRelativeUrl": "/sites/Site_temp/Documents partages/Dossier C",
           "Cree": "07/10/2026 12:13:10",
           "CreePar": "Pascal N'DRI",
-          "Modifie": "07/30/2026 08:23:50",
+          "Modifie": "07/30/2026 08:43:29",
           "ModifiePar": "Application SharePoint",
           "HeritageRompu": true,
           "Permissions": [
             {
-              "Principal": "G_PARTENAIRE",
+              "Principal": "G_FORCE",
               "Type": "SecurityGroup",
               "Roles": [
-                "Modification"
+                "Contrôle total"
               ],
               "Members": [
+                {
+                  "Name": "",
+                  "Email": "",
+                  "LoginName": "",
+                  "UserPrincipalName": "",
+                  "Type": ""
+                },
+                {
+                  "Name": "",
+                  "Email": "",
+                  "LoginName": "",
+                  "UserPrincipalName": "",
+                  "Type": ""
+                },
                 {
                   "Name": "",
                   "Email": "",
@@ -561,10 +582,41 @@
           "ServerRelativeUrl": "/sites/Site_temp/Documents partages/Dossier D",
           "Cree": "07/10/2026 12:18:57",
           "CreePar": "Pascal N'DRI",
-          "Modifie": "07/10/2026 12:18:57",
-          "ModifiePar": "Pascal N'DRI",
-          "HeritageRompu": false,
-          "Permissions": [],
+          "Modifie": "07/30/2026 08:43:38",
+          "ModifiePar": "Application SharePoint",
+          "HeritageRompu": true,
+          "Permissions": [
+            {
+              "Principal": "G_FORCE",
+              "Type": "SecurityGroup",
+              "Roles": [
+                "Contrôle total"
+              ],
+              "Members": [
+                {
+                  "Name": "",
+                  "Email": "",
+                  "LoginName": "",
+                  "UserPrincipalName": "",
+                  "Type": ""
+                },
+                {
+                  "Name": "",
+                  "Email": "",
+                  "LoginName": "",
+                  "UserPrincipalName": "",
+                  "Type": ""
+                },
+                {
+                  "Name": "",
+                  "Email": "",
+                  "LoginName": "",
+                  "UserPrincipalName": "",
+                  "Type": ""
+                }
+              ]
+            }
+          ],
           "Dossiers": [],
           "Fichiers": [
             {
@@ -618,6 +670,13 @@
           ],
           "Members": [
             {
+              "Name": "Marius KOFFI",
+              "Email": "marius.koffi@infosoluces.ci",
+              "LoginName": "i:0#.f|membership|marius.koffi@infosoluces.ci",
+              "UserPrincipalName": "marius.koffi@infosoluces.ci",
+              "Type": "User"
+            },
+            {
               "Name": "Site_temp - Membres",
               "Email": "Site_temp@infosolucesivoire.onmicrosoft.com",
               "LoginName": "c:0o.c|federateddirectoryclaimprovider|d3d1ef52-3c01-478a-a0e3-aaac360f791f",
@@ -665,6 +724,36 @@
             "Accès limité"
           ],
           "Members": [
+            {
+              "Name": "",
+              "Email": "",
+              "LoginName": "",
+              "UserPrincipalName": "",
+              "Type": ""
+            }
+          ]
+        },
+        {
+          "Principal": "G_FORCE",
+          "Type": "SecurityGroup",
+          "Roles": [
+            "Accès limité"
+          ],
+          "Members": [
+            {
+              "Name": "",
+              "Email": "",
+              "LoginName": "",
+              "UserPrincipalName": "",
+              "Type": ""
+            },
+            {
+              "Name": "",
+              "Email": "",
+              "LoginName": "",
+              "UserPrincipalName": "",
+              "Type": ""
+            },
             {
               "Name": "",
               "Email": "",
@@ -724,8 +813,86 @@
               "CreePar": "Pascal N'DRI",
               "Modifie": "06/29/2026 23:13:27",
               "ModifiePar": "Pascal N'DRI",
-              "HeritageRompu": false,
-              "Permissions": [],
+              "HeritageRompu": true,
+              "Permissions": [
+                {
+                  "Principal": "Propriétaires de Site_temp",
+                  "Type": "SharePointGroup",
+                  "Roles": [
+                    "Contrôle total"
+                  ],
+                  "Members": [
+                    {
+                      "Name": "Compte système",
+                      "Email": "",
+                      "LoginName": "SHAREPOINT\\system",
+                      "UserPrincipalName": "",
+                      "Type": "User"
+                    },
+                    {
+                      "Name": "Propriétaires de Site_temp",
+                      "Email": "Site_temp@infosolucesivoire.onmicrosoft.com",
+                      "LoginName": "c:0o.c|federateddirectoryclaimprovider|d3d1ef52-3c01-478a-a0e3-aaac360f791f_o",
+                      "UserPrincipalName": "",
+                      "Type": "SecurityGroup"
+                    },
+                    {
+                      "Name": "Rebecca NANAN",
+                      "Email": "rebecca.nanan@infosoluces.ci",
+                      "LoginName": "i:0#.f|membership|rebecca.nanan@infosoluces.ci",
+                      "UserPrincipalName": "rebecca.nanan@infosoluces.ci",
+                      "Type": "User"
+                    }
+                  ]
+                },
+                {
+                  "Principal": "Site_temp - Visiteurs",
+                  "Type": "SharePointGroup",
+                  "Roles": [
+                    "Lecture"
+                  ],
+                  "Members": [
+                    {
+                      "Name": "anvounpascal",
+                      "Email": "anvounpascal@outlook.com",
+                      "LoginName": "i:0#.f|membership|anvounpascal_outlook.com#ext#@infosolucesivoire.onmicrosoft.com",
+                      "UserPrincipalName": "anvounpascal_outlook.com#ext#@infosolucesivoire.onmicrosoft.com",
+                      "Type": "User"
+                    }
+                  ]
+                },
+                {
+                  "Principal": "Site_temp - Membres",
+                  "Type": "SharePointGroup",
+                  "Roles": [
+                    "Modification"
+                  ],
+                  "Members": [
+                    {
+                      "Name": "Marius KOFFI",
+                      "Email": "marius.koffi@infosoluces.ci",
+                      "LoginName": "i:0#.f|membership|marius.koffi@infosoluces.ci",
+                      "UserPrincipalName": "marius.koffi@infosoluces.ci",
+                      "Type": "User"
+                    },
+                    {
+                      "Name": "Site_temp - Membres",
+                      "Email": "Site_temp@infosolucesivoire.onmicrosoft.com",
+                      "LoginName": "c:0o.c|federateddirectoryclaimprovider|d3d1ef52-3c01-478a-a0e3-aaac360f791f",
+                      "UserPrincipalName": "",
+                      "Type": "SecurityGroup"
+                    }
+                  ]
+                },
+                {
+                  "Principal": "Marius KOFFI",
+                  "Type": "User",
+                  "Roles": [
+                    "Lecture"
+                  ],
+                  "Members": []
+                }
+              ],
               "Dossiers": [],
               "Fichiers": []
             }

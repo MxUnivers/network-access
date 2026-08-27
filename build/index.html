@@ -108,6 +108,8 @@
   .fact{border:1px solid var(--line);border-radius:8px;background:var(--card2);padding:7px;min-width:0}
   .fact b{display:block;font-size:12px;word-break:break-word}
   .fact span{display:block;font-size:11px;color:var(--muted);word-break:break-word}
+  .inherit-hint{border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:8px;background:var(--card2);padding:8px 10px;margin:8px 0;font-size:11px;line-height:1.45;color:var(--muted)}
+  .inherit-hint strong{display:block;font-size:11px;color:var(--accent);margin-bottom:2px}
   .current-perms{display:grid;gap:8px}
   .rights-heading{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
   .rights-heading strong{font-size:12px}
@@ -1317,7 +1319,7 @@ function validAssignments(entry){
   return (entry.Assignments||[]).filter(a=>norm(a.GroupName) && (a.Access==="Deny" || norm(a.Role)));
 }
 function configuredEntries(){
-  return [...PERMISSION_EDITS.entries()].filter(([,entry])=>validAssignments(entry).length);
+  return [...PERMISSION_EDITS.entries()].filter(([,entry])=>validAssignments(entry).length || entry.ResetPermissions===true);
 }
 
 function renderEditor(){
@@ -1350,6 +1352,10 @@ function renderEditor(){
     facts.appendChild(fact);
   });
   panel.appendChild(facts);
+  const hint = el("div","inherit-hint");
+  hint.appendChild(el("strong","","Rappel de la regle d'heritage"));
+  hint.appendChild(el("span","","Parent en Lecture + droit demande plus eleve (Modification) = l'outil rompt automatiquement l'heritage sur ce dossier (droits du parent copies : navigation conservee) puis applique le droit. Un dossier nouveau est cree automatiquement dans SharePoint avant l'application."));
+  panel.appendChild(hint);
   const current = el("div","current-perms");
   const heading = el("div","rights-heading");
   heading.appendChild(el("strong","","Droits actuels du dossier"));

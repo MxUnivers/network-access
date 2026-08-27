@@ -67,7 +67,11 @@ App registration → **API permissions** → **Add a permission** :
 | API | Permission | Type |
 |-----|-----------|------|
 | Microsoft Graph | `Group.Read.All` | Application |
+| Microsoft Graph | `User.Read.All` | Application |
 | SharePoint | `Sites.FullControl.All` | Application |
+
+`User.Read.All` est necessaire des qu'on assigne un droit a une **personne individuelle**
+(et pas seulement a un groupe) dans les fichiers de permissions.
 
 Puis cliquez sur **Grant admin consent for <votre tenant>** (bouton en haut).
 ⚠️ Sans le consentement admin, les connexions échoueront avec une erreur `403`.
