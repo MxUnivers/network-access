@@ -136,6 +136,9 @@
   .metric b{display:block;font-size:18px;line-height:1.1}
   .metric span{font-size:11px;color:var(--muted)}
   .export-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+  .export-depth{display:flex;align-items:center;gap:8px;margin-top:8px;flex-wrap:wrap}
+  .export-depth label{font-size:12px;color:var(--muted)}
+  .export-depth select{flex:1;min-width:120px}
   .json-preview{margin-top:8px;max-height:160px;overflow:auto;border:1px solid var(--line);border-radius:8px;background:var(--card2);padding:8px;font:12px/1.45 ui-monospace,SFMono-Regular,Consolas,"Liberation Mono",monospace;white-space:pre-wrap;word-break:break-word;color:var(--muted)}
   .warn-text{color:var(--warn);font-size:12px;margin-top:6px}
   .dirty-state{font-size:12px;color:var(--warn);font-weight:700}
@@ -194,6 +197,15 @@
             <button id="word" type="button">Word</button>
             <button id="excel" type="button">Excel</button>
             <button id="archJson" type="button">JSON architecture</button>
+          </div>
+          <div class="export-depth">
+            <label for="exportDepth">Profondeur (PDF / Word architecture)</label>
+            <select id="exportDepth" aria-label="Profondeur de l'export d'architecture">
+              <option value="1">Niveau 1</option>
+              <option value="2">Niveau 2</option>
+              <option value="3" selected>Niveau 3</option>
+              <option value="0">Tout (illimité)</option>
+            </select>
           </div>
           <div class="action-runner">
             <select id="actionMenu" aria-label="Action rapide">
@@ -355,6 +367,17 @@ let STRUCTURE_REPLAYING = false;
 const DRAFT_STORAGE_KEY = "spo-visualizer-draft-v2";
 
 const SEP = "\u001f";
+// Profondeur par defaut des exports d'architecture (PDF / Word) : 1er, 2e et 3e niveau de sous-dossiers.
+const EXPORT_MAX_LEVELS = 3;
+// Profondeur reellement appliquee a l'export en cours (mise a jour depuis le menu "Profondeur").
+let ACTIVE_EXPORT_LEVELS = EXPORT_MAX_LEVELS;
+// Lit le menu de profondeur : 0 (ou vide) = tout / illimite, sinon 1, 2 ou 3 niveaux.
+function exportMaxLevels(){
+  const node = byId("exportDepth");
+  const v = node ? parseInt(node.value, 10) : EXPORT_MAX_LEVELS;
+  if(!Number.isFinite(v) || v <= 0) return Infinity;
+  return v;
+}
 const ROLE_OPTIONS = ["Contrôle total", "Modification", "Collaboration", "Lecture"];
 const $ = s => document.querySelector(s);
 const byId = id => document.getElementById(id);
@@ -1957,6 +1980,7 @@ function architectureReportHtml(){
 }
 function exportPDF(){
   if(!needData())return;
+  ACTIVE_EXPORT_LEVELS = exportMaxLevels();
   setLoadProgress(20, "Generation PDF architecture", "Construction du rapport depuis le JSON...");
   const siteTitle = DATA.Site && DATA.Site.Titre || "architecture";
   const html = architectureReportHtml();
@@ -2102,11 +2126,16 @@ function reportHtml(f, depth){
     : list.map(permissionInlineHtml).join("<hr>"));
   let h="<p style=\"margin:6px 0 2px "+pad+"px\">📁 <b>"+esc(f.Name)+"</b>"+(f.ModifiePar?" <span style=\"color:#777\">- modifie par "+esc(f.ModifiePar)+"</span>":"")+"<br><span style=\"margin-left:18px;color:#333\">"+pt+"</span></p>";
   (f.Fichiers||[]).forEach(fi=> h+="<p style=\"margin:1px 0 1px "+(pad+18)+"px;color:#555\">📄 "+esc(fi.Name)+(fi.Modifie?" <span style=\"color:#999\">("+esc(fi.Modifie)+")</span>":"")+"</p>");
-  (f.Dossiers||[]).forEach(s=> h+=reportHtml(s, depth+1));
+  if(depth+1 < ACTIVE_EXPORT_LEVELS){
+    (f.Dossiers||[]).forEach(s=> h+=reportHtml(s, depth+1));
+  }else if((f.Dossiers||[]).length){
+    h+="<p style=\"margin:1px 0 1px "+(pad+18)+"px;color:#999;font-style:italic\">… "+(f.Dossiers||[]).length+" sous-dossier(s) au-dela du niveau "+ACTIVE_EXPORT_LEVELS+" (non affiches)</p>";
+  }
   return h;
 }
 function exportWord(){
   if(!needData())return;
+  ACTIVE_EXPORT_LEVELS = exportMaxLevels();
   setLoadProgress(20, "Export Word", "Construction du document...");
   let h="<html xmlns:o=\"urn:schemas-microsoft-com:office:office\" xmlns:w=\"urn:schemas-microsoft-com:office:word\"><head><meta charset=\"utf-8\">"
     +"<style>body{font-family:Calibri,Arial;font-size:11pt} h1{font-size:18pt} h2{font-size:14pt;color:#0969da;border-bottom:1px solid #ccc}</style></head><body>";
