@@ -65,6 +65,14 @@ desktop-app/__pycache__/
 desktop-app/*.spec.bak
 desktop-app/spo_gestionnaire_settings.json
 
+# Electron app build output (bundle volumineux : .exe, DLL, .pak...)
+electron-app/dist/
+electron-app/node_modules/
+
+# PyInstaller server build output (racine)
+/dist/
+*.exe
+
 
 # Optional eslint cache
 .eslintcache
